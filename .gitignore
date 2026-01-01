@@ -1,6 +1,46 @@
+# ESP-IDF Build Artifacts
 build/
 sdkconfig
 sdkconfig.old
+dependencies.lock
 
-# CSV files
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+*.egg-info/
+dist/
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data Files (DO NOT commit large datasets)
 *.csv
+*.log
+*.dat
+*.bin
+
+# IDE and Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Temporary Files
+*.tmp
+*.bak
+*.cache
