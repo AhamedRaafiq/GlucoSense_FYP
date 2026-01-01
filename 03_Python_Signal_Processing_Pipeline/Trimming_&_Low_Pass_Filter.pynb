@@ -1,0 +1,97 @@
+import numpy as np
+import pandas as pd
+import scipy.signal as signal
+import matplotlib.pyplot as plt
+
+# ==========================================
+# 1. Configuration (Global Settings)
+# ==========================================
+FILENAME = 'ppg_data_A0015_rms01_0015_T21.csv'  # Replace with your actual file name
+FS = 400.0                    # Sampling Frequency (Hz)
+CUTOFF = 16.0                 # Low-Pass Cutoff (Hz)
+ORDER = 4                     # Filter Order (Effective Order 8)
+TRIM_THRESHOLD = 150000         # Min value to consider "Finger is On"
+
+# ==========================================
+# 2. Define the Precision Filter Function
+# ==========================================
+def apply_precision_ppg_filter(raw_data, fs, cutoff, order):
+    """
+    Applies a Zero-Phase Butterworth Low-Pass Filter using SOS.
+    """
+    # Calculate Nyquist and Normal Cutoff
+    nyquist = 0.5 * fs
+    normal_cutoff = cutoff / nyquist
+    
+    # Design Filter (Second-Order Sections for stability)
+    sos = signal.butter(order, normal_cutoff, btype='low', analog=False, output='sos')
+    
+    # Apply Zero-Phase Filtering (Forward-Backward)
+    filtered_signal = signal.sosfiltfilt(sos, raw_data)
+    
+    return filtered_signal
+
+# ==========================================
+# 3. Main Processing Pipeline
+# ==========================================
+
+# --- Step A: Load Data ---
+try:
+    df = pd.read_csv(FILENAME)
+    print("✅ File Loaded Successfully.")
+except FileNotFoundError:
+    print("❌ Error: File not found. Please check the file path.")
+    # Create dummy data for testing if file is missing
+    df = pd.DataFrame({'RED': np.zeros(1000), 'IR': np.zeros(1000)}) 
+
+# --- Step B: Trim "Sensor Off" Zeros ---
+# Logic: Keep rows where BOTH Red AND IR are significant.
+# If the finger moves slightly, one might drop, so checking both is safer.
+mask = (df['RED'] > TRIM_THRESHOLD) & (df['IR'] > TRIM_THRESHOLD)
+clean_df = df[mask].copy()
+
+if clean_df.empty:
+    print("⚠️ Warning: All data was trimmed! Check your Threshold or Column Names.")
+else:
+    print(f"✅ Data Trimmed. Removed {len(df) - len(clean_df)} 'idle' samples.")
+
+    # --- Step C: Apply Filter to Both Channels ---
+    # We extract the values as numpy arrays for the filter
+    red_raw = clean_df['RED'].values
+    ir_raw  = clean_df['IR'].values
+    
+    # Filter RED
+    red_filtered = apply_precision_ppg_filter(red_raw, FS, CUTOFF, ORDER)
+    
+    # Filter IR
+    ir_filtered = apply_precision_ppg_filter(ir_raw, FS, CUTOFF, ORDER)
+
+    # Generate Time Axis for plotting
+    t = np.arange(len(red_filtered)) / FS
+
+    # ==========================================
+    # 4. Visualization (Compare Red vs IR)
+    # ==========================================
+    plt.figure(figsize=(12, 8))
+
+    # Plot 1: RED Signal
+    plt.subplot(2, 1, 1)
+    plt.plot(t, red_raw, label='Raw RED', color='lightcoral', alpha=0.5)
+    plt.plot(t, red_filtered, label='Filtered RED', color='red', linewidth=1.5)
+    plt.title('RED Signal: Trimmed & Filtered')
+    plt.ylabel('Amplitude')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    # Plot 2: IR Signal
+    plt.subplot(2, 1, 2)
+    plt.plot(t, ir_raw, label='Raw IR', color='lightgray', alpha=0.5)
+    plt.plot(t, ir_filtered, label='Filtered IR', color='black', linewidth=1.5)
+    plt.title('IR Signal: Trimmed & Filtered')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Amplitude')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    plt.show()
