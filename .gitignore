@@ -1,0 +1,6 @@
+build/
+sdkconfig
+sdkconfig.old
+
+# CSV files
+*.csv
