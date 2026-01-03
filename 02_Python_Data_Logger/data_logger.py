@@ -7,7 +7,8 @@ BAUD_RATE   = 115200          # MUST match the ESP32 Code (921600 Recommended)
 
 # 2. File Saving Location
 # Tip: Use 'r' before the string to handle backslashes on Windows safely.
-DATA_STORAGE_FOLDER_PATH = r"C:\Users\DELL\Documents\GitHub\fyp\04_Data_Storage\Normal_PPG_Only_Data_Set_For_Practice" 
+# Example: r"C:\Users\YourName\Desktop\FYP_Data_Raw"
+DATA_STORAGE_FOLDER_PATH = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\Normal_PPG_Only_Data_Set_For_Practice" 
 
 # 3. Plotter Settings
 FS          = 400             # Sampling Rate (Hz) - Used for time axis
@@ -133,7 +134,7 @@ class HighPerfPlotter(QMainWindow):
             try:
                 self.csv_file = open(self.filepath, mode='w', newline='')
                 self.csv_writer = csv.writer(self.csv_file)
-                self.csv_writer.writerow(["Timestamp", "IR", "RED"]) # Header
+                self.csv_writer.writerow(["Timestamp", "IR_Value", "Red_Value"]) # Header
                 
                 self.setWindowTitle(f"Recording: {filename} | {SERIAL_PORT}")
                 print(f"\n✅ Recording Started! Saving to: {filename}")
