@@ -68,7 +68,7 @@
 //    Select the speed for the High-Performance Plotter.
 //    Options: 115200 (Standard), 460800 (Fast), 921600 (Very Fast -
 //    Recommended)
-#define UART_BAUD_RATE 921600
+#define UART_BAUD_RATE 115200
 
 /* ======================================================================== */
 /* ======================================================================== */

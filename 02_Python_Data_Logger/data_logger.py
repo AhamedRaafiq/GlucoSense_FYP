@@ -3,7 +3,7 @@
 # ==============================================================================
 # 1. Hardware Connection
 SERIAL_PORT = 'COM6'          # CHECK DEVICE MANAGER! (e.g., COM3 on Windows, /dev/ttyUSB0 on Linux)
-BAUD_RATE   = 921600          # MUST match the ESP32 Code (921600 Recommended)
+BAUD_RATE   = 115200          # MUST match the ESP32 Code (921600 Recommended)
 
 # 2. File Saving Location
 # Tip: Use 'r' before the string to handle backslashes on Windows safely.
@@ -11,7 +11,7 @@ BAUD_RATE   = 921600          # MUST match the ESP32 Code (921600 Recommended)
 DATA_STORAGE_FOLDER_PATH = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\Normal_PPG_Only_Data_Set_For_Practice" 
 
 # 3. Plotter Settings
-FS          = 100             # Sampling Rate (Hz) - Used for time axis
+FS          = 400             # Sampling Rate (Hz) - Used for time axis
 WINDOW_SIZE = 2000            # How many points to show (2000 points @ 100Hz = 20 seconds)
 # ==============================================================================
 
@@ -26,7 +26,7 @@ from collections import deque
 
 # High-Performance Graphics & GUI Libraries
 import pyqtgraph as pg
-from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMessageBox, QInputDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QMessageBox
 from PyQt5.QtCore import QTimer
 
 class HighPerfPlotter(QMainWindow):
@@ -54,9 +54,6 @@ class HighPerfPlotter(QMainWindow):
         
         # 4. Connect Serial
         self.setup_serial()
-
-        # 5. Start Session (Popup Dialog)
-        self.ask_filename()
 
     def init_ui(self):
         self.setWindowTitle("PPG Signal Acquisition (High-Performance)")
@@ -104,15 +101,19 @@ class HighPerfPlotter(QMainWindow):
             self.ser.flushInput()
             print(f"✅ Serial Connected: {SERIAL_PORT} @ {BAUD_RATE}")
         except Exception as e:
+            # We still use a popup for CRITICAL hardware errors so you see them
             QMessageBox.critical(self, "Serial Error", f"Could not open {SERIAL_PORT}.\n\nCheck connection or close Arduino IDE.\nError: {e}")
             sys.exit(1)
 
     def ask_filename(self):
-        # Popup Dialog for Session ID
-        filename, ok = QInputDialog.getText(self, "New Session", "Enter Session ID (e.g., SubjectA_Glu100):")
+        # --- MODIFIED: TERMINAL INPUT INSTEAD OF POPUP ---
+        print("\n" + "="*50)
+        print(f"📂 TARGET FOLDER: {DATA_STORAGE_FOLDER_PATH}")
+        print("="*50)
         
-        if ok and filename:
-            filename = filename.strip()
+        filename = input("👉 Enter Session ID (e.g., SubjectA_Glu100): ").strip()
+        
+        if filename:
             # Auto-append .csv if missing
             if not filename.lower().endswith('.csv'):
                 filename += ".csv"
@@ -121,10 +122,12 @@ class HighPerfPlotter(QMainWindow):
             
             # Check overwrite protection
             if os.path.exists(self.filepath):
-                reply = QMessageBox.question(self, "Warning", f"File '{filename}' already exists.\nOverwrite it?",
-                                             QMessageBox.Yes | QMessageBox.No)
-                if reply == QMessageBox.No:
-                    self.ask_filename() # Ask again
+                print(f"\n⚠️  WARNING: File '{filename}' already exists!")
+                choice = input("   Overwrite it? (y/n): ").strip().lower()
+                
+                if choice != 'y':
+                    print("   ...Restarting inputs.")
+                    self.ask_filename() # Ask again recursively
                     return
 
             # Open File for Writing
@@ -134,12 +137,15 @@ class HighPerfPlotter(QMainWindow):
                 self.csv_writer.writerow(["Timestamp", "IR_Value", "Red_Value"]) # Header
                 
                 self.setWindowTitle(f"Recording: {filename} | {SERIAL_PORT}")
-                print(f"📂 Recording Started: {self.filepath}")
+                print(f"\n✅ Recording Started! Saving to: {filename}")
+                print("   (Close the plot window to stop saving)")
+                
             except Exception as e:
-                QMessageBox.critical(self, "File Error", f"Cannot create file: {e}")
+                print(f"❌ File Error: {e}")
                 sys.exit(1)
         else:
-            sys.exit(0) # User cancelled
+            print("❌ No filename entered. Exiting.")
+            sys.exit(0)
 
     def update_loop(self):
         if not self.ser.is_open:
@@ -190,7 +196,49 @@ class HighPerfPlotter(QMainWindow):
         event.accept()
 
 if __name__ == "__main__":
+    # --- ASK FOR FILENAME FIRST (Before GUI starts) ---
+    print("\n" + "="*50)
+    print(f"📂 TARGET FOLDER: {DATA_STORAGE_FOLDER_PATH}")
+    print("="*50)
+    
+    filename = input("👉 Enter Session ID (e.g., SubjectA_Glu100): ").strip()
+    
+    if not filename:
+        print("❌ No filename entered. Exiting.")
+        sys.exit(0)
+    
+    # Auto-append .csv if missing
+    if not filename.lower().endswith('.csv'):
+        filename += ".csv"
+    
+    filepath = os.path.join(DATA_STORAGE_FOLDER_PATH, filename)
+    
+    # Check overwrite protection
+    if os.path.exists(filepath):
+        print(f"\n⚠️  WARNING: File '{filename}' already exists!")
+        choice = input("   Overwrite it? (y/n): ").strip().lower()
+        
+        if choice != 'y':
+            print("❌ Cancelled. Exiting.")
+            sys.exit(0)
+    
+    # --- NOW START THE GUI ---
     app = QApplication(sys.argv)
     window = HighPerfPlotter()
+    window.filepath = filepath  # Pass the filepath to the window
+    window.filename = filename  # Pass the filename too
+    
+    # Open CSV file
+    try:
+        window.csv_file = open(filepath, mode='w', newline='')
+        window.csv_writer = csv.writer(window.csv_file)
+        window.csv_writer.writerow(["Timestamp", "IR", "RED"])
+        window.setWindowTitle(f"Recording: {filename} | {SERIAL_PORT}")
+        print(f"\n✅ Recording Started! Saving to: {filename}")
+        print("   (Close the plot window to stop saving)\n")
+    except Exception as e:
+        print(f"❌ File Error: {e}")
+        sys.exit(1)
+    
     window.show()
     sys.exit(app.exec_())
