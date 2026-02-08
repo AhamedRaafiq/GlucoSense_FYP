@@ -2,7 +2,7 @@
 # ⚙️ USER CONFIGURATION SECTION
 # ==============================================================================
 # 1. Hardware Connection
-SERIAL_PORT = 'COM6'          # CHECK DEVICE MANAGER! (e.g., COM3 on Windows, /dev/ttyUSB0 on Linux)
+SERIAL_PORT = 'COM5'          # CHECK DEVICE MANAGER! (e.g., COM3 on Windows, /dev/ttyUSB0 on Linux)
 BAUD_RATE   = 115200          # MUST match the ESP32 Code (921600 Recommended)
 
 # 2. File Saving Location
@@ -12,7 +12,7 @@ DATA_STORAGE_FOLDER_PATH = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\
 
 # 3. Plotter Settings
 FS          = 400             # Sampling Rate (Hz) - Used for time axis
-WINDOW_SIZE = 2000            # How many points to show (2000 points @ 100Hz = 20 seconds)
+WINDOW_SIZE = 4000            # How many points to show (2000 points @ 100Hz = 20 seconds)
 # ==============================================================================
 
 import sys

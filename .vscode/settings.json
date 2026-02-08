@@ -5,7 +5,7 @@
   "idf.openOcdConfigs": [
     "board/esp32s3-builtin.cfg"
   ],
-  "idf.portWin": "COM6",
+  "idf.portWin": "COM5",
   "idf.toolsPathWin": "C:\\Users\\DELL\\.espressif",
   "idf.customExtraVars": {
     "IDF_TARGET": "esp32s3"
@@ -16,5 +16,6 @@
     "--query-driver=C:\\Users\\DELL\\.espressif\\tools\\xtensa-esp-elf\\esp-14.2.0_20241119\\xtensa-esp-elf\\bin\\xtensa-esp32s3-elf-gcc.exe",
     "--compile-commands-dir=${workspaceFolder}\\build"
   ],
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "idf.currentSetup": "C:\\Users\\DELL\\esp\\v5.5.1\\esp-idf"
 }
