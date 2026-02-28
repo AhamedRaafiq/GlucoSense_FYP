@@ -2,7 +2,7 @@
 # ⚙️ USER CONFIGURATION SECTION
 # ==============================================================================
 # 1. INPUT: FOLDER (for popup) OR FILE PATH (to skip popup)
-RAW_INPUT_DIR = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\Raw"
+RAW_INPUT_DIR = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\Verified_Raw"
 
 # 2. BASE OUTPUT FOLDER
 BASE_OUTPUT_DIR = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\Windowed"
