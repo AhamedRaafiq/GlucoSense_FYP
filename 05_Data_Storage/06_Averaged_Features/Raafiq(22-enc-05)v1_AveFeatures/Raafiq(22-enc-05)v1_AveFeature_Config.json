@@ -1,0 +1,54 @@
+{
+    "Metadata": {
+        "Base_Name": "Raafiq(22-enc-05)v1",
+        "Source_Features_Folder": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/05_Features_/Raafiq(22-enc-05)v1_Features",
+        "Sampling_Rate_FS": 400.0,
+        "Window_Duration_Sec": 15.0,
+        "Number_of_Windows_Used": 12,
+        "Date_Averaged": "2026-03-12 14:31:12"
+    },
+    "Processing_Settings": {
+        "Invert_Enable": true,
+        "Normalization_Method": 1,
+        "Low_Pass_Filter": {
+            "Enabled": true,
+            "Cutoff_Hz": 16.0,
+            "Order": 4
+        },
+        "High_Pass_Filter": {
+            "Enabled": true,
+            "Cutoff_Hz": 0.5,
+            "Order": 4
+        },
+        "Savitzky_Golay": {
+            "Enabled": false,
+            "Window_Size": null,
+            "Polynomial_Order": null
+        }
+    },
+    "Ensemble_Method": {
+        "Method_Name": "Foot-to-foot segmentation -> resample -> align by VPG max -> ensemble average -> VPG/SDPPG",
+        "Segmentation": "Foot-to-foot",
+        "Foot_Refinement": "Valley refined using VPG near zero",
+        "Alignment": "Maximum VPG alignment",
+        "Target_Length_Samples": 220
+    },
+    "Averaging_Info": {
+        "Averaging_Method": "Column-wise arithmetic mean",
+        "Windows_Used": [
+            "Win0",
+            "Win1",
+            "Win2",
+            "Win3",
+            "Win4",
+            "Win5",
+            "Win6",
+            "Win7",
+            "Win8",
+            "Win9",
+            "Win10",
+            "Win11"
+        ],
+        "Configuration_Validation": "Pipeline parameters matched"
+    }
+}
