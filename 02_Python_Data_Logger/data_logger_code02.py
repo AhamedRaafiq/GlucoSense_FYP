@@ -2,7 +2,7 @@
 # ⚙️ USER CONFIGURATION SECTION
 # ==============================================================================
 # 1. Hardware Connection
-SERIAL_PORT = 'COM5'          # CHECK DEVICE MANAGER! (e.g., COM3 on Windows, /dev/ttyUSB0 on Linux)
+SERIAL_PORT = 'COM7'          # CHECK DEVICE MANAGER! (e.g., COM3 on Windows, /dev/ttyUSB0 on Linux)
 BAUD_RATE   = 115200          # MUST match the ESP32 Code (921600 Recommended)
 
 # 2. File Saving Location
