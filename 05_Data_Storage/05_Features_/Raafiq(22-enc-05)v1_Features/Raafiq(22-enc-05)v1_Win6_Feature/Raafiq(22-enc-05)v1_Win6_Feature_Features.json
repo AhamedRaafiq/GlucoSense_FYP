@@ -3,10 +3,10 @@
     "IR_Skewness": -0.40214475648883674,
     "Red_Kurtosis": -1.3204684047027404,
     "IR_Kurtosis": -1.3115680096876228,
-    "Red_Shannon Entrophy": 5.706161998515471,
-    "IR_Shannon Entrophy": 5.695041623761126,
-    "Red_Spectral Entrophy": 1.5528944702680356,
-    "IR_Spectral Entrophy": 1.54567618275297,
+    "Red_Shannon Entropy": 5.706161998515471,
+    "IR_Shannon Entropy": 5.695041623761126,
+    "Red_Spectral Entropy": 1.5528944702680356,
+    "IR_Spectral Entropy": 1.54567618275297,
     "Red_pulse width": 0.45693303838396143,
     "IR_pulse width": 0.4667357935196784,
     "Red_PPI": 0.7585526315789474,
@@ -34,6 +34,6 @@
     "IR_Rise time": 0.1790239726027397,
     "Red_Decay time": 0.5868493150684932,
     "IR_Decay time": 0.5897260273972603,
-    "Red_Dictrotic notch": 0.765,
-    "IR_Dictrotic notch": 0.3159246575342466
+    "Red_Dicrotic notch": 0.765,
+    "IR_Dicrotic notch": 0.3159246575342466
 }
