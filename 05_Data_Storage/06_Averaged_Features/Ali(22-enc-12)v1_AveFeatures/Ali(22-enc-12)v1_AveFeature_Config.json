@@ -1,0 +1,24 @@
+{
+    "Metadata": {
+        "Base_Name": "Ali(22-enc-12)v1",
+        "Source_Features_Folder": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/05_Features_/Ali(22-enc-12)v1_Features",
+        "Sampling_Rate_FS": 400.0,
+        "Window_Duration_Sec": 15.0,
+        "Number_of_Windows_Used": 5,
+        "Date_Averaged": "2026-05-13 06:48:06"
+    },
+    "Processing_Settings": {},
+    "Ensemble_Method": {},
+    "Averaging_Info": {
+        "Averaging_Method": "Column-wise arithmetic mean",
+        "Windows_Used": [
+            "Win0",
+            "Win1",
+            "Win2",
+            "Win3",
+            "Win4"
+        ],
+        "Configuration_Validation": "No major configuration mismatches detected",
+        "Validation_Warnings": []
+    }
+}
