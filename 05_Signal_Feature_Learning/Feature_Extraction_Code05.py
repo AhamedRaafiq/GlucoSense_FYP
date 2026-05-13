@@ -12,6 +12,7 @@ from tkinter import filedialog
 
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from scipy.signal import find_peaks, welch, peak_widths
 from scipy.stats import skew, kurtosis
 from scipy.fft import rfft
@@ -375,6 +376,181 @@ def resolve_selected_folder():
     return folder
 
 
+def build_filtered_configuration_summary(cfg, flat_features):
+    """
+    Build a properly organized Filtered_Configuration JSON that preserves the
+    valuable original data (Metadata, Folder_Structure, ensemble summaries,
+    fiducials) and appends the extracted features.
+    """
+    summary = {}
+
+    # Preserve Metadata as-is
+    if "Metadata" in cfg:
+        summary["Metadata"] = cfg["Metadata"]
+
+    # Preserve Folder_Structure as-is
+    if "Folder_Structure" in cfg:
+        summary["Folder_Structure"] = cfg["Folder_Structure"]
+
+    # Compact ensemble summary (drop bulky time_axis & per-pulse logs)
+    def ensemble_summary(ens):
+        if not isinstance(ens, dict):
+            return {}
+        keep_keys = [
+            "title",
+            "target_len",
+            "beats_used",
+            "rejected_candidates",
+            "rejected_pulses",
+            "segmented_pulses_total",
+            "avg_duration",
+            "fs_eff",
+            "fiducials",
+        ]
+        out = {k: ens[k] for k in keep_keys if k in ens}
+        # Include count of feet & rejected info (compact)
+        if "feet" in ens:
+            out["num_feet_pairs"] = len(ens["feet"])
+        if "rejected_pulses_info" in ens:
+            out["rejected_pulses_info"] = ens["rejected_pulses_info"]
+        return out
+
+    if "Ensemble_RED" in cfg:
+        summary["Ensemble_RED"] = ensemble_summary(cfg["Ensemble_RED"])
+    if "Ensemble_IR" in cfg:
+        summary["Ensemble_IR"] = ensemble_summary(cfg["Ensemble_IR"])
+
+    # Append extracted features
+    summary["Extracted_Features"] = flat_features
+
+    return summary
+
+
+def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
+    """
+    Save a 4-panel plot:
+      1. DC Component (Low Pass) - Baseline Drift
+      2. AC Component (High Pass) - Pulsatile Signal
+      3. Normalized Signal (0..1)
+      4. Ensemble Average (Single Beat Template)
+    """
+    try:
+        # Time axis for full signal
+        if "Time_s" in df_full.columns:
+            t_full = df_full["Time_s"].values
+        elif "Time" in df_full.columns:
+            t_full = df_full["Time"].values
+        else:
+            t_full = np.arange(len(df_full))
+
+        red_dc = df_full["Red_DC_LowPass"].values
+        ir_dc = df_full["IR_DC_LowPass"].values
+        red_ac = df_full["Red_AC_HighPass"].values
+        ir_ac = df_full["IR_AC_HighPass"].values
+        red_norm = df_full["Red_Normalized"].values
+        ir_norm = df_full["IR_Normalized"].values
+
+        t_red_ens = df_ens["Time_Red_s"].values
+        red_ens = df_ens["Red_Ensemble_Avg"].values
+        t_ir_ens = df_ens["Time_IR_s"].values
+        ir_ens = df_ens["IR_Ensemble_Avg"].values
+
+        fig, axes = plt.subplots(4, 1, figsize=(10, 11))
+
+        # 1. DC
+        axes[0].plot(t_full, red_dc, color="darkred", label="Red DC", linewidth=1)
+        axes[0].plot(t_full, ir_dc, color="blue", label="IR DC", linewidth=1)
+        axes[0].set_title("1. DC Component (Low Pass Filtered) - Baseline Drift")
+        axes[0].set_ylabel("Amplitude")
+        axes[0].legend(loc="upper right")
+        axes[0].grid(True, alpha=0.3)
+
+        # 2. AC
+        axes[1].plot(t_full, red_ac, color="red", label="Red AC", linewidth=0.8)
+        axes[1].plot(t_full, ir_ac, color="blue", label="IR AC", linewidth=0.8)
+        axes[1].set_title("2. AC Component (High Pass Filtered) - Pulsatile Signal")
+        axes[1].set_ylabel("Amplitude")
+        axes[1].legend(loc="upper right")
+        axes[1].grid(True, alpha=0.3)
+
+        # 3. Normalized
+        axes[2].plot(t_full, red_norm, color="red", label="Red Norm", linewidth=0.8)
+        axes[2].plot(t_full, ir_norm, color="blue", label="IR Norm", linewidth=0.8)
+        axes[2].set_title("3. Normalized Signal (0 to 1 Scaled) - Shape Analysis")
+        axes[2].set_ylabel("Normalized Amp")
+        axes[2].legend(loc="upper right")
+        axes[2].grid(True, alpha=0.3)
+
+        # 4. Ensemble Average
+        axes[3].plot(t_red_ens, red_ens, color="red", label="Red Avg Beat", linewidth=2)
+        axes[3].plot(t_ir_ens, ir_ens, color="blue", label="IR Avg Beat", linewidth=2)
+        axes[3].set_title("4. Ensemble Average (Cleaned Single Beat Template)")
+        axes[3].set_xlabel("Time (seconds)")
+        axes[3].set_ylabel("Amplitude")
+        axes[3].legend(loc="upper right")
+        axes[3].grid(True, alpha=0.3)
+
+        plt.tight_layout()
+
+        plot_path = output_folder_path / f"{base_name}_Signal_Overview.png"
+        fig.savefig(plot_path, dpi=120, bbox_inches="tight")
+        plt.close(fig)
+
+        return str(plot_path)
+    except Exception as e:
+        print(f"⚠️ Plot generation failed: {e}")
+        return None
+
+
+# --------------------------------------------------
+# NEW: FILE REPLACEMENT TRACKING HELPERS
+# --------------------------------------------------
+def check_existing_file(file_path):
+    """
+    Check if a file already exists before saving.
+    Returns a dict with existence status and file size info.
+    """
+    p = Path(file_path)
+    if p.exists() and p.is_file():
+        try:
+            size_bytes = p.stat().st_size
+            size_kb = size_bytes / 1024.0
+            return {
+                "exists": True,
+                "path": str(p),
+                "size_bytes": size_bytes,
+                "size_kb": size_kb,
+            }
+        except Exception:
+            return {"exists": True, "path": str(p), "size_bytes": None, "size_kb": None}
+    return {"exists": False, "path": str(p), "size_bytes": None, "size_kb": None}
+
+
+def report_replaced_files(replaced_list, output_folder_path):
+    """
+    Print a clean terminal report of all files that were replaced inside
+    the given output folder.
+    """
+    if not replaced_list:
+        print(f"🆕 No existing files found — all output files are newly created.")
+        return
+
+    print(f"\n♻️ REPLACED {len(replaced_list)} EXISTING FILE(S) in:")
+    print(f"   📁 {output_folder_path}")
+    print("   " + "-" * 56)
+
+    for idx, info in enumerate(replaced_list, start=1):
+        file_name = os.path.basename(info["path"])
+        old_size = info.get("old_size_kb")
+        new_size = info.get("new_size_kb")
+
+        size_old_str = f"{old_size:.2f} KB" if old_size is not None else "N/A"
+        size_new_str = f"{new_size:.2f} KB" if new_size is not None else "N/A"
+
+        print(f"   {idx}. {file_name}")
+        print(f"      ↳ Old size: {size_old_str}  →  New size: {size_new_str}")
+
+
 def process_window(folder_path):
     df_full, df_ens, cfg, file_full, file_ensemble, file_config, fs = load_window_data(folder_path)
 
@@ -544,15 +720,63 @@ def process_window(folder_path):
     flat_csv_path = output_folder_path / f"{output_folder_name}_Features_Flat.csv"
     feature_json_path = output_folder_path / f"{output_folder_name}_Features.json"
     dst_config_path = output_folder_path / file_config
+    plot_path_planned = output_folder_path / f"{output_folder_name}_Signal_Overview.png"
 
+    # --------------------------------------------------
+    # NEW: PRE-CHECK for existing files (BEFORE saving)
+    # --------------------------------------------------
+    pre_check_files = [
+        ("Features Table CSV", table_csv_path),
+        ("Features Flat CSV", flat_csv_path),
+        ("Features JSON", feature_json_path),
+        ("Filtered Configuration JSON", dst_config_path),
+        ("Signal Overview Plot", plot_path_planned),
+    ]
+
+    existing_before = []
+    for label, fp in pre_check_files:
+        info = check_existing_file(fp)
+        if info["exists"]:
+            existing_before.append(
+                {
+                    "label": label,
+                    "path": info["path"],
+                    "old_size_kb": info["size_kb"],
+                }
+            )
+
+    # --------------------------------------------------
+    # Save outputs (will overwrite existing files)
+    # --------------------------------------------------
     df_feature_table.to_csv(table_csv_path, index=False)
     df_features_flat.to_csv(flat_csv_path, index=False)
 
+    # Pure features JSON (unchanged behavior)
     with open(feature_json_path, "w", encoding="utf-8") as f:
         json.dump(flat_features, f, indent=4)
 
+    # Properly organized Filtered_Configuration JSON
+    organized_config = build_filtered_configuration_summary(cfg, flat_features)
     with open(dst_config_path, "w", encoding="utf-8") as f:
-        json.dump(flat_features, f, indent=4)
+        json.dump(organized_config, f, indent=4)
+
+    # Save signal overview plot
+    plot_path = save_signal_plot(df_full, df_ens, output_folder_path, output_folder_name)
+
+    # --------------------------------------------------
+    # NEW: POST-CHECK — get new sizes for replaced files
+    # --------------------------------------------------
+    replaced_files_info = []
+    for entry in existing_before:
+        new_info = check_existing_file(entry["path"])
+        replaced_files_info.append(
+            {
+                "label": entry["label"],
+                "path": entry["path"],
+                "old_size_kb": entry["old_size_kb"],
+                "new_size_kb": new_info["size_kb"],
+            }
+        )
 
     return {
         "window_folder": os.path.basename(folder_path),
@@ -560,7 +784,9 @@ def process_window(folder_path):
         "table_csv": str(table_csv_path),
         "flat_csv": str(flat_csv_path),
         "feature_json": str(feature_json_path),
-        "flat_json_config": str(dst_config_path),
+        "filtered_config_json": str(dst_config_path),
+        "signal_plot": plot_path,
+        "replaced_files": replaced_files_info,  # NEW
     }
 
 
@@ -592,6 +818,10 @@ def main():
     processed_ok = []
     processed_failed = []
 
+    # NEW: Track total replacement summary
+    total_replaced_count = 0
+    folders_with_replacements = 0
+
     for idx, folder_path in enumerate(window_folders, start=1):
         print("\n" + "=" * 60)
         print(f"🔄 PROCESSING WINDOW {idx}/{len(window_folders)}")
@@ -606,7 +836,17 @@ def main():
             print(f"💾 Table CSV:\n{result['table_csv']}")
             print(f"💾 Flat CSV:\n{result['flat_csv']}")
             print(f"💾 Features JSON:\n{result['feature_json']}")
-            print(f"💾 Flat JSON config:\n{result['flat_json_config']}")
+            print(f"💾 Organized Filtered Config JSON:\n{result['filtered_config_json']}")
+            if result.get("signal_plot"):
+                print(f"🖼️ Signal Plot:\n{result['signal_plot']}")
+
+            # NEW: Print file replacement report for this window
+            replaced = result.get("replaced_files", [])
+            report_replaced_files(replaced, result["output_folder"])
+
+            if replaced:
+                total_replaced_count += len(replaced)
+                folders_with_replacements += 1
 
             processed_ok.append(result["window_folder"])
 
@@ -631,6 +871,14 @@ def main():
     for name, reason in processed_failed:
         print(f"   - {name}")
         print(f"     Reason: {reason}")
+
+    # NEW: Global replacement summary
+    print("\n" + "=" * 60)
+    print("♻️ FILE REPLACEMENT SUMMARY")
+    print("=" * 60)
+    print(f"📊 Total files replaced:        {total_replaced_count}")
+    print(f"📁 Folders with replacements:   {folders_with_replacements}")
+    print(f"🆕 Folders fully fresh:         {len(processed_ok) - folders_with_replacements}")
 
 
 if __name__ == "__main__":
