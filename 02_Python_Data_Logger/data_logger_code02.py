@@ -8,7 +8,7 @@ BAUD_RATE   = 115200          # MUST match the ESP32 Code (921600 Recommended)
 # 2. File Saving Location
 # Tip: Use 'r' before the string to handle backslashes on Windows safely.
 # Example: r"C:\Users\YourName\Desktop\FYP_Data_Raw"
-DATA_STORAGE_FOLDER_PATH = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\Raw"
+DATA_STORAGE_FOLDER_PATH = r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\01_Raw"
 
 # 3. Plotter Settings
 FS          = 400             # Sampling Rate (Hz) - Used for time axis
