@@ -1,0 +1,516 @@
+{
+    "pipeline_info": {
+        "pipeline_name": "Data Cleaning: NaN Handling + Outlier Clipping",
+        "pipeline_step": "STEP 8 (Sub-task 1 & 2)",
+        "execution_timestamp": "20260605_021949",
+        "execution_date_readable": "2026-06-05 02:19:55",
+        "previous_step": "STEP 7 (Feature Engineering)"
+    },
+    "file_paths": {
+        "input_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\08_Data_set_with_24_features\\Uncleaned_24_feature_data_Set_20260605_014222",
+        "input_csv": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\08_Data_set_with_24_features\\Uncleaned_24_feature_data_Set_20260605_014222\\Uncleaned_24_feature_data_Set_20260605_014222.csv",
+        "input_json_from_step7": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\08_Data_set_with_24_features\\Uncleaned_24_feature_data_Set_20260605_014222\\Uncleaned_24_feature_data_Set_20260605_014222.json",
+        "output_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\09_Cleaned_dataset_without_(NaN_&_outliers)\\removed_outliers_&_NaN_24_feature_data_set_20260605_021949",
+        "output_cleaned_csv": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\09_Cleaned_dataset_without_(NaN_&_outliers)\\removed_outliers_&_NaN_24_feature_data_set_20260605_021949\\removed_outliers_&_NaN_24_feature_data_set_20260605_021949.csv",
+        "output_json_log": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\09_Cleaned_dataset_without_(NaN_&_outliers)\\removed_outliers_&_NaN_24_feature_data_set_20260605_021949\\removed_outliers_&_NaN_24_feature_data_set_20260605_021949.json"
+    },
+    "dataset_shape_summary": {
+        "input_rows": 3,
+        "input_columns": 25,
+        "output_rows": 3,
+        "output_columns": 25,
+        "rows_dropped": 0,
+        "columns_unchanged": true,
+        "feature_count": 24,
+        "target_column": "Glucose level (mg/dl)"
+    },
+    "sub_task_1_nan_handling": {
+        "description": "NaN values were analyzed across all columns. Rows with NaN in the target column (Glucose level) were dropped entirely because the model cannot train without a label. Remaining NaN values in feature columns were imputed using the MEDIAN of each respective column. Median is preferred over mean for PPG data because it is robust to outliers caused by motion artifacts and signal noise.",
+        "nan_analysis": {
+            "total_nan_count": 0,
+            "total_cells": 75,
+            "columns_with_nan": [],
+            "columns_without_nan": [
+                "IR_Skewness",
+                "IR_Kurtosis",
+                "IR_Shannon Entropy",
+                "IR_Spectral Entropy",
+                "IR_pulse width",
+                "IR_PPI",
+                "IR_systolic amplitude",
+                "IR_BPM",
+                "IR_HRV",
+                "IR_TEO Mean",
+                "IR_TEO std dev",
+                "IR_1st_Derivative_Mean",
+                "IR_2nd_Derivative_Mean",
+                "IR_2nd_Derivative_Skewness",
+                "IR_Harmonic ratio",
+                "IR_Rise time",
+                "IR_Decay time",
+                "IR_Dicrotic notch",
+                "Ratio_systolic_amplitude",
+                "Ratio_TEO_Mean",
+                "Diff_2nd_Derivative_Mean",
+                "Diff_Spectral_Entropy",
+                "Diff_Dicrotic_notch",
+                "Ensemble ratio",
+                "Glucose level (mg/dl)"
+            ],
+            "target_nan_rows": [],
+            "feature_nan_details": []
+        },
+        "nan_handling": {
+            "rows_dropped_due_to_target_nan": [],
+            "feature_imputations": [],
+            "total_values_imputed": 0,
+            "total_rows_dropped": 0,
+            "imputation_method": "median",
+            "remaining_nans_after_cleaning": 0
+        }
+    },
+    "sub_task_2_outlier_handling": {
+        "description": "Outliers were detected using the IQR (Interquartile Range) method with a multiplier of 1.5. Lower bound = Q1 - 1.5 \u00d7 IQR, Upper bound = Q3 + 1.5 \u00d7 IQR. Values outside these bounds were CLIPPED (capped) to the nearest bound. The target column (Glucose level) was NOT touched. Clipping is preferred over removal because PPG datasets are typically small and losing rows would reduce training data.",
+        "outlier_analysis": {
+            "iqr_multiplier": 1.5,
+            "total_outliers_detected": 0,
+            "columns_with_outliers": [],
+            "columns_without_outliers": [
+                "IR_Skewness",
+                "IR_Kurtosis",
+                "IR_Shannon Entropy",
+                "IR_Spectral Entropy",
+                "IR_pulse width",
+                "IR_PPI",
+                "IR_systolic amplitude",
+                "IR_BPM",
+                "IR_HRV",
+                "IR_TEO Mean",
+                "IR_TEO std dev",
+                "IR_1st_Derivative_Mean",
+                "IR_2nd_Derivative_Mean",
+                "IR_2nd_Derivative_Skewness",
+                "IR_Harmonic ratio",
+                "IR_Rise time",
+                "IR_Decay time",
+                "IR_Dicrotic notch",
+                "Ratio_systolic_amplitude",
+                "Ratio_TEO_Mean",
+                "Diff_2nd_Derivative_Mean",
+                "Diff_Spectral_Entropy",
+                "Diff_Dicrotic_notch",
+                "Ensemble ratio"
+            ]
+        },
+        "clipping_log": {
+            "iqr_multiplier": 1.5,
+            "target_column_touched": false,
+            "total_values_clipped": 0,
+            "clipped_features": [],
+            "remaining_outliers_after_clipping": 0
+        }
+    },
+    "feature_statistics": {
+        "before_cleaning": {
+            "IR_Skewness": {
+                "mean": -0.2954021172614121,
+                "std": 0.07626351968649273,
+                "min": -0.3547748088472431,
+                "max": -0.2093927117561336,
+                "median": -0.3220388311808596
+            },
+            "IR_Kurtosis": {
+                "mean": -1.3428489746981986,
+                "std": 0.07908044061940554,
+                "min": -1.4273909715700068,
+                "max": -1.2706914548478725,
+                "median": -1.3304644976767166
+            },
+            "IR_Shannon Entropy": {
+                "mean": 5.78995640970583,
+                "std": 0.016965228899807637,
+                "min": 5.770421275231344,
+                "max": 5.800990026871269,
+                "median": 5.798457927014876
+            },
+            "IR_Spectral Entropy": {
+                "mean": 1.5690052661238327,
+                "std": 0.045933748643209676,
+                "min": 1.5353319768940703,
+                "max": 1.621331225451091,
+                "median": 1.550352596026337
+            },
+            "IR_pulse width": {
+                "mean": 0.5099944627364766,
+                "std": 0.04221992274778296,
+                "min": 0.4666239265817118,
+                "max": 0.5509610513616052,
+                "median": 0.512398410266113
+            },
+            "IR_PPI": {
+                "mean": 0.8758464897947483,
+                "std": 0.08852173780174927,
+                "min": 0.774014469384245,
+                "max": 0.9344291666666666,
+                "median": 0.9190958333333332
+            },
+            "IR_systolic amplitude": {
+                "mean": 0.790242309920688,
+                "std": 0.03356795015450713,
+                "min": 0.7531256049787708,
+                "max": 0.8184738179401979,
+                "median": 0.7991275068430953
+            },
+            "IR_BPM": {
+                "mean": 69.04344241425743,
+                "std": 7.4579808022291125,
+                "min": 64.21136436397713,
+                "max": 77.6327904332369,
+                "median": 65.28617244555826
+            },
+            "IR_HRV": {
+                "mean": 59.58327294994141,
+                "std": 28.651252729962643,
+                "min": 30.313052416909105,
+                "max": 87.57259324389581,
+                "median": 60.86417318901933
+            },
+            "IR_TEO Mean": {
+                "mean": 9.84520447468079e-05,
+                "std": 1.211799181639245e-05,
+                "min": 8.575343644337977e-05,
+                "max": 0.0001098910184388,
+                "median": 9.971167935824394e-05
+            },
+            "IR_TEO std dev": {
+                "mean": 0.00026671436530746666,
+                "std": 1.582961547000183e-06,
+                "min": 0.000265083293052,
+                "max": 0.0002682443730808,
+                "median": 0.0002668154297896
+            },
+            "IR_1st_Derivative_Mean": {
+                "mean": -0.012922563567016633,
+                "std": 0.00440132958791263,
+                "min": -0.0178383289056606,
+                "max": -0.0093474788152695,
+                "median": -0.0115818829801198
+            },
+            "IR_2nd_Derivative_Mean": {
+                "mean": -0.8181557332131897,
+                "std": 0.9029381828166331,
+                "min": -1.8374826919792564,
+                "max": -0.1186850481246182,
+                "median": -0.4982994595356943
+            },
+            "IR_2nd_Derivative_Skewness": {
+                "mean": 0.8095428014691833,
+                "std": 0.7127336243002204,
+                "min": 0.3455889359905189,
+                "max": 1.6302041379756629,
+                "median": 0.4528353304413685
+            },
+            "IR_Harmonic ratio": {
+                "mean": 4.607612519919011,
+                "std": 0.9098208724805982,
+                "min": 3.5570783356427342,
+                "max": 5.140460228891588,
+                "median": 5.1252989952227095
+            },
+            "IR_Rise time": {
+                "mean": 0.16515870750887865,
+                "std": 0.00780135425537569,
+                "min": 0.1561609589041095,
+                "max": 0.1700337709284626,
+                "median": 0.1692813926940639
+            },
+            "IR_Decay time": {
+                "mean": 0.7179662924911213,
+                "std": 0.09027298639336648,
+                "min": 0.6149662290715373,
+                "max": 0.7833390410958905,
+                "median": 0.7555936073059362
+            },
+            "IR_Dicrotic notch": {
+                "mean": 0.35323975773718913,
+                "std": 0.06644354878971194,
+                "min": 0.2934543378995433,
+                "max": 0.4247740677321156,
+                "median": 0.3414908675799086
+            },
+            "Ratio_systolic_amplitude": {
+                "mean": 0.9887724234297459,
+                "std": 0.011096123947654968,
+                "min": 0.981861636504402,
+                "max": 1.0015715171613742,
+                "median": 0.9828841166234616
+            },
+            "Ratio_TEO_Mean": {
+                "mean": 0.989523183014378,
+                "std": 0.02312896039793766,
+                "min": 0.9663015325227662,
+                "max": 1.0125583253261374,
+                "median": 0.9897096911942308
+            },
+            "Diff_2nd_Derivative_Mean": {
+                "mean": 0.11789029675598377,
+                "std": 0.1588478747302163,
+                "min": 0.0025996830916401,
+                "max": 0.2990819637408561,
+                "median": 0.0519892434354551
+            },
+            "Diff_Spectral_Entropy": {
+                "mean": 0.0129619959493878,
+                "std": 0.005753073617622736,
+                "min": 0.0067622822354709,
+                "max": 0.0181283760820172,
+                "median": 0.0139953295306753
+            },
+            "Diff_Dicrotic_notch": {
+                "mean": 0.045628551496702134,
+                "std": 0.06384243580877723,
+                "min": 0.0025342465753425,
+                "max": 0.1189735540334855,
+                "median": 0.0153778538812784
+            },
+            "Ensemble ratio": {
+                "mean": 0.8289886351960587,
+                "std": 0.04908656512871599,
+                "min": 0.7944164479949382,
+                "max": 0.8851728493197714,
+                "median": 0.8073766082734668
+            }
+        },
+        "after_cleaning": {
+            "IR_Skewness": {
+                "mean": -0.2954021172614121,
+                "std": 0.07626351968649273,
+                "min": -0.3547748088472431,
+                "max": -0.2093927117561336,
+                "median": -0.3220388311808596
+            },
+            "IR_Kurtosis": {
+                "mean": -1.3428489746981986,
+                "std": 0.07908044061940554,
+                "min": -1.4273909715700068,
+                "max": -1.2706914548478725,
+                "median": -1.3304644976767166
+            },
+            "IR_Shannon Entropy": {
+                "mean": 5.78995640970583,
+                "std": 0.016965228899807637,
+                "min": 5.770421275231344,
+                "max": 5.800990026871269,
+                "median": 5.798457927014876
+            },
+            "IR_Spectral Entropy": {
+                "mean": 1.5690052661238327,
+                "std": 0.045933748643209676,
+                "min": 1.5353319768940703,
+                "max": 1.621331225451091,
+                "median": 1.550352596026337
+            },
+            "IR_pulse width": {
+                "mean": 0.5099944627364766,
+                "std": 0.04221992274778296,
+                "min": 0.4666239265817118,
+                "max": 0.5509610513616052,
+                "median": 0.512398410266113
+            },
+            "IR_PPI": {
+                "mean": 0.8758464897947483,
+                "std": 0.08852173780174927,
+                "min": 0.774014469384245,
+                "max": 0.9344291666666666,
+                "median": 0.9190958333333332
+            },
+            "IR_systolic amplitude": {
+                "mean": 0.790242309920688,
+                "std": 0.03356795015450713,
+                "min": 0.7531256049787708,
+                "max": 0.8184738179401979,
+                "median": 0.7991275068430953
+            },
+            "IR_BPM": {
+                "mean": 69.04344241425743,
+                "std": 7.4579808022291125,
+                "min": 64.21136436397713,
+                "max": 77.6327904332369,
+                "median": 65.28617244555826
+            },
+            "IR_HRV": {
+                "mean": 59.58327294994141,
+                "std": 28.651252729962643,
+                "min": 30.313052416909105,
+                "max": 87.57259324389581,
+                "median": 60.86417318901933
+            },
+            "IR_TEO Mean": {
+                "mean": 9.84520447468079e-05,
+                "std": 1.211799181639245e-05,
+                "min": 8.575343644337977e-05,
+                "max": 0.0001098910184388,
+                "median": 9.971167935824394e-05
+            },
+            "IR_TEO std dev": {
+                "mean": 0.00026671436530746666,
+                "std": 1.582961547000183e-06,
+                "min": 0.000265083293052,
+                "max": 0.0002682443730808,
+                "median": 0.0002668154297896
+            },
+            "IR_1st_Derivative_Mean": {
+                "mean": -0.012922563567016633,
+                "std": 0.00440132958791263,
+                "min": -0.0178383289056606,
+                "max": -0.0093474788152695,
+                "median": -0.0115818829801198
+            },
+            "IR_2nd_Derivative_Mean": {
+                "mean": -0.8181557332131897,
+                "std": 0.9029381828166331,
+                "min": -1.8374826919792564,
+                "max": -0.1186850481246182,
+                "median": -0.4982994595356943
+            },
+            "IR_2nd_Derivative_Skewness": {
+                "mean": 0.8095428014691833,
+                "std": 0.7127336243002204,
+                "min": 0.3455889359905189,
+                "max": 1.6302041379756629,
+                "median": 0.4528353304413685
+            },
+            "IR_Harmonic ratio": {
+                "mean": 4.607612519919011,
+                "std": 0.9098208724805982,
+                "min": 3.5570783356427342,
+                "max": 5.140460228891588,
+                "median": 5.1252989952227095
+            },
+            "IR_Rise time": {
+                "mean": 0.16515870750887865,
+                "std": 0.00780135425537569,
+                "min": 0.1561609589041095,
+                "max": 0.1700337709284626,
+                "median": 0.1692813926940639
+            },
+            "IR_Decay time": {
+                "mean": 0.7179662924911213,
+                "std": 0.09027298639336648,
+                "min": 0.6149662290715373,
+                "max": 0.7833390410958905,
+                "median": 0.7555936073059362
+            },
+            "IR_Dicrotic notch": {
+                "mean": 0.35323975773718913,
+                "std": 0.06644354878971194,
+                "min": 0.2934543378995433,
+                "max": 0.4247740677321156,
+                "median": 0.3414908675799086
+            },
+            "Ratio_systolic_amplitude": {
+                "mean": 0.9887724234297459,
+                "std": 0.011096123947654968,
+                "min": 0.981861636504402,
+                "max": 1.0015715171613742,
+                "median": 0.9828841166234616
+            },
+            "Ratio_TEO_Mean": {
+                "mean": 0.989523183014378,
+                "std": 0.02312896039793766,
+                "min": 0.9663015325227662,
+                "max": 1.0125583253261374,
+                "median": 0.9897096911942308
+            },
+            "Diff_2nd_Derivative_Mean": {
+                "mean": 0.11789029675598377,
+                "std": 0.1588478747302163,
+                "min": 0.0025996830916401,
+                "max": 0.2990819637408561,
+                "median": 0.0519892434354551
+            },
+            "Diff_Spectral_Entropy": {
+                "mean": 0.0129619959493878,
+                "std": 0.005753073617622736,
+                "min": 0.0067622822354709,
+                "max": 0.0181283760820172,
+                "median": 0.0139953295306753
+            },
+            "Diff_Dicrotic_notch": {
+                "mean": 0.045628551496702134,
+                "std": 0.06384243580877723,
+                "min": 0.0025342465753425,
+                "max": 0.1189735540334855,
+                "median": 0.0153778538812784
+            },
+            "Ensemble ratio": {
+                "mean": 0.8289886351960587,
+                "std": 0.04908656512871599,
+                "min": 0.7944164479949382,
+                "max": 0.8851728493197714,
+                "median": 0.8073766082734668
+            }
+        }
+    },
+    "verification_results": {
+        "all_passed": true,
+        "checks": [
+            {
+                "check": "column_count",
+                "passed": true,
+                "actual": 25,
+                "original": 25
+            },
+            {
+                "check": "column_names",
+                "passed": true
+            },
+            {
+                "check": "no_nan",
+                "passed": true,
+                "remaining_nans": 0
+            },
+            {
+                "check": "row_count",
+                "original": 3,
+                "cleaned": 3,
+                "dropped": 0
+            },
+            {
+                "check": "target_valid",
+                "passed": true
+            },
+            {
+                "check": "all_numeric",
+                "passed": true,
+                "non_numeric": []
+            }
+        ]
+    },
+    "step7_reference": {
+        "step7_input_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\08_Data_set_with_24_features\\Uncleaned_24_feature_data_Set_20260605_014222",
+        "step7_json_file": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\08_Data_set_with_24_features\\Uncleaned_24_feature_data_Set_20260605_014222\\Uncleaned_24_feature_data_Set_20260605_014222.json",
+        "step7_feature_composition": {
+            "tier_1_ir_base_count": 18,
+            "tier_1_description": "All 18 IR channel features kept as primary physiological measurements. IR (~940nm) has deeper tissue penetration, higher SNR, less skin tone sensitivity, and is the standard reference channel in clinical pulse oximetry.",
+            "tier_2_engineered_count": 5,
+            "tier_2_description": "5 engineered features derived from RED-IR relationships. These capture inter-wavelength physiological information that IR alone cannot provide. Includes ratios (amplitude, energy) and differences (derivatives, entropy, dicrotic notch).",
+            "tier_3_keep_as_is_count": 1,
+            "tier_3_description": "1 feature (Ensemble ratio) kept unchanged as it is already a combined metric.",
+            "total_features": 24,
+            "target_count": 1,
+            "total_columns": 25
+        },
+        "step7_pipeline_info": {
+            "pipeline_name": "Feature Engineering: IR Base + Selective RED/Ratio Additions",
+            "pipeline_step": "STEP 7",
+            "execution_timestamp": "20260605_014222",
+            "execution_date_readable": "2026-06-05 01:42:31"
+        }
+    },
+    "cleaning_rationale": {
+        "why_median_imputation": "Median is robust to outliers and skewed distributions. PPG signal features often have non-Gaussian distributions due to motion artifacts, sensor noise, and physiological variability. Using mean would be distorted by these extreme values.",
+        "why_iqr_clipping": "IQR-based clipping caps extreme values without removing entire rows. This preserves sample count (critical for small PPG datasets) while preventing extreme values from distorting the scaler in the next step. The 1.5\u00d7 IQR multiplier is the standard statistical convention.",
+        "why_not_touch_target": "Glucose level is the ground truth measurement from a blood glucometer. Even extreme glucose values are real clinical measurements and should not be modified. Clipping glucose would distort the model's learning."
+    }
+}
