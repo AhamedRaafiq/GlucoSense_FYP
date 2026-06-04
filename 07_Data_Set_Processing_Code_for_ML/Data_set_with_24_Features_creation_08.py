@@ -711,18 +711,18 @@ def build_full_json_log(
 def save_outputs(engineered_df, json_log, output_folder, timestamp_str):
     """
     Save the engineered dataset CSV and JSON log file.
-    Folder name: Data_set_with_selected_feature_&_target_YYYYMMDD_HHMMSS
-    CSV name:    Data_set_with_selected_feature_&_target_YYYYMMDD_HHMMSS.csv
-    JSON name:   Data_set_with_selected_feature_&_target_YYYYMMDD_HHMMSS.json
+    Folder name: Uncleaned_24_feature_data_Set_YYYYMMDD_HHMMSS
+    CSV name:    Uncleaned_24_feature_data_Set_YYYYMMDD_HHMMSS.csv
+    JSON name:   Uncleaned_24_feature_data_Set_YYYYMMDD_HHMMSS.json
     """
     # Create output folder
-    folder_name = f"Data_set_with_selected_feature_&_target_{timestamp_str}"
+    folder_name = f"Uncleaned_24_feature_data_Set_{timestamp_str}"
     output_dir = output_folder / folder_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # File names
-    csv_name = f"Data_set_with_selected_feature_&_target_{timestamp_str}.csv"
-    json_name = f"Data_set_with_selected_feature_&_target_{timestamp_str}.json"
+    csv_name = f"Uncleaned_24_feature_data_Set_{timestamp_str}.csv"
+    json_name = f"Uncleaned_24_feature_data_Set_{timestamp_str}.json"
 
     csv_path = output_dir / csv_name
     json_path = output_dir / json_name
@@ -852,9 +852,9 @@ def main():
     print(f"{'─' * 60}")
 
     # Prepare output paths for JSON log (before saving)
-    folder_name = f"Data_set_with_selected_feature_&_target_{timestamp_str}"
-    csv_name = f"Data_set_with_selected_feature_&_target_{timestamp_str}.csv"
-    json_name = f"Data_set_with_selected_feature_&_target_{timestamp_str}.json"
+    folder_name = f"Uncleaned_24_feature_data_Set_{timestamp_str}"
+    csv_name = f"Uncleaned_24_feature_data_Set_{timestamp_str}.csv"
+    json_name = f"Uncleaned_24_feature_data_Set_{timestamp_str}.json"
     output_dir = OUTPUT_ROOT / folder_name
 
     json_log = build_full_json_log(
