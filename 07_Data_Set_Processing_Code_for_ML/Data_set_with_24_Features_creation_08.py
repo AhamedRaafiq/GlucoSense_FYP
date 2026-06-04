@@ -19,7 +19,7 @@ import pandas as pd
 # USER SETTINGS (PASTE YOUR PATHS HERE)
 # --------------------------------------------------
 INPUT_MASTER_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\07_Final_Data_Set")
-OUTPUT_ROOT       = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\08_ML_Data_Set_Processing\Data_set_with_24_features")
+OUTPUT_ROOT       = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\08_Data_set_with_24_features")
 
 
 # --------------------------------------------------
