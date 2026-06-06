@@ -40,11 +40,11 @@ N_ESTIMATORS = 100
 
 # Maximum depth of each tree. Deeper = more complex.
 # Recommended range: 2–6. Use 3 for small datasets to avoid overfitting.
-MAX_DEPTH = 3
+MAX_DEPTH = 2
 
 # Step size shrinkage. Lower = slower learning but more robust.
 # Recommended range: 0.01–0.3. Default 0.1 is a good start.
-LEARNING_RATE = 0.1
+LEARNING_RATE = 0.05
 
 # Fraction of training rows randomly sampled per tree.
 # Adds randomness to prevent overfitting.
@@ -54,29 +54,29 @@ SUBSAMPLE = 0.8
 # Fraction of features randomly sampled per tree.
 # Forces trees to use different features = reduces overfitting.
 # Recommended range: 0.6–1.0. Default 0.8 works well.
-COLSAMPLE_BYTREE = 0.8
+COLSAMPLE_BYTREE = 0.7
 
 # L1 regularization (Lasso). Pushes unimportant feature weights to zero.
 # Higher value = more features ignored = simpler model.
 # Recommended range: 0–10. Default 0 (no L1 penalty).
-REG_ALPHA = 0
+REG_ALPHA = 0.1
 
 # L2 regularization (Ridge). Smooths feature weights to prevent any single
 # feature from dominating. Higher value = smoother, more stable model.
 # Recommended range: 0–10. Default 1.
-REG_LAMBDA = 1
+REG_LAMBDA = 2
 
 # Minimum sum of instance weight needed in a child node.
 # Higher value = more conservative splits = less overfitting.
 # For small datasets keep it low.
 # Recommended range: 1–10. Default 1.
-MIN_CHILD_WEIGHT = 1
+MIN_CHILD_WEIGHT = 3
 
 # Minimum loss reduction required to make a split.
 # Higher value = fewer splits = simpler tree.
 # Acts as a pruning threshold.
 # Recommended range: 0–5. Default 0 (no minimum).
-GAMMA = 0
+GAMMA = 0.1
 
 # Fixed random seed for reproducibility.
 RANDOM_STATE = 42
