@@ -1,0 +1,4586 @@
+{
+    "subject": "Ali(22-enc-12)v1",
+    "processing_date": "2026-06-07 23:10:36",
+    "input_folder": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1",
+    "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
+    "total_windows": 18,
+    "windows_processed": [
+        "Ali(22-enc-12)v1_Win0.csv",
+        "Ali(22-enc-12)v1_Win1.csv",
+        "Ali(22-enc-12)v1_Win10.csv",
+        "Ali(22-enc-12)v1_Win11.csv",
+        "Ali(22-enc-12)v1_Win12.csv",
+        "Ali(22-enc-12)v1_Win13.csv",
+        "Ali(22-enc-12)v1_Win14.csv",
+        "Ali(22-enc-12)v1_Win15.csv",
+        "Ali(22-enc-12)v1_Win16.csv",
+        "Ali(22-enc-12)v1_Win17.csv",
+        "Ali(22-enc-12)v1_Win2.csv",
+        "Ali(22-enc-12)v1_Win3.csv",
+        "Ali(22-enc-12)v1_Win4.csv",
+        "Ali(22-enc-12)v1_Win5.csv",
+        "Ali(22-enc-12)v1_Win6.csv",
+        "Ali(22-enc-12)v1_Win7.csv",
+        "Ali(22-enc-12)v1_Win8.csv",
+        "Ali(22-enc-12)v1_Win9.csv"
+    ],
+    "errors_log": [],
+    "summary_table": [
+        {
+            "filename": "Ali(22-enc-12)v1_Win0.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.3379118052204427,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.0567142441201824,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.0359119777624035,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 16.586752718678618,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.06833956219967,
+                "width": 0.6129687500000001,
+                "sys_amp": 0.8686295032261149,
+                "area": 3233.7981649877647,
+                "skew": -0.3379118052204419,
+                "kurt": -1.056714244120183,
+                "pi": 4.365251743105847,
+                "zcr": 2.1333333333333333,
+                "snr": 13.95684799695742
+            },
+            "golden_features": {
+                "HR_Global": 64.06833956219967,
+                "Width_Avg": 0.6032556818181818,
+                "Area_Avg": 117.01983825808499,
+                "Amp_Avg": 0.7515593358113118,
+                "Skew_Avg": -0.28811499531238804,
+                "Kurt_Avg": -1.2529208406161263,
+                "PI_Global": 4.365251743105847
+            },
+            "ensemble": {
+                "beats_used": 14,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.9412499999999999,
+                "fiducials": {
+                    "a": 5,
+                    "b": 21,
+                    "c": 45,
+                    "d": 54,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win0.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.32044455196164556,
+                "skewness_status": "FAIL",
+                "kurtosis": -0.9347223996828373,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.9405917312778697,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 16.70630099240825,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.02276364929753,
+                "width": 0.63015625,
+                "sys_amp": 0.8724623101849756,
+                "area": 3304.511037977241,
+                "skew": -0.3204445519616471,
+                "kurt": -0.9347223996828369,
+                "pi": 3.001518539884205,
+                "zcr": 2.1333333333333333,
+                "snr": 13.17456980590257
+            },
+            "golden_features": {
+                "HR_Global": 64.02276364929753,
+                "Width_Avg": 0.6220170454545455,
+                "Area_Avg": 119.74152466724294,
+                "Amp_Avg": 0.7160863335223909,
+                "Skew_Avg": -0.25232519922486163,
+                "Kurt_Avg": -1.248227373252448,
+                "PI_Global": 3.001518539884205
+            },
+            "ensemble": {
+                "beats_used": 14,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.94375,
+                "fiducials": {
+                    "a": 5,
+                    "b": 21,
+                    "c": 46,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win1.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.32628637643446495,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1140253184952744,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.000722992181198,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 18.577144955896152,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.27423674343868,
+                "width": 0.5909374999999999,
+                "sys_amp": 0.8632158687207997,
+                "area": 3147.249512939409,
+                "skew": -0.326286376434465,
+                "kurt": -1.1140253184952749,
+                "pi": 3.900577103728543,
+                "zcr": 2.2,
+                "snr": 15.00196764022498
+            },
+            "golden_features": {
+                "HR_Global": 64.27423674343868,
+                "Width_Avg": 0.5931477272727272,
+                "Area_Avg": 114.972678828803,
+                "Amp_Avg": 0.7986620360250096,
+                "Skew_Avg": -0.3189683600404633,
+                "Kurt_Avg": -1.2689555659045313,
+                "PI_Global": 3.900577103728543
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9525,
+                "fiducials": {
+                    "a": 5,
+                    "b": 20,
+                    "c": 45,
+                    "d": 54,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win1.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.28054235100847563,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.105480008910484,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.85631775057905,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 18.091265640755623,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.21691045308597,
+                "width": 0.5771875,
+                "sys_amp": 0.8616232697662888,
+                "area": 3062.731136522857,
+                "skew": -0.2805423510084757,
+                "kurt": -1.1054800089104841,
+                "pi": 2.2807850898360864,
+                "zcr": 2.1333333333333333,
+                "snr": 14.803362805973343
+            },
+            "golden_features": {
+                "HR_Global": 64.21691045308597,
+                "Width_Avg": 0.5860227272727272,
+                "Area_Avg": 111.89970007799627,
+                "Amp_Avg": 0.8009210736402832,
+                "Skew_Avg": -0.28674947234053166,
+                "Kurt_Avg": -1.2561759383250533,
+                "PI_Global": 2.2807850898360864
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.955,
+                "fiducials": {
+                    "a": 5,
+                    "b": 20,
+                    "c": 46,
+                    "d": 55,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win10.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.2308066904521102,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2311380616659844,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.4244693497561816,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 17.52998768277052,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 69.98359759431384,
+                "width": 0.5091176470588235,
+                "sys_amp": 0.9217172722198865,
+                "area": 3265.8540247602186,
+                "skew": -0.2308066904521106,
+                "kurt": -1.2311380616659844,
+                "pi": 2.949702646950075,
+                "zcr": 2.2666666666666666,
+                "snr": 14.169836605142002
+            },
+            "golden_features": {
+                "HR_Global": 69.98359759431384,
+                "Width_Avg": 0.5180454545454545,
+                "Area_Avg": 119.55335551960255,
+                "Amp_Avg": 0.833494772163097,
+                "Skew_Avg": -0.19268034326796574,
+                "Kurt_Avg": -1.361672808848273,
+                "PI_Global": 2.949702646950075
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.87,
+                "fiducials": {
+                    "a": 6,
+                    "b": 20,
+                    "c": 47,
+                    "d": 58,
+                    "e": 78
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win10.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.24734518785825932,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1819805651105617,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.1761450320966567,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 17.274171747403532,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 69.97084548104957,
+                "width": 0.5323529411764706,
+                "sys_amp": 0.8903630475010664,
+                "area": 3291.9689130837687,
+                "skew": -0.2473451878582589,
+                "kurt": -1.1819805651105626,
+                "pi": 1.308098665398065,
+                "zcr": 2.2666666666666666,
+                "snr": 13.81174101589746
+            },
+            "golden_features": {
+                "HR_Global": 69.97084548104957,
+                "Width_Avg": 0.5417727272727273,
+                "Area_Avg": 120.45822313818826,
+                "Amp_Avg": 0.7554448110581469,
+                "Skew_Avg": -0.2170934274431797,
+                "Kurt_Avg": -1.359818802121598,
+                "PI_Global": 1.308098665398065
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.87,
+                "fiducials": {
+                    "a": 3,
+                    "b": 18,
+                    "c": 46,
+                    "d": 57,
+                    "e": 76
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win11.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.10784111697649497,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2774520124632067,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.671871259271685,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 16.069676098612174,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 70.12417823228634,
+                "width": 0.5127941176470587,
+                "sys_amp": 0.9065959190744636,
+                "area": 3169.8855972804995,
+                "skew": -0.10784111697649426,
+                "kurt": -1.2774520124632074,
+                "pi": 3.9863430392919534,
+                "zcr": 2.2666666666666666,
+                "snr": 12.764198462207245
+            },
+            "golden_features": {
+                "HR_Global": 70.12417823228634,
+                "Width_Avg": 0.5061818181818182,
+                "Area_Avg": 115.11769520294149,
+                "Amp_Avg": 0.7720709183900126,
+                "Skew_Avg": -0.07047098264123844,
+                "Kurt_Avg": -1.3783367958914672,
+                "PI_Global": 3.9863430392919534
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.87,
+                "fiducials": {
+                    "a": 6,
+                    "b": 19,
+                    "c": 47,
+                    "d": 57,
+                    "e": 77
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win11.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.12171301029676582,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2640056831123305,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.1865197381797108,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 15.901416850198453,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 70.12417823228634,
+                "width": 0.5213235294117647,
+                "sys_amp": 0.9155801283719277,
+                "area": 3247.3329792984173,
+                "skew": -0.12171301029676528,
+                "kurt": -1.26400568311233,
+                "pi": 1.6371366180127946,
+                "zcr": 2.2666666666666666,
+                "snr": 12.594152937032991
+            },
+            "golden_features": {
+                "HR_Global": 70.12417823228634,
+                "Width_Avg": 0.514090909090909,
+                "Area_Avg": 117.9707434251372,
+                "Amp_Avg": 0.7614413916531184,
+                "Skew_Avg": -0.09484917227264966,
+                "Kurt_Avg": -1.384533257358011,
+                "PI_Global": 1.6371366180127946
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.87,
+                "fiducials": {
+                    "a": 6,
+                    "b": 19,
+                    "c": 47,
+                    "d": 58,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win12.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": 0.026846450250380002,
+                "skewness_status": "PASS",
+                "kurtosis": -1.236068275191951,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.537748726253845,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.3333333333333335,
+                "zcr_status": "PASS",
+                "snr_db": 16.554252321478593,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 69.97084548104957,
+                "width": 0.4776470588235295,
+                "sys_amp": 0.9138396830714509,
+                "area": 3002.5535567738607,
+                "skew": 0.02684645025038051,
+                "kurt": -1.2360682751919507,
+                "pi": 3.9708800215391937,
+                "zcr": 2.3333333333333335,
+                "snr": 13.749917192392552
+            },
+            "golden_features": {
+                "HR_Global": 69.97084548104957,
+                "Width_Avg": 0.48125,
+                "Area_Avg": 110.17866754122164,
+                "Amp_Avg": 0.8146701520757336,
+                "Skew_Avg": 0.0156955249729118,
+                "Kurt_Avg": -1.3566919577282799,
+                "PI_Global": 3.9708800215391937
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.875,
+                "fiducials": {
+                    "a": 7,
+                    "b": 21,
+                    "c": 47,
+                    "d": 56,
+                    "e": 77
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win12.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": 0.012859611582721975,
+                "skewness_status": "PASS",
+                "kurtosis": -1.1990260847221315,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.1905085187756628,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.3333333333333335,
+                "zcr_status": "PASS",
+                "snr_db": 16.42686220949888,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 70.17543859649123,
+                "width": 0.49705882352941183,
+                "sys_amp": 0.9135515916710035,
+                "area": 3168.883698175439,
+                "skew": 0.012859611582722143,
+                "kurt": -1.1990260847221321,
+                "pi": 1.6359373987772516,
+                "zcr": 2.3333333333333335,
+                "snr": 13.483966762592702
+            },
+            "golden_features": {
+                "HR_Global": 70.17543859649123,
+                "Width_Avg": 0.5018522727272727,
+                "Area_Avg": 116.21460786484494,
+                "Amp_Avg": 0.7552442796861261,
+                "Skew_Avg": 0.0032576409498147503,
+                "Kurt_Avg": -1.3689870108044566,
+                "PI_Global": 1.6359373987772516
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.87625,
+                "fiducials": {
+                    "a": 7,
+                    "b": 20,
+                    "c": 47,
+                    "d": 57,
+                    "e": 76
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win13.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": 0.02978961659503815,
+                "skewness_status": "PASS",
+                "kurtosis": -1.234168468820772,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.490795111311395,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 16.51179116221636,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 68.12134113890367,
+                "width": 0.47838235294117637,
+                "sys_amp": 0.9008032378468652,
+                "area": 2949.9115606608393,
+                "skew": 0.029789616595038444,
+                "kurt": -1.2341684688207717,
+                "pi": 3.6632800334991806,
+                "zcr": 2.2666666666666666,
+                "snr": 13.87165734890603
+            },
+            "golden_features": {
+                "HR_Global": 68.12134113890367,
+                "Width_Avg": 0.4881818181818182,
+                "Area_Avg": 108.67998032278955,
+                "Amp_Avg": 0.8296121317444629,
+                "Skew_Avg": -0.006579496508757996,
+                "Kurt_Avg": -1.3357897740598028,
+                "PI_Global": 3.6632800334991806
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.895,
+                "fiducials": {
+                    "a": 6,
+                    "b": 19,
+                    "c": 46,
+                    "d": 55,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win13.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": 0.040071909692148286,
+                "skewness_status": "PASS",
+                "kurtosis": -1.2175354936287577,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.0936247514732218,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 16.3958114146596,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 68.10925860234126,
+                "width": 0.47897058823529415,
+                "sys_amp": 0.8907272912891647,
+                "area": 2918.3868351156734,
+                "skew": 0.040071909692147425,
+                "kurt": -1.217535493628757,
+                "pi": 1.7177396167485075,
+                "zcr": 2.2666666666666666,
+                "snr": 13.814777048768136
+            },
+            "golden_features": {
+                "HR_Global": 68.10925860234126,
+                "Width_Avg": 0.4881818181818182,
+                "Area_Avg": 107.55580507186826,
+                "Amp_Avg": 0.8130211899813898,
+                "Skew_Avg": -0.0003738952480407735,
+                "Kurt_Avg": -1.3278013340549204,
+                "PI_Global": 1.7177396167485075
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.895,
+                "fiducials": {
+                    "a": 6,
+                    "b": 19,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win14.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.15000456625613476,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1944433697319687,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.5515959112911393,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.062979068953517,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 67.63103513056546,
+                "width": 0.56109375,
+                "sys_amp": 0.8965259392339311,
+                "area": 3213.28088612019,
+                "skew": -0.15000456625613348,
+                "kurt": -1.1944433697319687,
+                "pi": 4.17559185344066,
+                "zcr": 2.2,
+                "snr": 13.806429572930135
+            },
+            "golden_features": {
+                "HR_Global": 67.63103513056546,
+                "Width_Avg": 0.5634090909090909,
+                "Area_Avg": 117.76861427316555,
+                "Amp_Avg": 0.7760234125975195,
+                "Skew_Avg": -0.17074295407921466,
+                "Kurt_Avg": -1.3496744938254743,
+                "PI_Global": 4.17559185344066
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.925,
+                "fiducials": {
+                    "a": 6,
+                    "b": 19,
+                    "c": 45,
+                    "d": 55,
+                    "e": 76
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win14.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.1559474833773613,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1871154679608173,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.0997450016381338,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 16.931642147407644,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 67.63103513056546,
+                "width": 0.56359375,
+                "sys_amp": 0.9004812353552678,
+                "area": 3240.7956738208586,
+                "skew": -0.15594748337736125,
+                "kurt": -1.1871154679608167,
+                "pi": 1.8752477948122883,
+                "zcr": 2.2,
+                "snr": 13.86397820166015
+            },
+            "golden_features": {
+                "HR_Global": 67.63103513056546,
+                "Width_Avg": 0.5645454545454546,
+                "Area_Avg": 118.72607268089922,
+                "Amp_Avg": 0.772846161468556,
+                "Skew_Avg": -0.17452595015042177,
+                "Kurt_Avg": -1.3458764047715512,
+                "PI_Global": 1.8752477948122883
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.92,
+                "fiducials": {
+                    "a": 6,
+                    "b": 19,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win15.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.22121194657369872,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2254296335266284,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.4177988970040762,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.236184845072216,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 67.59373349762366,
+                "width": 0.5301470588235295,
+                "sys_amp": 0.8944928602493851,
+                "area": 3160.7417444394555,
+                "skew": -0.22121194657369816,
+                "kurt": -1.2254296335266284,
+                "pi": 3.8179319980952684,
+                "zcr": 2.2,
+                "snr": 14.48080761905893
+            },
+            "golden_features": {
+                "HR_Global": 67.59373349762366,
+                "Width_Avg": 0.5279999999999999,
+                "Area_Avg": 115.9449573372142,
+                "Amp_Avg": 0.8312571205223379,
+                "Skew_Avg": -0.23663840319566085,
+                "Kurt_Avg": -1.3210566822800083,
+                "PI_Global": 3.8179319980952684
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.8799999999999999,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win15.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.23103014695459376,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.222614473402775,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.0359595905952776,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.147963314730802,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 67.60563380281691,
+                "width": 0.5320588235294118,
+                "sys_amp": 0.9025212633887674,
+                "area": 3191.6277985216957,
+                "skew": -0.23103014695459384,
+                "kurt": -1.2226144734027748,
+                "pi": 1.6936501312996894,
+                "zcr": 2.2,
+                "snr": 14.51558896187162
+            },
+            "golden_features": {
+                "HR_Global": 67.60563380281691,
+                "Width_Avg": 0.532,
+                "Area_Avg": 117.02917866623207,
+                "Amp_Avg": 0.8363419676121226,
+                "Skew_Avg": -0.24383555567280663,
+                "Kurt_Avg": -1.3172929131431426,
+                "PI_Global": 1.6936501312996894
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.88,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 56,
+                    "e": 76
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win16.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.2375331301758137,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2789869556496847,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.2982343465999646,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.504669217543608,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 66.75938803894297,
+                "width": 0.5185294117647059,
+                "sys_amp": 0.9369292198197073,
+                "area": 3262.222779599294,
+                "skew": -0.23753313017581468,
+                "kurt": -1.2789869556496842,
+                "pi": 2.9548264363275996,
+                "zcr": 2.2,
+                "snr": 14.457369901797323
+            },
+            "golden_features": {
+                "HR_Global": 66.75938803894297,
+                "Width_Avg": 0.5281250000000001,
+                "Area_Avg": 119.5564882803221,
+                "Amp_Avg": 0.8960908263943399,
+                "Skew_Avg": -0.2452697741540727,
+                "Kurt_Avg": -1.3134420009764454,
+                "PI_Global": 2.9548264363275996
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.89375,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win16.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.2399688307855026,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2779632358654878,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.9888730100212552,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.50149143388969,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 66.66666666666667,
+                "width": 0.519264705882353,
+                "sys_amp": 0.9441603948881273,
+                "area": 3279.161653458637,
+                "skew": -0.23996883078550263,
+                "kurt": -1.2779632358654873,
+                "pi": 1.315284902669624,
+                "zcr": 2.2,
+                "snr": 14.536204138714412
+            },
+            "golden_features": {
+                "HR_Global": 66.66666666666667,
+                "Width_Avg": 0.5273863636363637,
+                "Area_Avg": 120.15911584239404,
+                "Amp_Avg": 0.9018899190326738,
+                "Skew_Avg": -0.24524748066732746,
+                "Kurt_Avg": -1.310717369865952,
+                "PI_Global": 1.315284902669624
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.8925000000000001,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win17.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.23938635752407972,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.222957905066302,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.4934589184132814,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.3333333333333335,
+                "zcr_status": "PASS",
+                "snr_db": 16.49333062499379,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 69.28171166581762,
+                "width": 0.5025000000000001,
+                "sys_amp": 0.8415330619361255,
+                "area": 2986.2250419772945,
+                "skew": -0.2393863575240782,
+                "kurt": -1.2229579050663024,
+                "pi": 3.60191732090148,
+                "zcr": 2.3333333333333335,
+                "snr": 14.57262058313747
+            },
+            "golden_features": {
+                "HR_Global": 69.28171166581762,
+                "Width_Avg": 0.5106022727272728,
+                "Area_Avg": 108.18262668833387,
+                "Amp_Avg": 0.7914400356876028,
+                "Skew_Avg": -0.2520102649745035,
+                "Kurt_Avg": -1.3027491040177808,
+                "PI_Global": 3.60191732090148
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 16,
+                "rejected_candidates": 1,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.8575,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 47,
+                    "d": 58,
+                    "e": 76
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win17.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.24171943777700647,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2303897876815373,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.0695700612508667,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.3333333333333335,
+                "zcr_status": "PASS",
+                "snr_db": 16.600478660408314,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 69.30524885340581,
+                "width": 0.5008333333333332,
+                "sys_amp": 0.8499895054046611,
+                "area": 2995.9914988078804,
+                "skew": -0.24171943777700666,
+                "kurt": -1.2303897876815366,
+                "pi": 1.4997084407825418,
+                "zcr": 2.3333333333333335,
+                "snr": 14.696810023827132
+            },
+            "golden_features": {
+                "HR_Global": 69.30524885340581,
+                "Width_Avg": 0.512090909090909,
+                "Area_Avg": 108.5467950977598,
+                "Amp_Avg": 0.8021828150095875,
+                "Skew_Avg": -0.25225143191396177,
+                "Kurt_Avg": -1.296991906043479,
+                "PI_Global": 1.4997084407825418
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 16,
+                "rejected_candidates": 1,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.86,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 47,
+                    "d": 57,
+                    "e": 77
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win2.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.36871688979502054,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1068159389141325,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.140340172646523,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 16.05604563063676,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 63.86375731772219,
+                "width": 0.61625,
+                "sys_amp": 0.8762990204865165,
+                "area": 3279.7695110015493,
+                "skew": -0.3687168897950206,
+                "kurt": -1.1068159389141323,
+                "pi": 2.674430366267532,
+                "zcr": 2.1333333333333333,
+                "snr": 14.24537936132939
+            },
+            "golden_features": {
+                "HR_Global": 63.86375731772219,
+                "Width_Avg": 0.6008522727272727,
+                "Area_Avg": 118.52088930232446,
+                "Amp_Avg": 0.7905976898645206,
+                "Skew_Avg": -0.3469953941257422,
+                "Kurt_Avg": -1.2546636529007844,
+                "PI_Global": 2.674430366267532
+            },
+            "ensemble": {
+                "beats_used": 14,
+                "total_segmented": 14,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9375,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 45,
+                    "d": 54,
+                    "e": 72
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win2.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.33033797630445055,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.0879519846924124,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.9307438013473698,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 15.467490958976475,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 63.84110657918071,
+                "width": 0.6071875,
+                "sys_amp": 0.8683801154525967,
+                "area": 3200.3939725650093,
+                "skew": -0.33033797630445044,
+                "kurt": -1.0879519846924122,
+                "pi": 17.88718351292635,
+                "zcr": 2.1333333333333333,
+                "snr": 13.837489730250187
+            },
+            "golden_features": {
+                "HR_Global": 63.84110657918071,
+                "Width_Avg": 0.5931193181818182,
+                "Area_Avg": 115.55050637381896,
+                "Amp_Avg": 0.7789401474438588,
+                "Skew_Avg": -0.32001219201406783,
+                "Kurt_Avg": -1.2457093638284953,
+                "PI_Global": 17.88718351292635
+            },
+            "ensemble": {
+                "beats_used": 14,
+                "total_segmented": 14,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.93875,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 54,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win3.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.3182720115250904,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2158110715013604,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.0241194953526884,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.844413945841424,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.14825374198146,
+                "width": 0.565625,
+                "sys_amp": 0.9357064733095057,
+                "area": 3417.8488863611246,
+                "skew": -0.31827201152508994,
+                "kurt": -1.2158110715013604,
+                "pi": 2.8100025786868192,
+                "zcr": 2.1333333333333333,
+                "snr": 13.823595356773115
+            },
+            "golden_features": {
+                "HR_Global": 64.14825374198146,
+                "Width_Avg": 0.5780000000000001,
+                "Area_Avg": 125.43606083213703,
+                "Amp_Avg": 0.8725513365586419,
+                "Skew_Avg": -0.32271714009265823,
+                "Kurt_Avg": -1.2741850368507877,
+                "PI_Global": 2.8100025786868192
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.935,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 73
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win3.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.29709994583594407,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1861263814650995,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.8847498217788488,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.290173442695224,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.15968633042239,
+                "width": 0.5648437500000001,
+                "sys_amp": 0.9292999666891435,
+                "area": 3367.0590387623793,
+                "skew": -0.29709994583594534,
+                "kurt": -1.1861263814650997,
+                "pi": 17.65260281160188,
+                "zcr": 2.1333333333333333,
+                "snr": 13.577687828722521
+            },
+            "golden_features": {
+                "HR_Global": 64.15968633042239,
+                "Width_Avg": 0.5838068181818182,
+                "Area_Avg": 123.64859999863731,
+                "Amp_Avg": 0.8558919505294134,
+                "Skew_Avg": -0.30718627004931115,
+                "Kurt_Avg": -1.2557417085464266,
+                "PI_Global": 17.65260281160188
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9375,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win4.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.339244276867066,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2126536239155863,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.0150540114512805,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.779864468364927,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.66823846412933,
+                "width": 0.5547058823529412,
+                "sys_amp": 0.9362849725935367,
+                "area": 3448.3854958774546,
+                "skew": -0.33924427686706604,
+                "kurt": -1.2126536239155867,
+                "pi": 2.4711978495323352,
+                "zcr": 2.1333333333333333,
+                "snr": 14.508713260408788
+            },
+            "golden_features": {
+                "HR_Global": 64.66823846412933,
+                "Width_Avg": 0.5772272727272728,
+                "Area_Avg": 125.59326996168062,
+                "Amp_Avg": 0.8858106983376346,
+                "Skew_Avg": -0.32554500420786225,
+                "Kurt_Avg": -1.2784786774348702,
+                "PI_Global": 2.4711978495323352
+            },
+            "ensemble": {
+                "beats_used": 14,
+                "total_segmented": 14,
+                "rejected_candidates": 2,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9337500000000001,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 72
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win4.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.330583902016291,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1953048910273023,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.8797656821224806,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.41444571100971,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.7132841991731,
+                "width": 0.5528124999999999,
+                "sys_amp": 0.9402062546047214,
+                "area": 3407.5668959939403,
+                "skew": -0.33058390201629095,
+                "kurt": -1.1953048910273023,
+                "pi": 1.3192820436815762,
+                "zcr": 2.1333333333333333,
+                "snr": 14.280315996920287
+            },
+            "golden_features": {
+                "HR_Global": 64.7132841991731,
+                "Width_Avg": 0.5764545454545454,
+                "Area_Avg": 124.84183093038186,
+                "Amp_Avg": 0.876780905805094,
+                "Skew_Avg": -0.3262260575978069,
+                "Kurt_Avg": -1.2559116938213082,
+                "PI_Global": 1.3192820436815762
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9325,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 46,
+                    "d": 55,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win5.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.32028566145679516,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.222920125462962,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.0739004945722024,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 18.043618167172667,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.99661475964794,
+                "width": 0.5416176470588235,
+                "sys_amp": 0.9369362204737303,
+                "area": 3387.612954549897,
+                "skew": -0.3202856614567951,
+                "kurt": -1.222920125462962,
+                "pi": 2.6127124627143306,
+                "zcr": 2.1333333333333333,
+                "snr": 14.676790895292243
+            },
+            "golden_features": {
+                "HR_Global": 64.99661475964794,
+                "Width_Avg": 0.5637386363636364,
+                "Area_Avg": 123.60586304511244,
+                "Amp_Avg": 0.8991898422303138,
+                "Skew_Avg": -0.30602714763033634,
+                "Kurt_Avg": -1.2852118382694198,
+                "PI_Global": 2.6127124627143306
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9325,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 72
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win5.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.32302559445556495,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2005652425187305,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.8930194158708219,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.687130233920325,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.9746192893401,
+                "width": 0.5416176470588236,
+                "sys_amp": 0.9362330807988176,
+                "area": 3360.645599082999,
+                "skew": -0.32302559445556506,
+                "kurt": -1.2005652425187305,
+                "pi": 1.1790102385608605,
+                "zcr": 2.1333333333333333,
+                "snr": 14.424000110041352
+            },
+            "golden_features": {
+                "HR_Global": 64.9746192893401,
+                "Width_Avg": 0.56525,
+                "Area_Avg": 122.56503502166998,
+                "Amp_Avg": 0.8975804194881881,
+                "Skew_Avg": -0.3060960916805911,
+                "Kurt_Avg": -1.265222883252939,
+                "PI_Global": 1.1790102385608605
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 1,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.935,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 46,
+                    "d": 55,
+                    "e": 73
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win6.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.295312260200053,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1992929188159038,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.321086567409017,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 16.89320955280938,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.92335437330928,
+                "width": 0.5890625,
+                "sys_amp": 0.9387036702130238,
+                "area": 3509.117778576985,
+                "skew": -0.2953122602000525,
+                "kurt": -1.1992929188159043,
+                "pi": 2.6990095049721585,
+                "zcr": 2.2,
+                "snr": 13.918168585944773
+            },
+            "golden_features": {
+                "HR_Global": 64.92335437330928,
+                "Width_Avg": 0.5950000000000001,
+                "Area_Avg": 128.90127640943444,
+                "Amp_Avg": 0.8313166567147359,
+                "Skew_Avg": -0.29590713996741985,
+                "Kurt_Avg": -1.2917921757630733,
+                "PI_Global": 2.6990095049721585
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.935,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 72
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win6.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.2879680624671553,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.186432662283445,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.0187336538071396,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 16.646302315935348,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.92335437330928,
+                "width": 0.58828125,
+                "sys_amp": 0.927101285646879,
+                "area": 3443.2287978932154,
+                "skew": -0.2879680624671546,
+                "kurt": -1.1864326622834447,
+                "pi": 1.043629389332327,
+                "zcr": 2.2,
+                "snr": 13.790738753820747
+            },
+            "golden_features": {
+                "HR_Global": 64.92335437330928,
+                "Width_Avg": 0.5950000000000001,
+                "Area_Avg": 126.49938226055593,
+                "Amp_Avg": 0.8181123980764241,
+                "Skew_Avg": -0.2895158863720325,
+                "Kurt_Avg": -1.2813571304792812,
+                "PI_Global": 1.043629389332327
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.935,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win7.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.28007403616463455,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2429595523828931,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.2714237204830208,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.541490371954552,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.7132841991731,
+                "width": 0.57,
+                "sys_amp": 0.9580385249310531,
+                "area": 3428.3013623834336,
+                "skew": -0.28007403616463455,
+                "kurt": -1.242959552382893,
+                "pi": 2.5761307883577818,
+                "zcr": 2.1333333333333333,
+                "snr": 14.103856799823255
+            },
+            "golden_features": {
+                "HR_Global": 64.7132841991731,
+                "Width_Avg": 0.5682727272727273,
+                "Area_Avg": 124.83547015228065,
+                "Amp_Avg": 0.8870005984012009,
+                "Skew_Avg": -0.2646784173532928,
+                "Kurt_Avg": -1.3040529353519354,
+                "PI_Global": 2.5761307883577818
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.94,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 72
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win7.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.2681111656983923,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2340522937946898,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 0.9858076625470444,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.1333333333333333,
+                "zcr_status": "PASS",
+                "snr_db": 17.242690961555702,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 64.70165348670021,
+                "width": 0.5634375,
+                "sys_amp": 0.9545350882373016,
+                "area": 3371.147729733508,
+                "skew": -0.26811116569839266,
+                "kurt": -1.2340522937946896,
+                "pi": 1.1497199471487338,
+                "zcr": 2.1333333333333333,
+                "snr": 13.951681454091611
+            },
+            "golden_features": {
+                "HR_Global": 64.70165348670021,
+                "Width_Avg": 0.5640000000000001,
+                "Area_Avg": 122.69959603491222,
+                "Amp_Avg": 0.8879186711102247,
+                "Skew_Avg": -0.25418874720770845,
+                "Kurt_Avg": -1.297115453054554,
+                "PI_Global": 1.1497199471487338
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.94,
+                "fiducials": {
+                    "a": 5,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 73
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win8.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.28331757496554727,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.1880475150013166,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.3013169520018115,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.495573215819576,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 66.22516556291392,
+                "width": 0.55953125,
+                "sys_amp": 0.96266444328775,
+                "area": 3497.3720167078336,
+                "skew": -0.28331757496554694,
+                "kurt": -1.1880475150013177,
+                "pi": 2.470679949566433,
+                "zcr": 2.2,
+                "snr": 13.949084136645588
+            },
+            "golden_features": {
+                "HR_Global": 66.22516556291392,
+                "Width_Avg": 0.5625454545454546,
+                "Area_Avg": 128.40766442640927,
+                "Amp_Avg": 0.8768924846957022,
+                "Skew_Avg": -0.2704587875679232,
+                "Kurt_Avg": -1.2945823883833925,
+                "PI_Global": 2.470679949566433
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.91,
+                "fiducials": {
+                    "a": 3,
+                    "b": 19,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win8.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.27244138426151054,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.180534052191965,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.0093115287828849,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2,
+                "zcr_status": "PASS",
+                "snr_db": 17.288031271529402,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 66.22516556291392,
+                "width": 0.55796875,
+                "sys_amp": 0.9642364276495686,
+                "area": 3487.5271517528236,
+                "skew": -0.272441384261511,
+                "kurt": -1.1805340521919654,
+                "pi": 1.3409221348208524,
+                "zcr": 2.2,
+                "snr": 13.933112787204134
+            },
+            "golden_features": {
+                "HR_Global": 66.22516556291392,
+                "Width_Avg": 0.5599431818181818,
+                "Area_Avg": 127.99500853092407,
+                "Amp_Avg": 0.8731291420897346,
+                "Skew_Avg": -0.2589985883715463,
+                "Kurt_Avg": -1.2863931974686118,
+                "PI_Global": 1.3409221348208524
+            },
+            "ensemble": {
+                "beats_used": 15,
+                "total_segmented": 15,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.9125,
+                "fiducials": {
+                    "a": 3,
+                    "b": 19,
+                    "c": 45,
+                    "d": 55,
+                    "e": 74
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win9.csv",
+            "channel": "IR",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.21812585355186787,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.291715310645784,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 2.3132555622929685,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 17.285550393769658,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 66.77099634846114,
+                "width": 0.5094117647058823,
+                "sys_amp": 0.9336238049596324,
+                "area": 3222.410046063349,
+                "skew": -0.21812585355186867,
+                "kurt": -1.2917153106457833,
+                "pi": 2.725684319287211,
+                "zcr": 2.2666666666666666,
+                "snr": 14.328150744804521
+            },
+            "golden_features": {
+                "HR_Global": 66.77099634846114,
+                "Width_Avg": 0.5214545454545454,
+                "Area_Avg": 118.53939438837592,
+                "Amp_Avg": 0.8900323992913335,
+                "Skew_Avg": -0.23124947269104076,
+                "Kurt_Avg": -1.3109389876568824,
+                "PI_Global": 2.725684319287211
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.89625,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 45,
+                    "d": 55,
+                    "e": 75
+                }
+            },
+            "validation_status": "PASS"
+        },
+        {
+            "filename": "Ali(22-enc-12)v1_Win9.csv",
+            "channel": "RED",
+            "status": "SUCCESS",
+            "samples": 6000,
+            "duration_sec": 15.0,
+            "sqi": {
+                "skewness": -0.2110298468492333,
+                "skewness_status": "FAIL",
+                "kurtosis": -1.2830660704605379,
+                "kurtosis_status": "FAIL",
+                "perfusion_index_pct": 1.004552324336249,
+                "perfusion_index_status": "PASS",
+                "zcr_hz": 2.2666666666666666,
+                "zcr_status": "PASS",
+                "snr_db": 17.12826489874193,
+                "snr_status": "PASS"
+            },
+            "ppg_features": {
+                "hr": 66.75938803894297,
+                "width": 0.5079411764705882,
+                "sys_amp": 0.9420479719469528,
+                "area": 3236.5455012590755,
+                "skew": -0.21102984684923318,
+                "kurt": -1.283066070460538,
+                "pi": 1.3413639498995065,
+                "zcr": 2.2666666666666666,
+                "snr": 14.23483541071581
+            },
+            "golden_features": {
+                "HR_Global": 66.75938803894297,
+                "Width_Avg": 0.5214545454545454,
+                "Area_Avg": 119.0841507909733,
+                "Amp_Avg": 0.898153055367216,
+                "Skew_Avg": -0.2268293142888414,
+                "Kurt_Avg": -1.2999959766653606,
+                "PI_Global": 1.3413639498995065
+            },
+            "ensemble": {
+                "beats_used": 16,
+                "total_segmented": 16,
+                "rejected_candidates": 0,
+                "rejected_pulses": 0,
+                "avg_beat_duration_s": 0.89625,
+                "fiducials": {
+                    "a": 4,
+                    "b": 18,
+                    "c": 45,
+                    "d": 56,
+                    "e": 72
+                }
+            },
+            "validation_status": "PASS"
+        }
+    ],
+    "validation_reports": {
+        "Ali(22-enc-12)v1_Win0.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win0_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.820766091346741e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win0_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.881784197001252e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.881784197001252e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win0_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49371
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win1.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win1_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.820766091346741e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win1_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 4.440892098500626e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win1_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49698
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win10.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win10_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win10_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win10_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51864
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win11.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win11_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win11_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win11_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51358
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win12.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win12_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win12_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win12_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51372
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win13.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win13_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win13_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win13_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51302
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win14.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win14_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win14_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 4.440892098500626e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.4210854715202004e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win14_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49693
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win15.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win15_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win15_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.4210854715202004e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.540979117872439e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win15_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51338
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win16.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win16_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win16_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win16_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51285
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win17.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win17_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win17_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.71445146547012e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win17_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51379
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win2.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win2_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win2_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 8.326672684688674e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 4.440892098500626e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win2_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 48626
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win3.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win3_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win3_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win3_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49761
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win4.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win4_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win4_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win4_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49728
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win5.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win5_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win5_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win5_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 50231
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win6.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win6_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win6_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win6_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49599
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win7.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win7_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win7_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 3.552713678800501e-15,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win7_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 49796
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win8.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win8_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.2737367544323206e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win8_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win8_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 48758
+                }
+            ],
+            "issues": []
+        },
+        "Ali(22-enc-12)v1_Win9.csv": {
+            "status": "PASS",
+            "checks": [
+                {
+                    "file": "Ali(22-enc-12)v1_Win9_Filtered_Full.csv",
+                    "exists": true,
+                    "rows": 6000,
+                    "cols": [
+                        "Red_AC_HighPass",
+                        "IR_AC_HighPass",
+                        "Red_DC_LowPass",
+                        "IR_DC_LowPass",
+                        "Red_Normalized",
+                        "IR_Normalized"
+                    ],
+                    "expected_rows": 6000,
+                    "row_match": true,
+                    "data_check": {
+                        "Red_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1368683772161603e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_AC_HighPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 4.547473508864641e-13,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_DC_LowPass": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 2.9103830456733704e-11,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Normalized": {
+                            "match": true,
+                            "length_mem": 6000,
+                            "length_disk": 6000,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win9_Filtered_Ensemble.csv",
+                    "exists": true,
+                    "rows": 220,
+                    "cols": [
+                        "Time_Red_s",
+                        "Red_Ensemble_Avg",
+                        "Red_VPG",
+                        "Red_SDPPG",
+                        "Time_IR_s",
+                        "IR_Ensemble_Avg",
+                        "IR_VPG",
+                        "IR_SDPPG"
+                    ],
+                    "expected_rows": 220,
+                    "row_match": true,
+                    "data_check": {
+                        "Time_Red_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "Red_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 5.684341886080802e-14,
+                            "reason": "within_tolerance"
+                        },
+                        "Time_IR_s": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 9.020562075079397e-17,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_Ensemble_Avg": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.1102230246251565e-16,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_VPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 1.7763568394002505e-15,
+                            "reason": "within_tolerance"
+                        },
+                        "IR_SDPPG": {
+                            "match": true,
+                            "length_mem": 220,
+                            "length_disk": 220,
+                            "max_abs_diff": 2.842170943040401e-14,
+                            "reason": "within_tolerance"
+                        }
+                    }
+                },
+                {
+                    "file": "Ali(22-enc-12)v1_Win9_Filtered_Configuration.json",
+                    "exists": true,
+                    "size_bytes": 51305
+                }
+            ],
+            "issues": []
+        }
+    }
+}

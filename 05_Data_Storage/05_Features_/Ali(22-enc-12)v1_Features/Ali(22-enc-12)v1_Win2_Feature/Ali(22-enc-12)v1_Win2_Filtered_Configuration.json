@@ -1,20 +1,244 @@
 {
-    "Metadata": {
-        "Source_File": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/Windowed/Ali(22-enc-12)v1/Ali(22-enc-12)v1_Win2.csv",
-        "Sampling_Rate_FS": 400.0,
-        "Total_Samples": 6000,
-        "Plot_Duration_Sec": 15.0,
-        "Nyquist_Rate": 200.0,
-        "Date_Processed": "2026-05-12 16:53:31"
+    "metadata": {
+        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win2.csv",
+        "filename": "Ali(22-enc-12)v1_Win2.csv",
+        "sampling_rate_fs": 400.0,
+        "total_samples": 6000,
+        "duration_sec": 15.0,
+        "nyquist_rate": 200.0,
+        "date_processed": "2026-06-07 23:11:40"
     },
-    "Folder_Structure": {
-        "Output_Root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
-        "Level_1_Folder_Name": "Ali(22-enc-12)v1_Filtered",
-        "Level_1_Folder_Path": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
-        "Level_2_Folder_Name": "Ali(22-enc-12)v1_Win2_Filtered",
-        "Final_Save_Path": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win2_Filtered"
+    "hyperparameters": {
+        "use_full_file": true,
+        "sample_start": 0,
+        "sample_end": 0,
+        "threshold_red": 0,
+        "threshold_ir": 0,
+        "spike_enable": true,
+        "kernel_size": 3,
+        "invert_enable": true,
+        "lp_enable": true,
+        "lp_cutoff_hz": 16.0,
+        "lp_order": 4,
+        "hp_enable": true,
+        "hp_cutoff_hz": 0.5,
+        "hp_order": 4,
+        "sg_enable": false,
+        "sg_window": 31,
+        "sg_poly": 3,
+        "norm_selection": 1,
+        "norm_type": "MinMax",
+        "ensemble_target_len": 220,
+        "peak_min_distance_sec": 0.4,
+        "peak_prom_factor": 0.2,
+        "valley_min_distance_sec": 0.35,
+        "valley_prom_factor": 0.1,
+        "min_foot_to_peak_sec": 0.12,
+        "max_foot_to_peak_sec": 0.4,
+        "max_valley_to_foot_sec": 0.2,
+        "max_foot_rel_height": 0.2,
+        "max_abs_vpg_at_foot": 0.5,
+        "edge_exclusion_sec": 0.1,
+        "min_beat_duration_sec": 0.35,
+        "max_beat_duration_sec": 1.5,
+        "main_peak_search_window_sec": 0.3,
+        "main_peak_min_delay_sec": 0.02,
+        "start_incomplete_margin_sec": 0.1,
+        "end_incomplete_margin_sec": 0.01,
+        "sqi_limits": {
+            "SKEWNESS_MIN": 0.0,
+            "SKEWNESS_MAX": 2.5,
+            "KURTOSIS_MIN": 1.5,
+            "KURTOSIS_MAX": 7.0,
+            "PI_MIN": 0.1,
+            "PI_MAX": 10.0,
+            "SNR_MIN_DB": 5.0,
+            "SNR_MAX_DB": 25.0,
+            "ZCR_MIN": 1.0,
+            "ZCR_MAX": 4.0
+        }
     },
-    "Ensemble_RED": {
+    "folder_structure": {
+        "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
+        "main_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
+        "window_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win2_Filtered",
+        "additional_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional"
+    },
+    "signal_quality": {
+        "IR": {
+            "skewness": -0.36871688979502054,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.1068159389141325,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 2.140340172646523,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.1333333333333333,
+            "zcr_status": "PASS",
+            "snr_db": 16.05604563063676,
+            "snr_status": "PASS"
+        },
+        "RED": {
+            "skewness": -0.33033797630445055,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.0879519846924124,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 0.9307438013473698,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.1333333333333333,
+            "zcr_status": "PASS",
+            "snr_db": 15.467490958976475,
+            "snr_status": "PASS"
+        }
+    },
+    "pipeline_diagnostic": {
+        "1_Raw": {
+            "IR": {
+                "skew": 0.16699911893077612,
+                "kurt": -0.7691200048082738,
+                "snr_db": 11.498222118058496,
+                "zcr_hz": 4.0,
+                "pi_pct": 2.674430366267532
+            },
+            "RED": {
+                "skew": -16.86353324075793,
+                "kurt": 792.4488672663019,
+                "snr_db": -2.50293311750331,
+                "zcr_hz": 4.133333333333334,
+                "pi_pct": 17.88718351292635
+            },
+            "R_ratio": 6.68822181296495
+        },
+        "2_Despiked": {
+            "IR": {
+                "skew": 0.1665844837644505,
+                "kurt": -0.7693772717495118,
+                "snr_db": 11.860896766024716,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 2.6621623370644705
+            },
+            "RED": {
+                "skew": 0.24474890861791107,
+                "kurt": -0.6648222883740216,
+                "snr_db": 10.900536787399282,
+                "zcr_hz": 2.0,
+                "pi_pct": 1.367803955998778
+            },
+            "R_ratio": 0.5137943456547569
+        },
+        "3_Inverted": {
+            "IR": {
+                "skew": -0.1665844837644505,
+                "kurt": -0.7693772717495118,
+                "snr_db": 11.860896766024716,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 2.6621623370644705
+            },
+            "RED": {
+                "skew": -0.24474890861791107,
+                "kurt": -0.6648222883740216,
+                "snr_db": 10.900536787399282,
+                "zcr_hz": 2.0,
+                "pi_pct": 1.367803955998778
+            },
+            "R_ratio": 0.5137943456547569
+        },
+        "4_LowPass": {
+            "IR": {
+                "skew": -0.16612534735916812,
+                "kurt": -0.7696214731248809,
+                "snr_db": 11.87387941370476,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 2.6605669435209993
+            },
+            "RED": {
+                "skew": -0.2440476887374749,
+                "kurt": -0.6663098688795843,
+                "snr_db": 10.923286837663593,
+                "zcr_hz": 1.8666666666666667,
+                "pi_pct": 1.3594078246608556
+            },
+            "R_ratio": 0.5109466717126887
+        },
+        "5_SG": {
+            "IR": {
+                "skew": -0.16612534735916812,
+                "kurt": -0.7696214731248809,
+                "snr_db": 11.87387941370476,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 2.6605669435209993
+            },
+            "RED": {
+                "skew": -0.2440476887374749,
+                "kurt": -0.6663098688795843,
+                "snr_db": 10.923286837663593,
+                "zcr_hz": 1.8666666666666667,
+                "pi_pct": 1.3594078246608556
+            },
+            "R_ratio": 0.5109466717126887
+        },
+        "6_HighPass": {
+            "IR": {
+                "skew": -0.36871688979502054,
+                "kurt": -1.1068159389141325,
+                "snr_db": 14.245379361329373,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 2.140340172646523
+            },
+            "RED": {
+                "skew": -0.33033797630445055,
+                "kurt": -1.0879519846924124,
+                "snr_db": 13.837489730250214,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 0.9307438013473698
+            },
+            "R_ratio": 0.43485788532227027
+        }
+    },
+    "ppg_features_per_channel": {
+        "IR": {
+            "hr": 63.86375731772219,
+            "width": 0.61625,
+            "sys_amp": 0.8762990204865165,
+            "area": 3279.7695110015493,
+            "skew": -0.3687168897950206,
+            "kurt": -1.1068159389141323,
+            "pi": 2.674430366267532,
+            "zcr": 2.1333333333333333,
+            "snr": 14.24537936132939
+        },
+        "RED": {
+            "hr": 63.84110657918071,
+            "width": 0.6071875,
+            "sys_amp": 0.8683801154525967,
+            "area": 3200.3939725650093,
+            "skew": -0.33033797630445044,
+            "kurt": -1.0879519846924122,
+            "pi": 17.88718351292635,
+            "zcr": 2.1333333333333333,
+            "snr": 13.837489730250187
+        }
+    },
+    "golden_standard_features": {
+        "IR": {
+            "HR_Global": 63.86375731772219,
+            "Width_Avg": 0.6008522727272727,
+            "Area_Avg": 118.52088930232446,
+            "Amp_Avg": 0.7905976898645206,
+            "Skew_Avg": -0.3469953941257422,
+            "Kurt_Avg": -1.2546636529007844,
+            "PI_Global": 2.674430366267532
+        },
+        "RED": {
+            "HR_Global": 63.84110657918071,
+            "Width_Avg": 0.5931193181818182,
+            "Area_Avg": 115.55050637381896,
+            "Amp_Avg": 0.7789401474438588,
+            "Skew_Avg": -0.32001219201406783,
+            "Kurt_Avg": -1.2457093638284953,
+            "PI_Global": 17.88718351292635
+        }
+    },
+    "ensemble_RED": {
         "title": "RED Channel",
         "target_len": 220,
         "beats_used": 14,
@@ -33,7 +257,7 @@
         "num_feet_pairs": 14,
         "rejected_pulses_info": []
     },
-    "Ensemble_IR": {
+    "ensemble_IR": {
         "title": "IR Channel",
         "target_len": 220,
         "beats_used": 14,
@@ -52,7 +276,7 @@
         "num_feet_pairs": 14,
         "rejected_pulses_info": []
     },
-    "Extracted_Features": {
+    "extracted_features": {
         "Red_Skewness": -0.32221327480533135,
         "IR_Skewness": -0.3493820706640669,
         "Red_Kurtosis": -1.246714740200722,
