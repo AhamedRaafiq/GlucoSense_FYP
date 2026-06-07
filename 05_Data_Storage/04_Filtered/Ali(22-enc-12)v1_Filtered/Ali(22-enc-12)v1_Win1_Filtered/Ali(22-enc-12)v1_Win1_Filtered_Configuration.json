@@ -1,20 +1,244 @@
 {
-    "Metadata": {
-        "Source_File": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/Windowed/Ali(22-enc-12)v1/Ali(22-enc-12)v1_Win1.csv",
-        "Sampling_Rate_FS": 400.0,
-        "Total_Samples": 6000,
-        "Plot_Duration_Sec": 15.0,
-        "Nyquist_Rate": 200.0,
-        "Date_Processed": "2026-05-12 16:44:43"
+    "metadata": {
+        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win1.csv",
+        "filename": "Ali(22-enc-12)v1_Win1.csv",
+        "sampling_rate_fs": 400.0,
+        "total_samples": 6000,
+        "duration_sec": 15.0,
+        "nyquist_rate": 200.0,
+        "date_processed": "2026-06-07 23:10:48"
     },
-    "Folder_Structure": {
-        "Output_Root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
-        "Level_1_Folder_Name": "Ali(22-enc-12)v1_Filtered",
-        "Level_1_Folder_Path": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
-        "Level_2_Folder_Name": "Ali(22-enc-12)v1_Win1_Filtered",
-        "Final_Save_Path": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win1_Filtered"
+    "hyperparameters": {
+        "use_full_file": true,
+        "sample_start": 0,
+        "sample_end": 0,
+        "threshold_red": 0,
+        "threshold_ir": 0,
+        "spike_enable": true,
+        "kernel_size": 3,
+        "invert_enable": true,
+        "lp_enable": true,
+        "lp_cutoff_hz": 16.0,
+        "lp_order": 4,
+        "hp_enable": true,
+        "hp_cutoff_hz": 0.5,
+        "hp_order": 4,
+        "sg_enable": false,
+        "sg_window": 31,
+        "sg_poly": 3,
+        "norm_selection": 1,
+        "norm_type": "MinMax",
+        "ensemble_target_len": 220,
+        "peak_min_distance_sec": 0.4,
+        "peak_prom_factor": 0.2,
+        "valley_min_distance_sec": 0.35,
+        "valley_prom_factor": 0.1,
+        "min_foot_to_peak_sec": 0.12,
+        "max_foot_to_peak_sec": 0.4,
+        "max_valley_to_foot_sec": 0.2,
+        "max_foot_rel_height": 0.2,
+        "max_abs_vpg_at_foot": 0.5,
+        "edge_exclusion_sec": 0.1,
+        "min_beat_duration_sec": 0.35,
+        "max_beat_duration_sec": 1.5,
+        "main_peak_search_window_sec": 0.3,
+        "main_peak_min_delay_sec": 0.02,
+        "start_incomplete_margin_sec": 0.1,
+        "end_incomplete_margin_sec": 0.01,
+        "sqi_limits": {
+            "SKEWNESS_MIN": 0.0,
+            "SKEWNESS_MAX": 2.5,
+            "KURTOSIS_MIN": 1.5,
+            "KURTOSIS_MAX": 7.0,
+            "PI_MIN": 0.1,
+            "PI_MAX": 10.0,
+            "SNR_MIN_DB": 5.0,
+            "SNR_MAX_DB": 25.0,
+            "ZCR_MIN": 1.0,
+            "ZCR_MAX": 4.0
+        }
     },
-    "Ensemble_RED": {
+    "folder_structure": {
+        "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
+        "main_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
+        "window_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win1_Filtered",
+        "additional_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional"
+    },
+    "signal_quality": {
+        "IR": {
+            "skewness": -0.32628637643446495,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.1140253184952744,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 2.000722992181198,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.2,
+            "zcr_status": "PASS",
+            "snr_db": 18.577144955896152,
+            "snr_status": "PASS"
+        },
+        "RED": {
+            "skewness": -0.28054235100847563,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.105480008910484,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 0.85631775057905,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.1333333333333333,
+            "zcr_status": "PASS",
+            "snr_db": 18.091265640755623,
+            "snr_status": "PASS"
+        }
+    },
+    "pipeline_diagnostic": {
+        "1_Raw": {
+            "IR": {
+                "skew": 0.2444721474165148,
+                "kurt": -0.5736452836565018,
+                "snr_db": 10.804872950402622,
+                "zcr_hz": 2.933333333333333,
+                "pi_pct": 3.900577103728543
+            },
+            "RED": {
+                "skew": 0.49218615914207386,
+                "kurt": -0.4776677612047324,
+                "snr_db": 9.16040222746079,
+                "zcr_hz": 1.9333333333333333,
+                "pi_pct": 2.2807850898360864
+            },
+            "R_ratio": 0.5847301640713357
+        },
+        "2_Despiked": {
+            "IR": {
+                "skew": 0.24314053635902239,
+                "kurt": -0.5740592935311453,
+                "snr_db": 11.150730156829239,
+                "zcr_hz": 1.6,
+                "pi_pct": 3.888351718413008
+            },
+            "RED": {
+                "skew": 0.49153621634707806,
+                "kurt": -0.47692724384312246,
+                "snr_db": 9.426046169878878,
+                "zcr_hz": 0.8666666666666667,
+                "pi_pct": 2.2774391948387716
+            },
+            "R_ratio": 0.5857081251302765
+        },
+        "3_Inverted": {
+            "IR": {
+                "skew": -0.24314053635902239,
+                "kurt": -0.5740592935311453,
+                "snr_db": 11.150730156829239,
+                "zcr_hz": 1.6,
+                "pi_pct": 3.888351718413008
+            },
+            "RED": {
+                "skew": -0.49153621634707806,
+                "kurt": -0.47692724384312246,
+                "snr_db": 9.426046169878878,
+                "zcr_hz": 0.8666666666666667,
+                "pi_pct": 2.2774391948387716
+            },
+            "R_ratio": 0.5857081251302765
+        },
+        "4_LowPass": {
+            "IR": {
+                "skew": -0.24307224431420812,
+                "kurt": -0.5741403464868409,
+                "snr_db": 11.160111307150125,
+                "zcr_hz": 1.6,
+                "pi_pct": 3.880562687980972
+            },
+            "RED": {
+                "skew": -0.4915481994650554,
+                "kurt": -0.4770080568885384,
+                "snr_db": 9.441603412830275,
+                "zcr_hz": 0.8666666666666667,
+                "pi_pct": 2.264434814614691
+            },
+            "R_ratio": 0.5835325948033736
+        },
+        "5_SG": {
+            "IR": {
+                "skew": -0.24307224431420812,
+                "kurt": -0.5741403464868409,
+                "snr_db": 11.160111307150125,
+                "zcr_hz": 1.6,
+                "pi_pct": 3.880562687980972
+            },
+            "RED": {
+                "skew": -0.4915481994650554,
+                "kurt": -0.4770080568885384,
+                "snr_db": 9.441603412830275,
+                "zcr_hz": 0.8666666666666667,
+                "pi_pct": 2.264434814614691
+            },
+            "R_ratio": 0.5835325948033736
+        },
+        "6_HighPass": {
+            "IR": {
+                "skew": -0.32628637643446495,
+                "kurt": -1.1140253184952744,
+                "snr_db": 15.001967640224894,
+                "zcr_hz": 2.2,
+                "pi_pct": 2.000722992181198
+            },
+            "RED": {
+                "skew": -0.28054235100847563,
+                "kurt": -1.105480008910484,
+                "snr_db": 14.803362805973357,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 0.85631775057905
+            },
+            "R_ratio": 0.42800415346128856
+        }
+    },
+    "ppg_features_per_channel": {
+        "IR": {
+            "hr": 64.27423674343868,
+            "width": 0.5909374999999999,
+            "sys_amp": 0.8632158687207997,
+            "area": 3147.249512939409,
+            "skew": -0.326286376434465,
+            "kurt": -1.1140253184952749,
+            "pi": 3.900577103728543,
+            "zcr": 2.2,
+            "snr": 15.00196764022498
+        },
+        "RED": {
+            "hr": 64.21691045308597,
+            "width": 0.5771875,
+            "sys_amp": 0.8616232697662888,
+            "area": 3062.731136522857,
+            "skew": -0.2805423510084757,
+            "kurt": -1.1054800089104841,
+            "pi": 2.2807850898360864,
+            "zcr": 2.1333333333333333,
+            "snr": 14.803362805973343
+        }
+    },
+    "golden_standard_features": {
+        "IR": {
+            "HR_Global": 64.27423674343868,
+            "Width_Avg": 0.5931477272727272,
+            "Area_Avg": 114.972678828803,
+            "Amp_Avg": 0.7986620360250096,
+            "Skew_Avg": -0.3189683600404633,
+            "Kurt_Avg": -1.2689555659045313,
+            "PI_Global": 3.900577103728543
+        },
+        "RED": {
+            "HR_Global": 64.21691045308597,
+            "Width_Avg": 0.5860227272727272,
+            "Area_Avg": 111.89970007799627,
+            "Amp_Avg": 0.8009210736402832,
+            "Skew_Avg": -0.28674947234053166,
+            "Kurt_Avg": -1.2561759383250533,
+            "PI_Global": 2.2807850898360864
+        }
+    },
+    "ensemble_RED": {
         "title": "RED Channel",
         "target_len": 220,
         "beats_used": 15,
@@ -248,14 +472,14 @@
         "feet": [
             [
                 108,
-                441
+                440
             ],
             [
-                441,
-                792
+                440,
+                793
             ],
             [
-                792,
+                793,
                 1174
             ],
             [
@@ -268,18 +492,18 @@
             ],
             [
                 1953,
-                2341
+                2340
             ],
             [
-                2341,
+                2340,
                 2723
             ],
             [
                 2723,
-                3104
+                3105
             ],
             [
-                3104,
+                3105,
                 3460
             ],
             [
@@ -292,10 +516,10 @@
             ],
             [
                 4201,
-                4574
+                4573
             ],
             [
-                4574,
+                4573,
                 4964
             ],
             [
@@ -312,182 +536,182 @@
                 "pulse_num": 1,
                 "foot": 108,
                 "peak": 160,
-                "next_foot": 441,
+                "next_foot": 440,
                 "mid_idx": 274,
-                "beat_duration": 0.8325,
+                "beat_duration": 0.83,
                 "foot_to_peak_sec": 0.13,
-                "amplitude": 0.6201210066624696,
-                "vpg_at_foot": -0.1494236579822867,
-                "sdppg_at_foot": 179.67435077256604,
+                "amplitude": 0.6303569697131537,
+                "vpg_at_foot": -0.02088680836835122,
+                "sdppg_at_foot": 210.15679754992038,
                 "status": "accepted"
             },
             {
                 "pulse_num": 2,
-                "foot": 441,
-                "peak": 501,
-                "next_foot": 792,
+                "foot": 440,
+                "peak": 500,
+                "next_foot": 793,
                 "mid_idx": 616,
-                "beat_duration": 0.8775,
+                "beat_duration": 0.8825,
                 "foot_to_peak_sec": 0.15,
-                "amplitude": 0.6461186518680526,
-                "vpg_at_foot": 0.08524269534487539,
-                "sdppg_at_foot": 101.03541273502506,
+                "amplitude": 0.6494592457013953,
+                "vpg_at_foot": -0.03750574759602781,
+                "sdppg_at_foot": 97.4024973594941,
                 "status": "accepted"
             },
             {
                 "pulse_num": 3,
-                "foot": 792,
-                "peak": 856,
+                "foot": 793,
+                "peak": 855,
                 "next_foot": 1174,
                 "mid_idx": 983,
-                "beat_duration": 0.955,
-                "foot_to_peak_sec": 0.16,
-                "amplitude": 0.7736451158683779,
-                "vpg_at_foot": -0.10089825551432327,
-                "sdppg_at_foot": 154.8220630709943,
+                "beat_duration": 0.9525,
+                "foot_to_peak_sec": 0.155,
+                "amplitude": 0.7765331813697279,
+                "vpg_at_foot": 0.11660357330295827,
+                "sdppg_at_foot": 158.42398560780342,
                 "status": "accepted"
             },
             {
                 "pulse_num": 4,
                 "foot": 1174,
-                "peak": 1231,
+                "peak": 1233,
                 "next_foot": 1572,
                 "mid_idx": 1373,
                 "beat_duration": 0.995,
-                "foot_to_peak_sec": 0.1425,
-                "amplitude": 0.8088727832425957,
-                "vpg_at_foot": -0.025516909814374246,
-                "sdppg_at_foot": 158.62538412875102,
+                "foot_to_peak_sec": 0.1475,
+                "amplitude": 0.8090246180213039,
+                "vpg_at_foot": 0.07740510575684004,
+                "sdppg_at_foot": 150.78643902937392,
                 "status": "accepted"
             },
             {
                 "pulse_num": 5,
                 "foot": 1572,
-                "peak": 1636,
+                "peak": 1633,
                 "next_foot": 1953,
                 "mid_idx": 1762,
                 "beat_duration": 0.9525,
-                "foot_to_peak_sec": 0.16,
-                "amplitude": 0.8071782738134778,
-                "vpg_at_foot": -0.1569599540144429,
-                "sdppg_at_foot": 161.47649162691047,
+                "foot_to_peak_sec": 0.1525,
+                "amplitude": 0.8082571409021375,
+                "vpg_at_foot": -0.14875959272678835,
+                "sdppg_at_foot": 162.29398219013154,
                 "status": "accepted"
             },
             {
                 "pulse_num": 6,
                 "foot": 1953,
                 "peak": 2014,
-                "next_foot": 2341,
-                "mid_idx": 2147,
-                "beat_duration": 0.97,
+                "next_foot": 2340,
+                "mid_idx": 2146,
+                "beat_duration": 0.9675,
                 "foot_to_peak_sec": 0.1525,
-                "amplitude": 0.7483218161267824,
-                "vpg_at_foot": -0.0500850678806184,
-                "sdppg_at_foot": 111.0610864783873,
+                "amplitude": 0.7498537735766337,
+                "vpg_at_foot": -0.07704422464358866,
+                "sdppg_at_foot": 108.78383729650588,
                 "status": "accepted"
             },
             {
                 "pulse_num": 7,
-                "foot": 2341,
-                "peak": 2405,
+                "foot": 2340,
+                "peak": 2407,
                 "next_foot": 2723,
-                "mid_idx": 2532,
-                "beat_duration": 0.955,
-                "foot_to_peak_sec": 0.16,
-                "amplitude": 0.8709695875664002,
-                "vpg_at_foot": 0.001965880419062177,
-                "sdppg_at_foot": 144.91809907851766,
+                "mid_idx": 2531,
+                "beat_duration": 0.9575,
+                "foot_to_peak_sec": 0.1675,
+                "amplitude": 0.8749035102995515,
+                "vpg_at_foot": -0.016069633920711937,
+                "sdppg_at_foot": 131.1203296244522,
                 "status": "accepted"
             },
             {
                 "pulse_num": 8,
                 "foot": 2723,
                 "peak": 2788,
-                "next_foot": 3104,
-                "mid_idx": 2913,
-                "beat_duration": 0.9525,
+                "next_foot": 3105,
+                "mid_idx": 2914,
+                "beat_duration": 0.955,
                 "foot_to_peak_sec": 0.1625,
-                "amplitude": 0.8451786429229009,
-                "vpg_at_foot": 0.1574242682168276,
-                "sdppg_at_foot": 161.49505202879143,
+                "amplitude": 0.8507303444020561,
+                "vpg_at_foot": -0.02541435779032625,
+                "sdppg_at_foot": 165.12561341637584,
                 "status": "accepted"
             },
             {
                 "pulse_num": 9,
-                "foot": 3104,
-                "peak": 3165,
+                "foot": 3105,
+                "peak": 3166,
                 "next_foot": 3460,
                 "mid_idx": 3282,
-                "beat_duration": 0.89,
+                "beat_duration": 0.8875,
                 "foot_to_peak_sec": 0.1525,
-                "amplitude": 0.7665557803682506,
-                "vpg_at_foot": -0.17631428153453255,
-                "sdppg_at_foot": 155.37892454513667,
+                "amplitude": 0.7693043800644639,
+                "vpg_at_foot": 0.21314749279931727,
+                "sdppg_at_foot": 169.19082629602187,
                 "status": "accepted"
             },
             {
                 "pulse_num": 10,
                 "foot": 3460,
-                "peak": 3522,
+                "peak": 3524,
                 "next_foot": 3828,
                 "mid_idx": 3644,
                 "beat_duration": 0.92,
-                "foot_to_peak_sec": 0.155,
-                "amplitude": 0.7434474611732379,
-                "vpg_at_foot": 0.06675876769692557,
-                "sdppg_at_foot": 140.57531835289439,
+                "foot_to_peak_sec": 0.16,
+                "amplitude": 0.7495387335717829,
+                "vpg_at_foot": 0.17371995542620436,
+                "sdppg_at_foot": 154.453732889176,
                 "status": "accepted"
             },
             {
                 "pulse_num": 11,
                 "foot": 3828,
-                "peak": 3904,
+                "peak": 3913,
                 "next_foot": 4201,
                 "mid_idx": 4014,
                 "beat_duration": 0.9325,
-                "foot_to_peak_sec": 0.19,
-                "amplitude": 0.8011894486380933,
-                "vpg_at_foot": 0.13289213266041927,
-                "sdppg_at_foot": 116.23535063972363,
+                "foot_to_peak_sec": 0.2125,
+                "amplitude": 0.8006361354586536,
+                "vpg_at_foot": 0.11461762465759553,
+                "sdppg_at_foot": 105.03196672098403,
                 "status": "accepted"
             },
             {
                 "pulse_num": 12,
                 "foot": 4201,
-                "peak": 4264,
-                "next_foot": 4574,
+                "peak": 4267,
+                "next_foot": 4573,
                 "mid_idx": 4387,
-                "beat_duration": 0.9325,
-                "foot_to_peak_sec": 0.1575,
-                "amplitude": 0.7998742453514386,
-                "vpg_at_foot": 0.05233176375682525,
-                "sdppg_at_foot": 143.9445582487047,
+                "beat_duration": 0.93,
+                "foot_to_peak_sec": 0.165,
+                "amplitude": 0.8011003065578243,
+                "vpg_at_foot": 0.08879567889978898,
+                "sdppg_at_foot": 152.67606070262292,
                 "status": "accepted"
             },
             {
                 "pulse_num": 13,
-                "foot": 4574,
+                "foot": 4573,
                 "peak": 4637,
                 "next_foot": 4964,
-                "mid_idx": 4769,
-                "beat_duration": 0.975,
-                "foot_to_peak_sec": 0.1575,
-                "amplitude": 0.7673073192193662,
-                "vpg_at_foot": 0.2076500653752505,
-                "sdppg_at_foot": 202.20596597081465,
+                "mid_idx": 4768,
+                "beat_duration": 0.9775,
+                "foot_to_peak_sec": 0.16,
+                "amplitude": 0.7743740966262507,
+                "vpg_at_foot": 0.07562327515545587,
+                "sdppg_at_foot": 173.5586828257853,
                 "status": "accepted"
             },
             {
                 "pulse_num": 14,
                 "foot": 4964,
-                "peak": 5018,
+                "peak": 5019,
                 "next_foot": 5350,
                 "mid_idx": 5157,
                 "beat_duration": 0.965,
-                "foot_to_peak_sec": 0.135,
-                "amplitude": 0.877390652175271,
-                "vpg_at_foot": -0.038341342182864446,
-                "sdppg_at_foot": 197.3324224445301,
+                "foot_to_peak_sec": 0.1375,
+                "amplitude": 0.8815170994368816,
+                "vpg_at_foot": -0.004693306639925467,
+                "sdppg_at_foot": 197.30253021397002,
                 "status": "accepted"
             },
             {
@@ -498,9 +722,9 @@
                 "mid_idx": 5528,
                 "beat_duration": 0.89,
                 "foot_to_peak_sec": 0.145,
-                "amplitude": 0.9790806738710742,
-                "vpg_at_foot": 0.18725529740715124,
-                "sdppg_at_foot": 164.24313728116343,
+                "amplitude": 0.9874904537987749,
+                "vpg_at_foot": -0.12565300924406222,
+                "sdppg_at_foot": 177.21679208573318,
                 "status": "accepted"
             }
         ],
@@ -508,22 +732,22 @@
             {
                 "pulse_num": 1,
                 "foot": 108,
-                "next_foot": 441,
+                "next_foot": 440,
                 "mid_idx": 274,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 2,
-                "foot": 441,
-                "next_foot": 792,
+                "foot": 440,
+                "next_foot": 793,
                 "mid_idx": 616,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 3,
-                "foot": 792,
+                "foot": 793,
                 "next_foot": 1174,
                 "mid_idx": 983,
                 "status": "accepted",
@@ -548,30 +772,30 @@
             {
                 "pulse_num": 6,
                 "foot": 1953,
-                "next_foot": 2341,
-                "mid_idx": 2147,
+                "next_foot": 2340,
+                "mid_idx": 2146,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 7,
-                "foot": 2341,
+                "foot": 2340,
                 "next_foot": 2723,
-                "mid_idx": 2532,
+                "mid_idx": 2531,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 8,
                 "foot": 2723,
-                "next_foot": 3104,
-                "mid_idx": 2913,
+                "next_foot": 3105,
+                "mid_idx": 2914,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 9,
-                "foot": 3104,
+                "foot": 3105,
                 "next_foot": 3460,
                 "mid_idx": 3282,
                 "status": "accepted",
@@ -596,16 +820,16 @@
             {
                 "pulse_num": 12,
                 "foot": 4201,
-                "next_foot": 4574,
+                "next_foot": 4573,
                 "mid_idx": 4387,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 13,
-                "foot": 4574,
+                "foot": 4573,
                 "next_foot": 4964,
-                "mid_idx": 4769,
+                "mid_idx": 4768,
                 "status": "accepted",
                 "reason_text": ""
             },
@@ -630,13 +854,18 @@
         "rejected_pulses_info": [],
         "fiducials": {
             "a": 5,
-            "b": 19,
-            "c": 45,
+            "b": 20,
+            "c": 46,
             "d": 55,
-            "e": 76
+            "e": 75
+        },
+        "plot_paths": {
+            "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Ensemble\\Ali(22-enc-12)v1_Win1_RED_11_Ensemble.png",
+            "debug_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Debug\\Ali(22-enc-12)v1_Win1_RED_11_FootCheck.png",
+            "numbering_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_PulseNumbering\\Ali(22-enc-12)v1_Win1_RED_11_Numbering.png"
         }
     },
-    "Ensemble_IR": {
+    "ensemble_IR": {
         "title": "IR Channel",
         "target_len": 220,
         "beats_used": 15,
@@ -869,35 +1098,35 @@
         ],
         "feet": [
             [
-                109,
+                108,
                 441
             ],
             [
                 441,
-                792
+                793
             ],
             [
-                792,
-                1174
+                793,
+                1173
             ],
             [
-                1174,
+                1173,
                 1572
             ],
             [
                 1572,
-                1955
+                1954
             ],
             [
-                1955,
-                2342
+                1954,
+                2341
             ],
             [
-                2342,
-                2722
+                2341,
+                2723
             ],
             [
-                2722,
+                2723,
                 3105
             ],
             [
@@ -922,168 +1151,168 @@
             ],
             [
                 4964,
-                5349
+                5350
             ],
             [
-                5349,
+                5350,
                 5707
             ]
         ],
         "beat_info": [
             {
                 "pulse_num": 1,
-                "foot": 109,
+                "foot": 108,
                 "peak": 165,
                 "next_foot": 441,
-                "mid_idx": 275,
-                "beat_duration": 0.83,
-                "foot_to_peak_sec": 0.14,
-                "amplitude": 0.624998174700558,
-                "vpg_at_foot": 0.10848301017047196,
-                "sdppg_at_foot": 180.33941566815233,
+                "mid_idx": 274,
+                "beat_duration": 0.8325,
+                "foot_to_peak_sec": 0.1425,
+                "amplitude": 0.6354411676410935,
+                "vpg_at_foot": -0.07766077030791116,
+                "sdppg_at_foot": 194.34630517850707,
                 "status": "accepted"
             },
             {
                 "pulse_num": 2,
                 "foot": 441,
                 "peak": 503,
-                "next_foot": 792,
-                "mid_idx": 616,
-                "beat_duration": 0.8775,
+                "next_foot": 793,
+                "mid_idx": 617,
+                "beat_duration": 0.88,
                 "foot_to_peak_sec": 0.155,
-                "amplitude": 0.6464087301485112,
-                "vpg_at_foot": 0.03794404405114831,
-                "sdppg_at_foot": 89.3993949072204,
+                "amplitude": 0.6466288283018817,
+                "vpg_at_foot": 0.09445719123058806,
+                "sdppg_at_foot": 94.89838810305683,
                 "status": "accepted"
             },
             {
                 "pulse_num": 3,
-                "foot": 792,
+                "foot": 793,
                 "peak": 858,
-                "next_foot": 1174,
+                "next_foot": 1173,
                 "mid_idx": 983,
-                "beat_duration": 0.955,
-                "foot_to_peak_sec": 0.165,
-                "amplitude": 0.7728536017403274,
-                "vpg_at_foot": -0.04418527504803908,
-                "sdppg_at_foot": 150.34644117601857,
+                "beat_duration": 0.95,
+                "foot_to_peak_sec": 0.1625,
+                "amplitude": 0.7728519586490594,
+                "vpg_at_foot": 0.1817644422971012,
+                "sdppg_at_foot": 153.61925640294305,
                 "status": "accepted"
             },
             {
                 "pulse_num": 4,
-                "foot": 1174,
+                "foot": 1173,
                 "peak": 1238,
                 "next_foot": 1572,
-                "mid_idx": 1373,
-                "beat_duration": 0.995,
-                "foot_to_peak_sec": 0.16,
-                "amplitude": 0.8145212158310231,
-                "vpg_at_foot": 0.13217446321333043,
-                "sdppg_at_foot": 155.22616830041255,
+                "mid_idx": 1372,
+                "beat_duration": 0.9975,
+                "foot_to_peak_sec": 0.1625,
+                "amplitude": 0.8161090327271808,
+                "vpg_at_foot": -0.1375796730937136,
+                "sdppg_at_foot": 130.6357094781081,
                 "status": "accepted"
             },
             {
                 "pulse_num": 5,
                 "foot": 1572,
-                "peak": 1637,
-                "next_foot": 1955,
+                "peak": 1635,
+                "next_foot": 1954,
                 "mid_idx": 1763,
-                "beat_duration": 0.9575,
-                "foot_to_peak_sec": 0.1625,
-                "amplitude": 0.8092958379628343,
-                "vpg_at_foot": -0.09760666518191705,
-                "sdppg_at_foot": 141.73783142202046,
+                "beat_duration": 0.955,
+                "foot_to_peak_sec": 0.1575,
+                "amplitude": 0.8059452843870851,
+                "vpg_at_foot": -0.10272455387121986,
+                "sdppg_at_foot": 141.39386075143548,
                 "status": "accepted"
             },
             {
                 "pulse_num": 6,
-                "foot": 1955,
+                "foot": 1954,
                 "peak": 2016,
-                "next_foot": 2342,
-                "mid_idx": 2148,
+                "next_foot": 2341,
+                "mid_idx": 2147,
                 "beat_duration": 0.9675,
-                "foot_to_peak_sec": 0.1525,
-                "amplitude": 0.721974282358288,
-                "vpg_at_foot": 0.13724776307826422,
-                "sdppg_at_foot": 153.56356668944838,
+                "foot_to_peak_sec": 0.155,
+                "amplitude": 0.7240160317194948,
+                "vpg_at_foot": -0.06651295808090638,
+                "sdppg_at_foot": 133.84230768396154,
                 "status": "accepted"
             },
             {
                 "pulse_num": 7,
-                "foot": 2342,
-                "peak": 2404,
-                "next_foot": 2722,
+                "foot": 2341,
+                "peak": 2407,
+                "next_foot": 2723,
                 "mid_idx": 2532,
-                "beat_duration": 0.95,
-                "foot_to_peak_sec": 0.155,
-                "amplitude": 0.836701733103225,
-                "vpg_at_foot": 0.08298615997810019,
-                "sdppg_at_foot": 148.6865489146776,
+                "beat_duration": 0.955,
+                "foot_to_peak_sec": 0.165,
+                "amplitude": 0.8352326026401868,
+                "vpg_at_foot": 0.03964607860060166,
+                "sdppg_at_foot": 126.27257138286747,
                 "status": "accepted"
             },
             {
                 "pulse_num": 8,
-                "foot": 2722,
+                "foot": 2723,
                 "peak": 2788,
                 "next_foot": 3105,
-                "mid_idx": 2913,
-                "beat_duration": 0.9575,
-                "foot_to_peak_sec": 0.165,
-                "amplitude": 0.8446716228420379,
-                "vpg_at_foot": -0.09830081287295143,
-                "sdppg_at_foot": 129.41040073141022,
+                "mid_idx": 2914,
+                "beat_duration": 0.955,
+                "foot_to_peak_sec": 0.1625,
+                "amplitude": 0.8466311616965345,
+                "vpg_at_foot": 0.08742018701138145,
+                "sdppg_at_foot": 147.58947913877006,
                 "status": "accepted"
             },
             {
                 "pulse_num": 9,
                 "foot": 3105,
-                "peak": 3165,
+                "peak": 3166,
                 "next_foot": 3460,
                 "mid_idx": 3282,
                 "beat_duration": 0.8875,
-                "foot_to_peak_sec": 0.15,
-                "amplitude": 0.774108971973144,
-                "vpg_at_foot": 0.09644365678373204,
-                "sdppg_at_foot": 167.94978337218478,
+                "foot_to_peak_sec": 0.1525,
+                "amplitude": 0.774215941652396,
+                "vpg_at_foot": 0.10573653001396888,
+                "sdppg_at_foot": 166.79048330744536,
                 "status": "accepted"
             },
             {
                 "pulse_num": 10,
                 "foot": 3460,
-                "peak": 3523,
+                "peak": 3525,
                 "next_foot": 3828,
                 "mid_idx": 3644,
                 "beat_duration": 0.92,
-                "foot_to_peak_sec": 0.1575,
-                "amplitude": 0.7314429265565737,
-                "vpg_at_foot": 0.04406000163509996,
-                "sdppg_at_foot": 139.3660375291361,
+                "foot_to_peak_sec": 0.1625,
+                "amplitude": 0.7336911692631057,
+                "vpg_at_foot": 0.0798300533040352,
+                "sdppg_at_foot": 148.1277773844925,
                 "status": "accepted"
             },
             {
                 "pulse_num": 11,
                 "foot": 3828,
-                "peak": 3903,
+                "peak": 3902,
                 "next_foot": 4201,
                 "mid_idx": 4014,
                 "beat_duration": 0.9325,
-                "foot_to_peak_sec": 0.1875,
-                "amplitude": 0.8109146036691243,
-                "vpg_at_foot": 0.10022515893321528,
-                "sdppg_at_foot": 151.51378096090022,
+                "foot_to_peak_sec": 0.185,
+                "amplitude": 0.8063375625164975,
+                "vpg_at_foot": 0.07504988780988667,
+                "sdppg_at_foot": 141.93391252242566,
                 "status": "accepted"
             },
             {
                 "pulse_num": 12,
                 "foot": 4201,
-                "peak": 4263,
+                "peak": 4267,
                 "next_foot": 4573,
                 "mid_idx": 4387,
                 "beat_duration": 0.93,
-                "foot_to_peak_sec": 0.155,
-                "amplitude": 0.7906572721549409,
-                "vpg_at_foot": -0.07231855048657355,
-                "sdppg_at_foot": 139.66580032691687,
+                "foot_to_peak_sec": 0.165,
+                "amplitude": 0.7888645192945778,
+                "vpg_at_foot": -0.023363160482200832,
+                "sdppg_at_foot": 146.3017599843795,
                 "status": "accepted"
             },
             {
@@ -1094,100 +1323,100 @@
                 "mid_idx": 4768,
                 "beat_duration": 0.9775,
                 "foot_to_peak_sec": 0.16,
-                "amplitude": 0.7781446455736312,
-                "vpg_at_foot": -0.19394300934904202,
-                "sdppg_at_foot": 170.8340097936872,
+                "amplitude": 0.7819346071335693,
+                "vpg_at_foot": 0.1558684556928175,
+                "sdppg_at_foot": 165.61155805028622,
                 "status": "accepted"
             },
             {
                 "pulse_num": 14,
                 "foot": 4964,
-                "peak": 5021,
-                "next_foot": 5349,
-                "mid_idx": 5156,
-                "beat_duration": 0.9625,
-                "foot_to_peak_sec": 0.1425,
-                "amplitude": 0.8926037158728104,
-                "vpg_at_foot": 0.17228628636813315,
-                "sdppg_at_foot": 193.12544566530983,
+                "peak": 5023,
+                "next_foot": 5350,
+                "mid_idx": 5157,
+                "beat_duration": 0.965,
+                "foot_to_peak_sec": 0.1475,
+                "amplitude": 0.8948203280772449,
+                "vpg_at_foot": 0.13802556691636217,
+                "sdppg_at_foot": 193.22575723884523,
                 "status": "accepted"
             },
             {
                 "pulse_num": 15,
-                "foot": 5349,
+                "foot": 5350,
                 "peak": 5409,
                 "next_foot": 5707,
                 "mid_idx": 5528,
-                "beat_duration": 0.895,
-                "foot_to_peak_sec": 0.15,
-                "amplitude": 0.9812468805314489,
-                "vpg_at_foot": -0.10512024002738998,
-                "sdppg_at_foot": 152.4934017205583,
+                "beat_duration": 0.8925,
+                "foot_to_peak_sec": 0.1475,
+                "amplitude": 0.9864070679117285,
+                "vpg_at_foot": -0.004789488833000257,
+                "sdppg_at_foot": 183.3826211627875,
                 "status": "accepted"
             }
         ],
         "pulse_map": [
             {
                 "pulse_num": 1,
-                "foot": 109,
+                "foot": 108,
                 "next_foot": 441,
-                "mid_idx": 275,
+                "mid_idx": 274,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 2,
                 "foot": 441,
-                "next_foot": 792,
-                "mid_idx": 616,
+                "next_foot": 793,
+                "mid_idx": 617,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 3,
-                "foot": 792,
-                "next_foot": 1174,
+                "foot": 793,
+                "next_foot": 1173,
                 "mid_idx": 983,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 4,
-                "foot": 1174,
+                "foot": 1173,
                 "next_foot": 1572,
-                "mid_idx": 1373,
+                "mid_idx": 1372,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 5,
                 "foot": 1572,
-                "next_foot": 1955,
+                "next_foot": 1954,
                 "mid_idx": 1763,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 6,
-                "foot": 1955,
-                "next_foot": 2342,
-                "mid_idx": 2148,
+                "foot": 1954,
+                "next_foot": 2341,
+                "mid_idx": 2147,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 7,
-                "foot": 2342,
-                "next_foot": 2722,
+                "foot": 2341,
+                "next_foot": 2723,
                 "mid_idx": 2532,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 8,
-                "foot": 2722,
+                "foot": 2723,
                 "next_foot": 3105,
-                "mid_idx": 2913,
+                "mid_idx": 2914,
                 "status": "accepted",
                 "reason_text": ""
             },
@@ -1234,14 +1463,14 @@
             {
                 "pulse_num": 14,
                 "foot": 4964,
-                "next_foot": 5349,
-                "mid_idx": 5156,
+                "next_foot": 5350,
+                "mid_idx": 5157,
                 "status": "accepted",
                 "reason_text": ""
             },
             {
                 "pulse_num": 15,
-                "foot": 5349,
+                "foot": 5350,
                 "next_foot": 5707,
                 "mid_idx": 5528,
                 "status": "accepted",
@@ -1252,10 +1481,15 @@
         "rejected_pulses_info": [],
         "fiducials": {
             "a": 5,
-            "b": 19,
-            "c": 28,
-            "d": 31,
-            "e": 45
+            "b": 20,
+            "c": 45,
+            "d": 54,
+            "e": 74
+        },
+        "plot_paths": {
+            "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Ensemble\\Ali(22-enc-12)v1_Win1_IR_11_Ensemble.png",
+            "debug_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Debug\\Ali(22-enc-12)v1_Win1_IR_11_FootCheck.png",
+            "numbering_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_PulseNumbering\\Ali(22-enc-12)v1_Win1_IR_11_Numbering.png"
         }
     }
 }

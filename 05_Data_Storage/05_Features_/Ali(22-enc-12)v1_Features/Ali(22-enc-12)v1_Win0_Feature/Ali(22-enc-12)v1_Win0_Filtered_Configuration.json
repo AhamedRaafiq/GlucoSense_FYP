@@ -1,112 +1,336 @@
 {
-    "Metadata": {
-        "Source_File": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/Windowed/Ali(22-enc-12)v1/Ali(22-enc-12)v1_Win0.csv",
-        "Sampling_Rate_FS": 400.0,
-        "Total_Samples": 6000,
-        "Plot_Duration_Sec": 15.0,
-        "Nyquist_Rate": 200.0,
-        "Date_Processed": "2026-05-12 16:42:31"
+    "metadata": {
+        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win0.csv",
+        "filename": "Ali(22-enc-12)v1_Win0.csv",
+        "sampling_rate_fs": 400.0,
+        "total_samples": 6000,
+        "duration_sec": 15.0,
+        "nyquist_rate": 200.0,
+        "date_processed": "2026-06-07 23:10:42"
     },
-    "Folder_Structure": {
-        "Output_Root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
-        "Level_1_Folder_Name": "Ali(22-enc-12)v1_Filtered",
-        "Level_1_Folder_Path": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
-        "Level_2_Folder_Name": "Ali(22-enc-12)v1_Win0_Filtered",
-        "Final_Save_Path": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win0_Filtered"
+    "hyperparameters": {
+        "use_full_file": true,
+        "sample_start": 0,
+        "sample_end": 0,
+        "threshold_red": 0,
+        "threshold_ir": 0,
+        "spike_enable": true,
+        "kernel_size": 3,
+        "invert_enable": true,
+        "lp_enable": true,
+        "lp_cutoff_hz": 16.0,
+        "lp_order": 4,
+        "hp_enable": true,
+        "hp_cutoff_hz": 0.5,
+        "hp_order": 4,
+        "sg_enable": false,
+        "sg_window": 31,
+        "sg_poly": 3,
+        "norm_selection": 1,
+        "norm_type": "MinMax",
+        "ensemble_target_len": 220,
+        "peak_min_distance_sec": 0.4,
+        "peak_prom_factor": 0.2,
+        "valley_min_distance_sec": 0.35,
+        "valley_prom_factor": 0.1,
+        "min_foot_to_peak_sec": 0.12,
+        "max_foot_to_peak_sec": 0.4,
+        "max_valley_to_foot_sec": 0.2,
+        "max_foot_rel_height": 0.2,
+        "max_abs_vpg_at_foot": 0.5,
+        "edge_exclusion_sec": 0.1,
+        "min_beat_duration_sec": 0.35,
+        "max_beat_duration_sec": 1.5,
+        "main_peak_search_window_sec": 0.3,
+        "main_peak_min_delay_sec": 0.02,
+        "start_incomplete_margin_sec": 0.1,
+        "end_incomplete_margin_sec": 0.01,
+        "sqi_limits": {
+            "SKEWNESS_MIN": 0.0,
+            "SKEWNESS_MAX": 2.5,
+            "KURTOSIS_MIN": 1.5,
+            "KURTOSIS_MAX": 7.0,
+            "PI_MIN": 0.1,
+            "PI_MAX": 10.0,
+            "SNR_MIN_DB": 5.0,
+            "SNR_MAX_DB": 25.0,
+            "ZCR_MIN": 1.0,
+            "ZCR_MAX": 4.0
+        }
     },
-    "Ensemble_RED": {
+    "folder_structure": {
+        "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
+        "main_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
+        "window_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win0_Filtered",
+        "additional_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional"
+    },
+    "signal_quality": {
+        "IR": {
+            "skewness": -0.3379118052204427,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.0567142441201824,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 2.0359119777624035,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.1333333333333333,
+            "zcr_status": "PASS",
+            "snr_db": 16.586752718678618,
+            "snr_status": "PASS"
+        },
+        "RED": {
+            "skewness": -0.32044455196164556,
+            "skewness_status": "FAIL",
+            "kurtosis": -0.9347223996828373,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 0.9405917312778697,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.1333333333333333,
+            "zcr_status": "PASS",
+            "snr_db": 16.70630099240825,
+            "snr_status": "PASS"
+        }
+    },
+    "pipeline_diagnostic": {
+        "1_Raw": {
+            "IR": {
+                "skew": -0.03269393216737143,
+                "kurt": -0.7047835986439632,
+                "snr_db": 10.140982761930129,
+                "zcr_hz": 2.7333333333333334,
+                "pi_pct": 4.365251743105847
+            },
+            "RED": {
+                "skew": 0.2621472294237037,
+                "kurt": -0.9629288604496362,
+                "snr_db": 7.4891185270868945,
+                "zcr_hz": 1.1333333333333333,
+                "pi_pct": 3.001518539884205
+            },
+            "R_ratio": 0.6875934577254518
+        },
+        "2_Despiked": {
+            "IR": {
+                "skew": -0.03303971657160416,
+                "kurt": -0.7040766777078264,
+                "snr_db": 10.471439068049309,
+                "zcr_hz": 1.2666666666666666,
+                "pi_pct": 4.346345780413354
+            },
+            "RED": {
+                "skew": 0.2624926788350304,
+                "kurt": -0.9624153905629305,
+                "snr_db": 7.668730920581783,
+                "zcr_hz": 0.4666666666666667,
+                "pi_pct": 2.999300122633736
+            },
+            "R_ratio": 0.6900739780415012
+        },
+        "3_Inverted": {
+            "IR": {
+                "skew": 0.03303971657160416,
+                "kurt": -0.7040766777078264,
+                "snr_db": 10.471439068049309,
+                "zcr_hz": 1.2666666666666666,
+                "pi_pct": 4.346345780413354
+            },
+            "RED": {
+                "skew": -0.2624926788350304,
+                "kurt": -0.9624153905629305,
+                "snr_db": 7.668730920581783,
+                "zcr_hz": 0.4666666666666667,
+                "pi_pct": 2.999300122633736
+            },
+            "R_ratio": 0.6900739780415012
+        },
+        "4_LowPass": {
+            "IR": {
+                "skew": 0.03376882943685888,
+                "kurt": -0.7060126472194557,
+                "snr_db": 10.480618798832747,
+                "zcr_hz": 1.1333333333333333,
+                "pi_pct": 4.346161918970422
+            },
+            "RED": {
+                "skew": -0.2622202174711821,
+                "kurt": -0.9633187047708587,
+                "snr_db": 7.6793146582499,
+                "zcr_hz": 0.4666666666666667,
+                "pi_pct": 2.9983197073692387
+            },
+            "R_ratio": 0.6898775893005665
+        },
+        "5_SG": {
+            "IR": {
+                "skew": 0.03376882943685888,
+                "kurt": -0.7060126472194557,
+                "snr_db": 10.480618798832747,
+                "zcr_hz": 1.1333333333333333,
+                "pi_pct": 4.346161918970422
+            },
+            "RED": {
+                "skew": -0.2622202174711821,
+                "kurt": -0.9633187047708587,
+                "snr_db": 7.6793146582499,
+                "zcr_hz": 0.4666666666666667,
+                "pi_pct": 2.9983197073692387
+            },
+            "R_ratio": 0.6898775893005665
+        },
+        "6_HighPass": {
+            "IR": {
+                "skew": -0.3379118052204427,
+                "kurt": -1.0567142441201824,
+                "snr_db": 13.956847996957432,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 2.0359119777624035
+            },
+            "RED": {
+                "skew": -0.32044455196164556,
+                "kurt": -0.9347223996828373,
+                "snr_db": 13.174569805902582,
+                "zcr_hz": 2.1333333333333333,
+                "pi_pct": 0.9405917312778697
+            },
+            "R_ratio": 0.46200019526956154
+        }
+    },
+    "ppg_features_per_channel": {
+        "IR": {
+            "hr": 64.06833956219967,
+            "width": 0.6129687500000001,
+            "sys_amp": 0.8686295032261149,
+            "area": 3233.7981649877647,
+            "skew": -0.3379118052204419,
+            "kurt": -1.056714244120183,
+            "pi": 4.365251743105847,
+            "zcr": 2.1333333333333333,
+            "snr": 13.95684799695742
+        },
+        "RED": {
+            "hr": 64.02276364929753,
+            "width": 0.63015625,
+            "sys_amp": 0.8724623101849756,
+            "area": 3304.511037977241,
+            "skew": -0.3204445519616471,
+            "kurt": -0.9347223996828369,
+            "pi": 3.001518539884205,
+            "zcr": 2.1333333333333333,
+            "snr": 13.17456980590257
+        }
+    },
+    "golden_standard_features": {
+        "IR": {
+            "HR_Global": 64.06833956219967,
+            "Width_Avg": 0.6032556818181818,
+            "Area_Avg": 117.01983825808499,
+            "Amp_Avg": 0.7515593358113118,
+            "Skew_Avg": -0.28811499531238804,
+            "Kurt_Avg": -1.2529208406161263,
+            "PI_Global": 4.365251743105847
+        },
+        "RED": {
+            "HR_Global": 64.02276364929753,
+            "Width_Avg": 0.6220170454545455,
+            "Area_Avg": 119.74152466724294,
+            "Amp_Avg": 0.7160863335223909,
+            "Skew_Avg": -0.25232519922486163,
+            "Kurt_Avg": -1.248227373252448,
+            "PI_Global": 3.001518539884205
+        }
+    },
+    "ensemble_RED": {
         "title": "RED Channel",
         "target_len": 220,
         "beats_used": 14,
         "rejected_candidates": 0,
         "rejected_pulses": 1,
         "segmented_pulses_total": 15,
-        "avg_duration": 0.9450000000000001,
-        "fs_eff": 232.80423280423278,
+        "avg_duration": 0.94375,
+        "fs_eff": 233.11258278145695,
         "fiducials": {
             "a": 5,
-            "b": 19,
-            "c": 26,
-            "d": 31,
-            "e": 44
+            "b": 21,
+            "c": 46,
+            "d": 55,
+            "e": 74
         },
         "num_feet_pairs": 14,
         "rejected_pulses_info": [
             {
                 "pulse_num": 1,
                 "reason_key": "incomplete_at_signal_start",
-                "reason_text": "Pulse is incomplete at the start of the signal.",
+                "reason_text": "Pulse incomplete at start.",
                 "foot": 25,
                 "peak": 79,
                 "next_foot": 411
             }
         ]
     },
-    "Ensemble_IR": {
+    "ensemble_IR": {
         "title": "IR Channel",
         "target_len": 220,
         "beats_used": 14,
         "rejected_candidates": 0,
         "rejected_pulses": 1,
         "segmented_pulses_total": 15,
-        "avg_duration": 0.93875,
-        "fs_eff": 234.35419440745673,
+        "avg_duration": 0.9412499999999999,
+        "fs_eff": 233.73173970783535,
         "fiducials": {
-            "a": 6,
-            "b": 19,
-            "c": 28,
-            "d": 32,
-            "e": 44
+            "a": 5,
+            "b": 21,
+            "c": 45,
+            "d": 54,
+            "e": 74
         },
         "num_feet_pairs": 14,
         "rejected_pulses_info": [
             {
                 "pulse_num": 1,
                 "reason_key": "incomplete_at_signal_start",
-                "reason_text": "Pulse is incomplete at the start of the signal.",
+                "reason_text": "Pulse incomplete at start.",
                 "foot": 25,
                 "peak": 82,
                 "next_foot": 411
             }
         ]
     },
-    "Extracted_Features": {
-        "Red_Skewness": -0.2552989097940911,
-        "IR_Skewness": -0.28420121217363176,
-        "Red_Kurtosis": -1.2503617938450613,
-        "IR_Kurtosis": -1.26974340416548,
-        "Red_Shannon Entropy": 5.7378994158921515,
-        "IR_Shannon Entropy": 5.729382702668129,
-        "Red_Spectral Entropy": 1.6360828508791065,
-        "IR_Spectral Entropy": 1.6408779451484345,
-        "Red_pulse width": 0.5394472762255671,
-        "IR_pulse width": 0.5392749071373639,
+    "extracted_features": {
+        "Red_Skewness": -0.2540607226445181,
+        "IR_Skewness": -0.2900966853039342,
+        "Red_Kurtosis": -1.2492909279593547,
+        "IR_Kurtosis": -1.2540928373774978,
+        "Red_Shannon Entropy": 5.73580253327782,
+        "IR_Shannon Entropy": 5.731543721996865,
+        "Red_Spectral Entropy": 1.636699711745674,
+        "IR_Spectral Entropy": 1.6415089971619552,
+        "Red_pulse width": 0.5377098621269044,
+        "IR_pulse width": 0.5449035705296753,
         "Red_PPI": 0.9371666666666667,
-        "IR_PPI": 0.9346666666666668,
-        "Red_systolic amplitude": 0.7153054931170988,
-        "IR_systolic amplitude": 0.7483692218362896,
+        "IR_PPI": 0.9365,
+        "Red_systolic amplitude": 0.7160863335223909,
+        "IR_systolic amplitude": 0.751559335811312,
         "Red_BPM": 64.02276364929753,
-        "IR_BPM": 64.19400855920114,
-        "Red_HRV": 42.023236202753125,
-        "IR_HRV": 38.28775758584435,
-        "Red_TEO Mean": 7.766933293743723e-05,
-        "IR_TEO Mean": 8.458886268251273e-05,
-        "Red_TEO std dev": 0.0002502432420928472,
-        "IR_TEO std dev": 0.00025568657172748326,
-        "Red_1st_Derivative_Mean": -0.005319295586602896,
-        "IR_1st_Derivative_Mean": -0.012282509763331393,
-        "Red_2nd_Derivative_Mean": -0.4688903526089861,
-        "IR_2nd_Derivative_Mean": -0.9510476853652485,
-        "Red_2nd_Derivative_Skewness": 1.3420780436423576,
-        "IR_2nd_Derivative_Skewness": 1.1129377071518016,
-        "Red_Harmonic ratio": 3.2270381514019784,
-        "IR_Harmonic ratio": 3.4419319828831783,
-        "Ensemble ratio": 0.7850873493003125,
-        "Red_Rise time": 0.1553424657534246,
-        "IR_Rise time": 0.1543150684931507,
-        "Red_Decay time": 0.7896575342465754,
-        "IR_Decay time": 0.7844349315068493,
-        "Red_Dicrotic notch": 0.3495205479452055,
-        "IR_Dicrotic notch": 0.347208904109589
+        "IR_BPM": 64.06833956219968,
+        "Red_HRV": 40.64070209367287,
+        "IR_HRV": 39.53750479878928,
+        "Red_TEO Mean": 7.78841709530176e-05,
+        "IR_TEO Mean": 8.496858902737576e-05,
+        "Red_TEO std dev": 0.00023480804689076672,
+        "IR_TEO std dev": 0.0002397955832681967,
+        "Red_1st_Derivative_Mean": -0.0048430820846964455,
+        "IR_1st_Derivative_Mean": -0.0026892300828115687,
+        "Red_2nd_Derivative_Mean": -0.0620577143721585,
+        "IR_2nd_Derivative_Mean": 0.11538115230954572,
+        "Red_2nd_Derivative_Skewness": 1.5134297407121455,
+        "IR_2nd_Derivative_Skewness": 1.6299378651253476,
+        "Red_Harmonic ratio": 3.160818091614093,
+        "IR_Harmonic ratio": 3.3275782739475925,
+        "Ensemble ratio": 0.7826104909975193,
+        "Red_Rise time": 0.1551369863013698,
+        "IR_Rise time": 0.1590239726027397,
+        "Red_Decay time": 0.7886130136986302,
+        "IR_Decay time": 0.7822260273972603,
+        "Red_Dicrotic notch": 0.3490582191780821,
+        "IR_Dicrotic notch": 0.3481335616438356
     }
 }

@@ -1,5 +1,6 @@
 # ==========================================
 # STEP 3: FEATURE EXTRACTION (AUTO BATCH, POPUP SELECTOR)
+# Updated for compatibility with new automated signal processing pipeline
 # ==========================================
 
 import os
@@ -337,9 +338,21 @@ def load_window_data(window_folder):
     with open(cfg_path, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    fs = cfg.get("Metadata", {}).get("Sampling_Rate_FS", None)
+    # ----- FIX #1: Support both NEW (lowercase) and OLD (uppercase) JSON keys -----
+    metadata = cfg.get("metadata") or cfg.get("Metadata") or {}
+
+    fs = (
+        metadata.get("sampling_rate_fs")
+        or metadata.get("Sampling_Rate_FS")
+        or None
+    )
+
     if fs is None:
-        raise ValueError("Sampling_Rate_FS not found in config Metadata")
+        raise ValueError(
+            "Sampling rate not found in config. "
+            "Expected key 'sampling_rate_fs' (new) or 'Sampling_Rate_FS' (old) "
+            "under 'metadata' / 'Metadata'."
+        )
 
     return df_full, df_ens, cfg, file_full, file_ensemble, file_config, float(fs)
 
@@ -378,21 +391,45 @@ def resolve_selected_folder():
 
 def build_filtered_configuration_summary(cfg, flat_features):
     """
-    Build a properly organized Filtered_Configuration JSON that preserves the
-    valuable original data (Metadata, Folder_Structure, ensemble summaries,
-    fiducials) and appends the extracted features.
+    Build a properly organized Filtered_Configuration JSON that preserves
+    the valuable original data and appends the extracted features.
+
+    Supports BOTH new (lowercase) and old (uppercase) JSON key conventions
+    from the automated signal processing pipeline.
     """
     summary = {}
 
-    # Preserve Metadata as-is
-    if "Metadata" in cfg:
-        summary["Metadata"] = cfg["Metadata"]
+    # ----- Metadata (new: lowercase, old: uppercase) -----
+    metadata = cfg.get("metadata") or cfg.get("Metadata")
+    if metadata:
+        summary["metadata"] = metadata
 
-    # Preserve Folder_Structure as-is
-    if "Folder_Structure" in cfg:
-        summary["Folder_Structure"] = cfg["Folder_Structure"]
+    # ----- Hyperparameters (only available in new pipeline) -----
+    if "hyperparameters" in cfg:
+        summary["hyperparameters"] = cfg["hyperparameters"]
 
-    # Compact ensemble summary (drop bulky time_axis & per-pulse logs)
+    # ----- Folder Structure -----
+    folder_struct = cfg.get("folder_structure") or cfg.get("Folder_Structure")
+    if folder_struct:
+        summary["folder_structure"] = folder_struct
+
+    # ----- Signal Quality (only in new pipeline) -----
+    if "signal_quality" in cfg:
+        summary["signal_quality"] = cfg["signal_quality"]
+
+    # ----- Pipeline Diagnostic (only in new pipeline) -----
+    if "pipeline_diagnostic" in cfg:
+        summary["pipeline_diagnostic"] = cfg["pipeline_diagnostic"]
+
+    # ----- PPG Features per Channel (only in new pipeline) -----
+    if "ppg_features_per_channel" in cfg:
+        summary["ppg_features_per_channel"] = cfg["ppg_features_per_channel"]
+
+    # ----- Golden Standard Features (only in new pipeline) -----
+    if "golden_standard_features" in cfg:
+        summary["golden_standard_features"] = cfg["golden_standard_features"]
+
+    # ----- Compact ensemble summary (drop bulky time_axis & per-pulse logs) -----
     def ensemble_summary(ens):
         if not isinstance(ens, dict):
             return {}
@@ -408,20 +445,25 @@ def build_filtered_configuration_summary(cfg, flat_features):
             "fiducials",
         ]
         out = {k: ens[k] for k in keep_keys if k in ens}
-        # Include count of feet & rejected info (compact)
         if "feet" in ens:
             out["num_feet_pairs"] = len(ens["feet"])
         if "rejected_pulses_info" in ens:
             out["rejected_pulses_info"] = ens["rejected_pulses_info"]
         return out
 
-    if "Ensemble_RED" in cfg:
-        summary["Ensemble_RED"] = ensemble_summary(cfg["Ensemble_RED"])
-    if "Ensemble_IR" in cfg:
-        summary["Ensemble_IR"] = ensemble_summary(cfg["Ensemble_IR"])
+    # Ensemble keys: new pipeline uses lowercase prefix, old uses uppercase
+    if "ensemble_RED" in cfg:
+        summary["ensemble_RED"] = ensemble_summary(cfg["ensemble_RED"])
+    elif "Ensemble_RED" in cfg:
+        summary["ensemble_RED"] = ensemble_summary(cfg["Ensemble_RED"])
 
-    # Append extracted features
-    summary["Extracted_Features"] = flat_features
+    if "ensemble_IR" in cfg:
+        summary["ensemble_IR"] = ensemble_summary(cfg["ensemble_IR"])
+    elif "Ensemble_IR" in cfg:
+        summary["ensemble_IR"] = ensemble_summary(cfg["Ensemble_IR"])
+
+    # ----- Append extracted features -----
+    summary["extracted_features"] = flat_features
 
     return summary
 
@@ -503,7 +545,7 @@ def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
 
 
 # --------------------------------------------------
-# NEW: FILE REPLACEMENT TRACKING HELPERS
+# FILE REPLACEMENT TRACKING HELPERS
 # --------------------------------------------------
 def check_existing_file(file_path):
     """
@@ -702,6 +744,24 @@ def process_window(folder_path):
     output_folder_name = f"{base_name}_Feature"
     output_folder_path = main_output_folder_path / output_folder_name
 
+    # --------------------------------------------------
+    # CLEAN REPLACE: If the output folder already exists,
+    # delete it entirely and recreate fresh.
+    # This guarantees no stale files remain from previous runs.
+    # --------------------------------------------------
+    folder_was_replaced = False
+    if output_folder_path.exists():
+        try:
+            import shutil
+            shutil.rmtree(output_folder_path)
+            folder_was_replaced = True
+            print(f"♻️  Existing folder removed and will be recreated fresh:")
+            print(f"   📁 {output_folder_path}")
+        except Exception as e:
+            print(f"⚠️  Could not remove existing folder: {e}")
+            print(f"   Proceeding with overwrite of individual files instead.")
+
+    # Recreate folders (fresh if replaced, or new if first time)
     main_output_folder_path.mkdir(parents=True, exist_ok=True)
     output_folder_path.mkdir(parents=True, exist_ok=True)
 
@@ -723,7 +783,7 @@ def process_window(folder_path):
     plot_path_planned = output_folder_path / f"{output_folder_name}_Signal_Overview.png"
 
     # --------------------------------------------------
-    # NEW: PRE-CHECK for existing files (BEFORE saving)
+    # PRE-CHECK for existing files (BEFORE saving)
     # --------------------------------------------------
     pre_check_files = [
         ("Features Table CSV", table_csv_path),
@@ -764,7 +824,7 @@ def process_window(folder_path):
     plot_path = save_signal_plot(df_full, df_ens, output_folder_path, output_folder_name)
 
     # --------------------------------------------------
-    # NEW: POST-CHECK — get new sizes for replaced files
+    # POST-CHECK — get new sizes for replaced files
     # --------------------------------------------------
     replaced_files_info = []
     for entry in existing_before:
@@ -786,7 +846,8 @@ def process_window(folder_path):
         "feature_json": str(feature_json_path),
         "filtered_config_json": str(dst_config_path),
         "signal_plot": plot_path,
-        "replaced_files": replaced_files_info,  # NEW
+        "replaced_files": replaced_files_info,
+        "folder_was_replaced": folder_was_replaced,  # NEW
     }
 
 
@@ -803,22 +864,39 @@ def main():
     selected_main_folder = resolve_selected_folder()
     print(f"\n📂 Selected main folder:\n{selected_main_folder}")
 
-    window_folders = [
+    # ----- FIX #3: Skip *_Additional folder (Plots + Combined_Report.json) -----
+    all_subfolders = [
         str(selected_main_folder / f)
         for f in os.listdir(selected_main_folder)
         if (selected_main_folder / f).is_dir()
     ]
+
+    # Filter out the *_Additional folder (not a window folder)
+    window_folders = [
+        f for f in all_subfolders
+        if not os.path.basename(f).endswith("_Additional")
+    ]
+
+    skipped_folders = [
+        f for f in all_subfolders
+        if os.path.basename(f).endswith("_Additional")
+    ]
+
     window_folders = sorted(window_folders, key=get_win_index_from_folder)
 
     if len(window_folders) == 0:
-        raise SystemExit("❌ No 2nd-step window folders found inside selected 1st-step folder")
+        raise SystemExit("❌ No window folders found inside selected main folder")
 
     print(f"\n✅ Found {len(window_folders)} window folders")
+    if skipped_folders:
+        print(f"⏭️  Skipped {len(skipped_folders)} non-window folder(s):")
+        for sf in skipped_folders:
+            print(f"   • {os.path.basename(sf)}")
 
     processed_ok = []
     processed_failed = []
 
-    # NEW: Track total replacement summary
+    # Track total replacement summary
     total_replaced_count = 0
     folders_with_replacements = 0
 
@@ -840,13 +918,18 @@ def main():
             if result.get("signal_plot"):
                 print(f"🖼️ Signal Plot:\n{result['signal_plot']}")
 
-            # NEW: Print file replacement report for this window
+            # Print file replacement report for this window
             replaced = result.get("replaced_files", [])
-            report_replaced_files(replaced, result["output_folder"])
+            folder_replaced = result.get("folder_was_replaced", False)
 
-            if replaced:
-                total_replaced_count += len(replaced)
+            if folder_replaced:
+                print(f"\n♻️  WHOLE FOLDER REPLACED — fresh files written.")
                 folders_with_replacements += 1
+            else:
+                report_replaced_files(replaced, result["output_folder"])
+                if replaced:
+                    total_replaced_count += len(replaced)
+                    folders_with_replacements += 1
 
             processed_ok.append(result["window_folder"])
 
@@ -872,7 +955,7 @@ def main():
         print(f"   - {name}")
         print(f"     Reason: {reason}")
 
-    # NEW: Global replacement summary
+    # Global replacement summary
     print("\n" + "=" * 60)
     print("♻️ FILE REPLACEMENT SUMMARY")
     print("=" * 60)

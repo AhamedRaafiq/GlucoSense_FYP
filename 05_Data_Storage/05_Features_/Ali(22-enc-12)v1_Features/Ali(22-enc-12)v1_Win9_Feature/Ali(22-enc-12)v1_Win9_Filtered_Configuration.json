@@ -1,0 +1,318 @@
+{
+    "metadata": {
+        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win9.csv",
+        "filename": "Ali(22-enc-12)v1_Win9.csv",
+        "sampling_rate_fs": 400.0,
+        "total_samples": 6000,
+        "duration_sec": 15.0,
+        "nyquist_rate": 200.0,
+        "date_processed": "2026-06-07 23:12:20"
+    },
+    "hyperparameters": {
+        "use_full_file": true,
+        "sample_start": 0,
+        "sample_end": 0,
+        "threshold_red": 0,
+        "threshold_ir": 0,
+        "spike_enable": true,
+        "kernel_size": 3,
+        "invert_enable": true,
+        "lp_enable": true,
+        "lp_cutoff_hz": 16.0,
+        "lp_order": 4,
+        "hp_enable": true,
+        "hp_cutoff_hz": 0.5,
+        "hp_order": 4,
+        "sg_enable": false,
+        "sg_window": 31,
+        "sg_poly": 3,
+        "norm_selection": 1,
+        "norm_type": "MinMax",
+        "ensemble_target_len": 220,
+        "peak_min_distance_sec": 0.4,
+        "peak_prom_factor": 0.2,
+        "valley_min_distance_sec": 0.35,
+        "valley_prom_factor": 0.1,
+        "min_foot_to_peak_sec": 0.12,
+        "max_foot_to_peak_sec": 0.4,
+        "max_valley_to_foot_sec": 0.2,
+        "max_foot_rel_height": 0.2,
+        "max_abs_vpg_at_foot": 0.5,
+        "edge_exclusion_sec": 0.1,
+        "min_beat_duration_sec": 0.35,
+        "max_beat_duration_sec": 1.5,
+        "main_peak_search_window_sec": 0.3,
+        "main_peak_min_delay_sec": 0.02,
+        "start_incomplete_margin_sec": 0.1,
+        "end_incomplete_margin_sec": 0.01,
+        "sqi_limits": {
+            "SKEWNESS_MIN": 0.0,
+            "SKEWNESS_MAX": 2.5,
+            "KURTOSIS_MIN": 1.5,
+            "KURTOSIS_MAX": 7.0,
+            "PI_MIN": 0.1,
+            "PI_MAX": 10.0,
+            "SNR_MIN_DB": 5.0,
+            "SNR_MAX_DB": 25.0,
+            "ZCR_MIN": 1.0,
+            "ZCR_MAX": 4.0
+        }
+    },
+    "folder_structure": {
+        "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
+        "main_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered",
+        "window_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Win9_Filtered",
+        "additional_folder": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional"
+    },
+    "signal_quality": {
+        "IR": {
+            "skewness": -0.21812585355186787,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.291715310645784,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 2.3132555622929685,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.2666666666666666,
+            "zcr_status": "PASS",
+            "snr_db": 17.285550393769658,
+            "snr_status": "PASS"
+        },
+        "RED": {
+            "skewness": -0.2110298468492333,
+            "skewness_status": "FAIL",
+            "kurtosis": -1.2830660704605379,
+            "kurtosis_status": "FAIL",
+            "perfusion_index_pct": 1.004552324336249,
+            "perfusion_index_status": "PASS",
+            "zcr_hz": 2.2666666666666666,
+            "zcr_status": "PASS",
+            "snr_db": 17.12826489874193,
+            "snr_status": "PASS"
+        }
+    },
+    "pipeline_diagnostic": {
+        "1_Raw": {
+            "IR": {
+                "skew": 0.24105774671902677,
+                "kurt": -1.0673866410612836,
+                "snr_db": 13.008697766892126,
+                "zcr_hz": 4.0,
+                "pi_pct": 2.725684319287211
+            },
+            "RED": {
+                "skew": 0.21284657073021,
+                "kurt": -0.9593333499260845,
+                "snr_db": 13.003536979913369,
+                "zcr_hz": 4.2,
+                "pi_pct": 1.3413639498995065
+            },
+            "R_ratio": 0.49212006702606126
+        },
+        "2_Despiked": {
+            "IR": {
+                "skew": 0.24141788855118476,
+                "kurt": -1.0643260061108406,
+                "snr_db": 13.509315834893547,
+                "zcr_hz": 2.4,
+                "pi_pct": 2.7094680516464344
+            },
+            "RED": {
+                "skew": 0.21083003633737685,
+                "kurt": -0.9599409441233919,
+                "snr_db": 13.532288101828687,
+                "zcr_hz": 2.3333333333333335,
+                "pi_pct": 1.3357350621533903
+            },
+            "R_ratio": 0.49298793589454504
+        },
+        "3_Inverted": {
+            "IR": {
+                "skew": -0.24141788855118476,
+                "kurt": -1.0643260061108406,
+                "snr_db": 13.509315834893547,
+                "zcr_hz": 2.4,
+                "pi_pct": 2.7094680516464344
+            },
+            "RED": {
+                "skew": -0.21083003633737685,
+                "kurt": -0.9599409441233919,
+                "snr_db": 13.532288101828687,
+                "zcr_hz": 2.3333333333333335,
+                "pi_pct": 1.3357350621533903
+            },
+            "R_ratio": 0.49298793589454504
+        },
+        "4_LowPass": {
+            "IR": {
+                "skew": -0.24065586575142495,
+                "kurt": -1.0643494032710952,
+                "snr_db": 13.536174368912013,
+                "zcr_hz": 2.2666666666666666,
+                "pi_pct": 2.715903091271148
+            },
+            "RED": {
+                "skew": -0.21016365069875761,
+                "kurt": -0.9600304751036148,
+                "snr_db": 13.5704844019686,
+                "zcr_hz": 2.2,
+                "pi_pct": 1.3329493213768218
+            },
+            "R_ratio": 0.49079413976915864
+        },
+        "5_SG": {
+            "IR": {
+                "skew": -0.24065586575142495,
+                "kurt": -1.0643494032710952,
+                "snr_db": 13.536174368912013,
+                "zcr_hz": 2.2666666666666666,
+                "pi_pct": 2.715903091271148
+            },
+            "RED": {
+                "skew": -0.21016365069875761,
+                "kurt": -0.9600304751036148,
+                "snr_db": 13.5704844019686,
+                "zcr_hz": 2.2,
+                "pi_pct": 1.3329493213768218
+            },
+            "R_ratio": 0.49079413976915864
+        },
+        "6_HighPass": {
+            "IR": {
+                "skew": -0.21812585355186787,
+                "kurt": -1.291715310645784,
+                "snr_db": 14.328150744804551,
+                "zcr_hz": 2.2666666666666666,
+                "pi_pct": 2.3132555622929685
+            },
+            "RED": {
+                "skew": -0.2110298468492333,
+                "kurt": -1.2830660704605379,
+                "snr_db": 14.234835410715796,
+                "zcr_hz": 2.2666666666666666,
+                "pi_pct": 1.004552324336249
+            },
+            "R_ratio": 0.4342591197924135
+        }
+    },
+    "ppg_features_per_channel": {
+        "IR": {
+            "hr": 66.77099634846114,
+            "width": 0.5094117647058823,
+            "sys_amp": 0.9336238049596324,
+            "area": 3222.410046063349,
+            "skew": -0.21812585355186867,
+            "kurt": -1.2917153106457833,
+            "pi": 2.725684319287211,
+            "zcr": 2.2666666666666666,
+            "snr": 14.328150744804521
+        },
+        "RED": {
+            "hr": 66.75938803894297,
+            "width": 0.5079411764705882,
+            "sys_amp": 0.9420479719469528,
+            "area": 3236.5455012590755,
+            "skew": -0.21102984684923318,
+            "kurt": -1.283066070460538,
+            "pi": 1.3413639498995065,
+            "zcr": 2.2666666666666666,
+            "snr": 14.23483541071581
+        }
+    },
+    "golden_standard_features": {
+        "IR": {
+            "HR_Global": 66.77099634846114,
+            "Width_Avg": 0.5214545454545454,
+            "Area_Avg": 118.53939438837592,
+            "Amp_Avg": 0.8900323992913335,
+            "Skew_Avg": -0.23124947269104076,
+            "Kurt_Avg": -1.3109389876568824,
+            "PI_Global": 2.725684319287211
+        },
+        "RED": {
+            "HR_Global": 66.75938803894297,
+            "Width_Avg": 0.5214545454545454,
+            "Area_Avg": 119.0841507909733,
+            "Amp_Avg": 0.898153055367216,
+            "Skew_Avg": -0.2268293142888414,
+            "Kurt_Avg": -1.2999959766653606,
+            "PI_Global": 1.3413639498995065
+        }
+    },
+    "ensemble_RED": {
+        "title": "RED Channel",
+        "target_len": 220,
+        "beats_used": 16,
+        "rejected_candidates": 0,
+        "rejected_pulses": 0,
+        "segmented_pulses_total": 16,
+        "avg_duration": 0.89625,
+        "fs_eff": 245.46722454672246,
+        "fiducials": {
+            "a": 4,
+            "b": 18,
+            "c": 45,
+            "d": 56,
+            "e": 72
+        },
+        "num_feet_pairs": 16,
+        "rejected_pulses_info": []
+    },
+    "ensemble_IR": {
+        "title": "IR Channel",
+        "target_len": 220,
+        "beats_used": 16,
+        "rejected_candidates": 0,
+        "rejected_pulses": 0,
+        "segmented_pulses_total": 16,
+        "avg_duration": 0.89625,
+        "fs_eff": 245.46722454672246,
+        "fiducials": {
+            "a": 4,
+            "b": 18,
+            "c": 45,
+            "d": 55,
+            "e": 75
+        },
+        "num_feet_pairs": 16,
+        "rejected_pulses_info": []
+    },
+    "extracted_features": {
+        "Red_Skewness": -0.2283894739099263,
+        "IR_Skewness": -0.23284003469939904,
+        "Red_Kurtosis": -1.3022556393401856,
+        "IR_Kurtosis": -1.3134514874139749,
+        "Red_Shannon Entropy": 5.856546177808123,
+        "IR_Shannon Entropy": 5.855936157372754,
+        "Red_Spectral Entropy": 1.6672869830755572,
+        "IR_Spectral Entropy": 1.656506716524066,
+        "Red_pulse width": 0.5031389437469365,
+        "IR_pulse width": 0.5052887120861008,
+        "Red_PPI": 0.89875,
+        "IR_PPI": 0.8985937500000001,
+        "Red_systolic amplitude": 0.8981530553672159,
+        "IR_systolic amplitude": 0.8900323992913336,
+        "Red_BPM": 66.75938803894297,
+        "IR_BPM": 66.77099634846113,
+        "Red_HRV": 45.488093680288095,
+        "IR_HRV": 44.91629947283427,
+        "Red_TEO Mean": 0.00013596989937805052,
+        "IR_TEO Mean": 0.00013244088109868487,
+        "Red_TEO std dev": 0.0003490989986459509,
+        "IR_TEO std dev": 0.00033554929704345736,
+        "Red_1st_Derivative_Mean": -0.007104772178010163,
+        "IR_1st_Derivative_Mean": -0.0054357074169941325,
+        "Red_2nd_Derivative_Mean": 0.8441206761823623,
+        "IR_2nd_Derivative_Mean": 0.8194427348874103,
+        "Red_2nd_Derivative_Skewness": 1.836799305881408,
+        "IR_2nd_Derivative_Skewness": 1.8925386382601923,
+        "Red_Harmonic ratio": 3.185928332454982,
+        "IR_Harmonic ratio": 3.3183602521054603,
+        "Ensemble ratio": 0.8406784690839599,
+        "Red_Rise time": 0.1391438356164383,
+        "IR_Rise time": 0.143236301369863,
+        "Red_Decay time": 0.7571061643835617,
+        "IR_Decay time": 0.753013698630137,
+        "Red_Dicrotic notch": 0.3396746575342466,
+        "IR_Dicrotic notch": 0.3355821917808219
+    }
+}

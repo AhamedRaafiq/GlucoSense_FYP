@@ -1719,11 +1719,79 @@ def build_window_paths(filepath, output_root):
         "file_config": f"{filename_no_ext}_Filtered_Configuration.json"
     }
 
-def validate_saved_data(window_path, paths, expected_lengths):
-    """Validates saved CSVs by reloading and checking dimensions."""
+def validate_saved_data(window_path, paths, expected_lengths, in_memory_arrays=None):
+    """
+    Validates saved CSVs by:
+    1. Checking file existence
+    2. Verifying row counts
+    3. Numerically comparing saved data against in-memory arrays
+       (uses tolerance to allow CSV float round-trip precision loss)
+    
+    in_memory_arrays: dict of {column_name: numpy_array} for data integrity check
+    """
     report = {"status": "PASS", "checks": [], "issues": []}
     
-    # Check full CSV
+    # Tolerance for float comparison (CSV round-trip can lose ~1e-10 precision)
+    RTOL = 1e-9   # relative tolerance
+    ATOL = 1e-9   # absolute tolerance
+    
+    def compare_arrays(name, mem_arr, disk_arr):
+        """Returns dict with comparison results."""
+        mem = np.asarray(mem_arr, dtype=np.float64)
+        disk = np.asarray(disk_arr, dtype=np.float64)
+        
+        if len(mem) != len(disk):
+            return {
+                "match": False,
+                "length_mem": len(mem),
+                "length_disk": len(disk),
+                "max_abs_diff": None,
+                "reason": "length_mismatch"
+            }
+        
+        # Handle NaN positions: they must match in both arrays
+        nan_mem = np.isnan(mem)
+        nan_disk = np.isnan(disk)
+        
+        if not np.array_equal(nan_mem, nan_disk):
+            return {
+                "match": False,
+                "length_mem": len(mem),
+                "length_disk": len(disk),
+                "max_abs_diff": None,
+                "reason": "nan_position_mismatch"
+            }
+        
+        # Compare non-NaN values with tolerance
+        valid_mask = ~nan_mem
+        if not np.any(valid_mask):
+            # All NaN — that's a match since NaN positions agree
+            return {
+                "match": True,
+                "length_mem": len(mem),
+                "length_disk": len(disk),
+                "max_abs_diff": 0.0,
+                "reason": "all_nan_match"
+            }
+        
+        diff = np.abs(mem[valid_mask] - disk[valid_mask])
+        max_abs_diff = float(np.max(diff))
+        
+        # Use isclose for tolerance-based comparison
+        close = np.allclose(
+            mem[valid_mask], disk[valid_mask],
+            rtol=RTOL, atol=ATOL, equal_nan=False
+        )
+        
+        return {
+            "match": bool(close),
+            "length_mem": len(mem),
+            "length_disk": len(disk),
+            "max_abs_diff": max_abs_diff,
+            "reason": "within_tolerance" if close else "exceeds_tolerance"
+        }
+    
+    # ----- Check Full CSV -----
     full_csv_path = os.path.join(window_path, paths["file_full"])
     if os.path.exists(full_csv_path):
         df_full = pd.read_csv(full_csv_path)
@@ -1733,17 +1801,34 @@ def validate_saved_data(window_path, paths, expected_lengths):
             "rows": len(df_full),
             "cols": list(df_full.columns),
             "expected_rows": expected_lengths["full_len"],
-            "match": len(df_full) == expected_lengths["full_len"]
+            "row_match": len(df_full) == expected_lengths["full_len"]
         }
-        report["checks"].append(check)
-        if not check["match"]:
+        if not check["row_match"]:
             report["issues"].append(f"Full CSV row mismatch: got {len(df_full)}, expected {expected_lengths['full_len']}")
             report["status"] = "FAIL"
+        
+        # Numerical integrity check
+        if in_memory_arrays and "full" in in_memory_arrays:
+            data_check = {}
+            for col, in_mem_arr in in_memory_arrays["full"].items():
+                if col in df_full.columns:
+                    reloaded = df_full[col].to_numpy()
+                    cmp = compare_arrays(col, in_mem_arr, reloaded)
+                    data_check[col] = cmp
+                    if not cmp["match"]:
+                        report["issues"].append(
+                            f"Full CSV column '{col}' mismatch ({cmp['reason']}, "
+                            f"max_diff={cmp['max_abs_diff']})"
+                        )
+                        report["status"] = "FAIL"
+            check["data_check"] = data_check
+        
+        report["checks"].append(check)
     else:
         report["issues"].append(f"Missing file: {paths['file_full']}")
         report["status"] = "FAIL"
     
-    # Check ensemble CSV
+    # ----- Check Ensemble CSV -----
     ens_csv_path = os.path.join(window_path, paths["file_ensemble"])
     if os.path.exists(ens_csv_path):
         df_ens = pd.read_csv(ens_csv_path)
@@ -1753,17 +1838,34 @@ def validate_saved_data(window_path, paths, expected_lengths):
             "rows": len(df_ens),
             "cols": list(df_ens.columns),
             "expected_rows": expected_lengths["ensemble_len"],
-            "match": len(df_ens) == expected_lengths["ensemble_len"]
+            "row_match": len(df_ens) == expected_lengths["ensemble_len"]
         }
-        report["checks"].append(check)
-        if not check["match"]:
+        if not check["row_match"]:
             report["issues"].append(f"Ensemble CSV row mismatch: got {len(df_ens)}, expected {expected_lengths['ensemble_len']}")
             report["status"] = "FAIL"
+        
+        # Numerical integrity check (handles NaN padding)
+        if in_memory_arrays and "ensemble" in in_memory_arrays:
+            data_check = {}
+            for col, in_mem_arr in in_memory_arrays["ensemble"].items():
+                if col in df_ens.columns:
+                    reloaded = df_ens[col].to_numpy()
+                    cmp = compare_arrays(col, in_mem_arr, reloaded)
+                    data_check[col] = cmp
+                    if not cmp["match"]:
+                        report["issues"].append(
+                            f"Ensemble CSV column '{col}' mismatch ({cmp['reason']}, "
+                            f"max_diff={cmp['max_abs_diff']})"
+                        )
+                        report["status"] = "FAIL"
+            check["data_check"] = data_check
+        
+        report["checks"].append(check)
     else:
         report["issues"].append(f"Missing file: {paths['file_ensemble']}")
         report["status"] = "FAIL"
     
-    # Check config JSON
+    # ----- Check Config JSON -----
     cfg_path = os.path.join(window_path, paths["file_config"])
     if os.path.exists(cfg_path):
         report["checks"].append({
@@ -1834,12 +1936,15 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         # ============ STEP 5: LOW-PASS ============
         ir_filtered, red_filtered = step5_lowpass(ir_inverted, red_inverted, plot_dirs["05"], base_name)
         
-        # ============ STEP 6: SG SMOOTH ============
+                # ============ STEP 6: SG SMOOTH ============
+        # Note: SG is OFF by default (SG_ENABLE=False), so ir_smoothed == ir_filtered.
+        # If enabled, SG output feeds correctly into Step 7 (proper sequential chain).
         ir_smoothed, red_smoothed = step6_savgol(ir_filtered, red_filtered, plot_dirs["06"], base_name)
         
         # ============ STEP 7: HIGH-PASS ============
-        ir_hpf, red_hpf = step7_highpass(ir_smoothed, red_smoothed, plot_dirs["07"], base_name)
-        
+        # Takes SG output as input (proper pipeline chaining).
+        # When SG_ENABLE=False, this is equivalent to using LP output directly.
+        ir_hpf, red_hpf = step7_highpass(ir_smoothed, red_smoothed, plot_dirs["07"], base_name)        
         # ============ STEP 8: NORMALIZE ============
         ir_norm, red_norm = step8_normalize(ir_hpf, red_hpf, plot_dirs["08"], base_name)
         
@@ -1931,6 +2036,45 @@ def process_single_window(filepath, output_root, file_idx, total_files):
                 "nyquist_rate": float(nyquist_rate),
                 "date_processed": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             },
+            "hyperparameters": {
+                "use_full_file": USE_FULL_FILE,
+                "sample_start": SAMPLE_START,
+                "sample_end": SAMPLE_END,
+                "threshold_red": THRESHOLD_RED,
+                "threshold_ir": THRESHOLD_IR,
+                "spike_enable": SPIKE_ENABLE,
+                "kernel_size": KERNEL_SIZE,
+                "invert_enable": INVERT_ENABLE,
+                "lp_enable": LP_ENABLE,
+                "lp_cutoff_hz": LP_CUTOFF,
+                "lp_order": LP_ORDER,
+                "hp_enable": HP_ENABLE,
+                "hp_cutoff_hz": HP_CUTOFF,
+                "hp_order": HP_ORDER,
+                "sg_enable": SG_ENABLE,
+                "sg_window": SG_WINDOW,
+                "sg_poly": SG_POLY,
+                "norm_selection": NORM_SELECTION,
+                "norm_type": "MinMax" if NORM_SELECTION == 1 else "ZScore",
+                "ensemble_target_len": ENSEMBLE_TARGET_LEN,
+                "peak_min_distance_sec": PEAK_MIN_DISTANCE_SEC,
+                "peak_prom_factor": PEAK_PROM_FACTOR,
+                "valley_min_distance_sec": VALLEY_MIN_DISTANCE_SEC,
+                "valley_prom_factor": VALLEY_PROM_FACTOR,
+                "min_foot_to_peak_sec": MIN_FOOT_TO_PEAK_SEC,
+                "max_foot_to_peak_sec": MAX_FOOT_TO_PEAK_SEC,
+                "max_valley_to_foot_sec": MAX_VALLEY_TO_FOOT_SEC,
+                "max_foot_rel_height": MAX_FOOT_REL_HEIGHT,
+                "max_abs_vpg_at_foot": MAX_ABS_VPG_AT_FOOT,
+                "edge_exclusion_sec": EDGE_EXCLUSION_SEC,
+                "min_beat_duration_sec": MIN_BEAT_DURATION_SEC,
+                "max_beat_duration_sec": MAX_BEAT_DURATION_SEC,
+                "main_peak_search_window_sec": MAIN_PEAK_SEARCH_WINDOW_SEC,
+                "main_peak_min_delay_sec": MAIN_PEAK_MIN_DELAY_SEC,
+                "start_incomplete_margin_sec": START_INCOMPLETE_MARGIN_SEC,
+                "end_incomplete_margin_sec": END_INCOMPLETE_MARGIN_SEC,
+                "sqi_limits": SQI_LIMITS
+            },
             "folder_structure": {
                 "output_root": output_root,
                 "main_folder": paths["main_path"],
@@ -1958,11 +2102,33 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         with open(path_config, "w") as f:
             json.dump(to_json_safe(window_config), f, indent=4)
         
-        # ============ STEP 13d: VALIDATE SAVED DATA ============
+                # ============ STEP 13d: VALIDATE SAVED DATA (with hash check) ============
+        in_memory_for_validation = {
+            "full": {
+                "Red_AC_HighPass": red_hpf,
+                "IR_AC_HighPass":  ir_hpf,
+                "Red_DC_LowPass":  red_filtered,
+                "IR_DC_LowPass":   ir_filtered,
+                "Red_Normalized":  red_norm,
+                "IR_Normalized":   ir_norm
+            },
+            "ensemble": {
+                "Time_Red_s":       make_padded_column(meta_red["time_axis"], max_len),
+                "Red_Ensemble_Avg": make_padded_column(avg_wave_red, max_len),
+                "Red_VPG":          make_padded_column(vpg_red, max_len),
+                "Red_SDPPG":        make_padded_column(sdppg_red, max_len),
+                "Time_IR_s":        make_padded_column(meta_ir["time_axis"], max_len),
+                "IR_Ensemble_Avg":  make_padded_column(avg_wave_ir, max_len),
+                "IR_VPG":           make_padded_column(vpg_ir, max_len),
+                "IR_SDPPG":         make_padded_column(sdppg_ir, max_len),
+            }
+        }
+        
         validation = validate_saved_data(
             paths["window_path"],
             paths,
-            expected_lengths={"full_len": len(df_full), "ensemble_len": len(df_ensemble)}
+            expected_lengths={"full_len": len(df_full), "ensemble_len": len(df_ensemble)},
+            in_memory_arrays=in_memory_for_validation
         )
         
         # ============ COLLECT RESULTS ============
@@ -2150,10 +2316,14 @@ for idx, filepath in enumerate(csv_files, start=1):
         print(f"        ✅ DONE — RED beats: {beats_r}, IR beats: {beats_i} | Validation: {val_str}{replaced_str}")
     else:
         print(f"        ❌ FAILED — {result['error']}")
+        # Trim traceback to last 500 chars for compact JSON
+        trimmed_tb = result.get("traceback", "")
+        if len(trimmed_tb) > 500:
+            trimmed_tb = "...[truncated]...\n" + trimmed_tb[-500:]
         combined_report["errors_log"].append({
             "filename": filename,
             "error": result["error"],
-            "traceback": result.get("traceback", "")
+            "traceback_tail": trimmed_tb
         })
 
 # -------------------------------------------------
