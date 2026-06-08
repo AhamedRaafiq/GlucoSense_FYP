@@ -1,7 +1,14 @@
 # ==========================================
 # STEP 8 (Sub-task 1 & 2): HANDLE NaN + OUTLIERS
-# Input: Uncleaned 24-feature dataset from Step 7
-# Output: Cleaned dataset with NaN imputed & outliers clipped
+# Updated:
+# - Popup message reflects new Step 7 naming (Master dataset with 24F)
+# - Output folder naming: Master dataset 24F cleaned YYYY-MM-DD HH-MM-SS
+# - Timestamp format: YYYY-MM-DD HH-MM-SS (consistent with Step 7)
+# - Validation that selected folder is from Step 7
+# - Auto-detection of latest Step 7 output folder with report
+# - Step 7 cross-reference in JSON log for full traceability
+# - Variable naming cleanup (step1_json_data → step7_json_data)
+# - All NaN / Outlier calculations preserved exactly
 # ==========================================
 
 import os
@@ -31,9 +38,110 @@ TARGET_COLUMN = "Glucose level (mg/dl)"
 # IQR multiplier for outlier detection
 IQR_MULTIPLIER = 1.5
 
+# Step 7 output identification patterns
+STEP7_FOLDER_IDENTIFIER     = "Master dataset with 24F"
+STEP7_JSON_PIPELINE_STEP_ID = "STEP 7"
+
 
 # --------------------------------------------------
-# HELPER FUNCTIONS
+# AUTO-DETECT LATEST STEP 7 OUTPUT FOLDER
+# --------------------------------------------------
+def find_latest_step7_output_folder(root_path):
+    """
+    Scans INPUT_ROOT for folders whose name contains STEP7_FOLDER_IDENTIFIER.
+    Sorts by modification time and returns info about all detected folders.
+    This is purely informational — the user still manually selects the folder.
+
+    Returns: dict with detection results.
+    """
+    root = Path(root_path)
+    if not root.exists():
+        return {"found": False, "latest_folder": None, "all_folders": [], "total_folders": 0}
+
+    candidates = [
+        p for p in root.iterdir()
+        if p.is_dir() and STEP7_FOLDER_IDENTIFIER.lower() in p.name.lower()
+    ]
+
+    if not candidates:
+        return {"found": False, "latest_folder": None, "all_folders": [], "total_folders": 0}
+
+    # Sort by modification time (most recent first)
+    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+
+    folder_info = []
+    for p in candidates:
+        try:
+            mtime = datetime.fromtimestamp(p.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+        except Exception:
+            mtime = "Unknown"
+
+        # Check contents
+        csv_files  = list(p.glob("*.csv"))
+        json_files = list(p.glob("*.json"))
+
+        folder_info.append({
+            "folder_name":    p.name,
+            "full_path":      str(p),
+            "last_modified":  mtime,
+            "has_csv":        len(csv_files) > 0,
+            "csv_name":       csv_files[0].name if csv_files else None,
+            "has_json":       len(json_files) > 0,
+            "json_name":      json_files[0].name if json_files else None,
+        })
+
+    return {
+        "found":          True,
+        "latest_folder":  folder_info[0],
+        "all_folders":    folder_info,
+        "total_folders":  len(folder_info),
+    }
+
+
+def print_step7_folder_detection_report(detection_result):
+    """
+    Prints a clean terminal report of detected Step 7 output folders.
+    Purely informational — helps user know which folder to select.
+    """
+    print(f"\n{'─' * 60}")
+    print(f"🔍 STEP 7 OUTPUT FOLDER AUTO-DETECTION REPORT")
+    print(f"{'─' * 60}")
+
+    if not detection_result["found"]:
+        print(f"   ⚠️  No '{STEP7_FOLDER_IDENTIFIER}' folders found in:")
+        print(f"       {INPUT_ROOT}")
+        print(f"   Please ensure Step 7 has been run before Step 8.")
+        return
+
+    total  = detection_result["total_folders"]
+    latest = detection_result["latest_folder"]
+
+    print(f"   📁 Found {total} Step 7 output folder(s) in:")
+    print(f"       {INPUT_ROOT}")
+    print(f"")
+    print(f"   ✅ LATEST (most recently modified):")
+    print(f"      📁 {latest['folder_name']}")
+    print(f"         Last modified : {latest['last_modified']}")
+    print(f"         Has CSV       : {'✅ ' + latest['csv_name'] if latest['has_csv'] else '❌ No CSV'}")
+    print(f"         Has JSON      : {'✅ ' + latest['json_name'] if latest['has_json'] else '❌ No JSON'}")
+    print(f"")
+
+    if len(detection_result["all_folders"]) > 1:
+        print(f"   📋 All detected Step 7 folders (newest → oldest):")
+        for idx, info in enumerate(detection_result["all_folders"], start=1):
+            marker = "← LATEST" if idx == 1 else ""
+            print(f"      {idx}. {info['folder_name']}  {marker}")
+            print(f"         Modified : {info['last_modified']}")
+            print(f"         CSV      : {info['csv_name'] if info['has_csv'] else 'NOT FOUND'}")
+        print(f"")
+
+    print(f"   ℹ️  The folder browser will open at the root folder.")
+    print(f"       Please select the Step 7 folder listed above.")
+    print(f"{'─' * 60}")
+
+
+# --------------------------------------------------
+# FOLDER SELECTOR POPUP (updated message)
 # --------------------------------------------------
 def popup_folder_selector(initial_dir):
     """
@@ -46,20 +154,30 @@ def popup_folder_selector(initial_dir):
     root.attributes("-topmost", True)
 
     messagebox.showinfo(
-        title="Data Cleaning Pipeline — Folder Selection",
+        title="Step 8 — Data Cleaning Pipeline",
         message=(
             "Select the Step 7 OUTPUT FOLDER to process.\n\n"
-            "This folder should contain:\n"
-            "  • Uncleaned_24_feature_data_Set_XXXXXX.csv\n"
-            "  • Uncleaned_24_feature_data_Set_XXXXXX.json\n\n"
-            "Select the FOLDER itself (not the files inside).\n\n"
+            "──────────────────────────────────────────\n"
+            "EXPECTED FOLDER NAME PATTERN:\n"
+            "   Master dataset with 24F <timestamp>\n\n"
+            "EXPECTED CONTENTS:\n"
+            "   Master dataset with 24F <timestamp>/\n"
+            "       ├── Master dataset with 24F <timestamp>.csv\n"
+            "       └── Master dataset with 24F <timestamp>.json\n\n"
+            "──────────────────────────────────────────\n"
+            "The script will automatically:\n"
+            "  1. Find the CSV and JSON files inside\n"
+            "  2. Validate this is a Step 7 output\n"
+            "  3. Clean NaN values and clip outliers\n\n"
+            "Check the terminal for which folder was\n"
+            "detected as the latest one.\n\n"
             "Click OK to open the folder browser."
         ),
     )
 
     selected_folder = filedialog.askdirectory(
         initialdir=str(initial_dir),
-        title="Select Step 7 Output FOLDER (contains CSV + JSON)",
+        title="Select Step 7 Output FOLDER (Master dataset with 24F ...)",
     )
 
     root.destroy()
@@ -70,6 +188,9 @@ def popup_folder_selector(initial_dir):
     return Path(selected_folder)
 
 
+# --------------------------------------------------
+# FILE FINDERS (unchanged logic)
+# --------------------------------------------------
 def find_csv_and_json_in_folder(folder_path):
     """
     Automatically find the CSV and JSON files inside the selected folder.
@@ -80,8 +201,7 @@ def find_csv_and_json_in_folder(folder_path):
     if not folder.exists() or not folder.is_dir():
         raise FileNotFoundError(f"Folder not found or not a directory: {folder}")
 
-    # Find CSV files
-    csv_files = list(folder.glob("*.csv"))
+    csv_files  = list(folder.glob("*.csv"))
     json_files = list(folder.glob("*.json"))
 
     if len(csv_files) == 0:
@@ -94,12 +214,203 @@ def find_csv_and_json_in_folder(folder_path):
     if len(json_files) > 1:
         print(f"   ⚠️ Multiple JSON files found. Using first one: {json_files[0].name}")
 
-    csv_path = csv_files[0]
+    csv_path  = csv_files[0]
     json_path = json_files[0]
 
     return csv_path, json_path
 
 
+# --------------------------------------------------
+# VALIDATION: IS THIS A STEP 7 OUTPUT?
+# --------------------------------------------------
+def validate_is_step7_output(folder_path, df, json_data):
+    """
+    Validates that the selected folder is a genuine Step 7 output.
+
+    Checks:
+      1. Folder name contains STEP7_FOLDER_IDENTIFIER
+      2. CSV has expected 25 columns (24 features + 1 target)
+      3. TARGET_COLUMN exists in CSV
+      4. CSV has more than 0 rows
+      5. JSON contains pipeline_step = "STEP 7"
+
+    Returns: dict with validation results, warnings, and errors.
+    """
+    folder_path = Path(folder_path)
+    warnings    = []
+    errors      = []
+
+    # ── Check 1: Folder name ──
+    if STEP7_FOLDER_IDENTIFIER.lower() not in folder_path.name.lower():
+        warnings.append(
+            f"⚠️  Folder name does not match expected Step 7 pattern.\n"
+            f"   Selected : '{folder_path.name}'\n"
+            f"   Expected : Contains '{STEP7_FOLDER_IDENTIFIER}'\n"
+            f"   Proceeding — but please verify this is a Step 7 output folder."
+        )
+
+    # ── Check 2: Column count ──
+    expected_columns = 25   # 24 features + 1 target
+    if df.shape[1] != expected_columns:
+        errors.append(
+            f"Column count mismatch.\n"
+            f"   Found    : {df.shape[1]} columns\n"
+            f"   Expected : {expected_columns} (24 features + 1 target)\n"
+            f"   This does not appear to be a valid Step 7 output file."
+        )
+
+    # ── Check 3: Target column exists ──
+    if TARGET_COLUMN not in df.columns:
+        errors.append(
+            f"Target column '{TARGET_COLUMN}' not found in CSV.\n"
+            f"   Available columns: {list(df.columns)}"
+        )
+
+    # ── Check 4: Row count ──
+    if df.shape[0] == 0:
+        errors.append("CSV has 0 rows. Cannot process an empty dataset.")
+    elif df.shape[0] < 3:
+        warnings.append(
+            f"⚠️  CSV has only {df.shape[0]} row(s).\n"
+            f"   Cleaning will proceed, but results may not be meaningful\n"
+            f"   with very few samples."
+        )
+
+    # ── Check 5: JSON pipeline step ──
+    pipeline_step = json_data.get("pipeline_info", {}).get("pipeline_step", "")
+    if STEP7_JSON_PIPELINE_STEP_ID.lower() not in pipeline_step.lower():
+        warnings.append(
+            f"⚠️  JSON log does not identify as Step 7 output.\n"
+            f"   pipeline_step found : '{pipeline_step}'\n"
+            f"   Expected            : Contains '{STEP7_JSON_PIPELINE_STEP_ID}'\n"
+            f"   Proceeding — but verify you selected the correct folder."
+        )
+
+    passed = len(errors) == 0
+
+    return {
+        "passed":             passed,
+        "folder_name":        folder_path.name,
+        "column_count":       df.shape[1],
+        "row_count":          df.shape[0],
+        "has_target_column":  TARGET_COLUMN in df.columns,
+        "json_pipeline_step": pipeline_step,
+        "warnings":           warnings,
+        "errors":             errors,
+    }
+
+
+# --------------------------------------------------
+# STEP 7 CROSS-REFERENCE BUILDER
+# --------------------------------------------------
+def build_step7_reference_section(step7_json_data, step7_json_path, step7_csv_path):
+    """
+    Builds a detailed cross-reference section for Step 7 to embed
+    inside the Step 8 JSON log. Provides full pipeline traceability:
+      Step 6 → Step 7 → Step 8
+
+    Returns: dict ready to insert into JSON log.
+    """
+    if step7_json_data is None:
+        return {
+            "status":  "not_found",
+            "message": (
+                "Step 7 JSON log was not found alongside the input CSV. "
+                "This may mean the JSON was moved or deleted. "
+                "Step 8 can still proceed without it, but traceability is reduced."
+            ),
+            "step7_log_path": None,
+        }
+
+    # Safe extraction helper
+    def safe_get(d, *keys, default="Not recorded"):
+        current = d
+        for k in keys:
+            if isinstance(current, dict) and k in current:
+                current = current[k]
+            else:
+                return default
+        return current
+
+    pipeline_info      = safe_get(step7_json_data, "pipeline_info",                  default={})
+    file_paths         = safe_get(step7_json_data, "file_paths",                     default={})
+    dataset_summary    = safe_get(step7_json_data, "dataset_transformation_summary", default={})
+    feature_comp       = safe_get(step7_json_data, "feature_composition",            default={})
+    verification       = safe_get(step7_json_data, "verification_results",           default={})
+    step6_ref          = safe_get(step7_json_data, "step6_pipeline_reference",       default={})
+    batch_detection    = safe_get(step7_json_data, "batch_folder_detection",         default={})
+
+    reference_section = {
+        "status":         "found",
+        "step7_log_file": str(step7_json_path),
+
+        "pipeline_provenance": {
+            "description": (
+                "This section records the Step 7 pipeline run that produced the "
+                "engineered dataset used as input to this Step 8 cleaning run. "
+                "It provides full traceability: Raw Features → Step 6 (Combine) → "
+                "Step 7 (Feature Engineering) → Step 8 (Cleaning)."
+            ),
+            "step7_pipeline_name":        safe_get(pipeline_info, "pipeline_name"),
+            "step7_pipeline_step":        safe_get(pipeline_info, "pipeline_step"),
+            "step7_execution_timestamp":  safe_get(pipeline_info, "execution_timestamp"),
+            "step7_execution_date":       safe_get(pipeline_info, "execution_date_readable"),
+            "step7_input_master_csv":     safe_get(file_paths,    "input_master_csv"),
+            "step7_output_engineered_csv": safe_get(file_paths,   "output_engineered_csv"),
+            "step7_csv_used_in_step8":    str(step7_csv_path),
+        },
+
+        "feature_engineering_summary": {
+            "tier_1_ir_base_count":    safe_get(feature_comp, "tier_1_ir_base_count"),
+            "tier_1_description":      safe_get(feature_comp, "tier_1_description"),
+            "tier_2_engineered_count": safe_get(feature_comp, "tier_2_engineered_count"),
+            "tier_2_description":      safe_get(feature_comp, "tier_2_description"),
+            "tier_3_keep_as_is_count": safe_get(feature_comp, "tier_3_keep_as_is_count"),
+            "tier_3_description":      safe_get(feature_comp, "tier_3_description"),
+            "total_features":          safe_get(feature_comp, "total_features"),
+            "total_columns":           safe_get(feature_comp, "total_columns"),
+            "target_column":           TARGET_COLUMN,
+        },
+
+        "dataset_transformation_at_step7": {
+            "original_total_columns":    safe_get(dataset_summary, "original_total_columns"),
+            "original_total_rows":       safe_get(dataset_summary, "original_total_rows"),
+            "engineered_total_columns":  safe_get(dataset_summary, "engineered_total_columns"),
+            "engineered_total_rows":     safe_get(dataset_summary, "engineered_total_rows"),
+            "reduction_summary":         safe_get(dataset_summary, "reduction_summary"),
+        },
+
+        "step7_verification_results": verification,
+
+        "upstream_pipeline_chain": {
+            "description": (
+                "Step 7 may contain a cross-reference to Step 6, which in turn "
+                "references the original averaged features and metadata. "
+                "This section preserves that upstream chain for full audit trail."
+            ),
+            "step6_reference_from_step7":  step6_ref,
+            "batch_detection_from_step7":  batch_detection,
+        },
+
+        "data_integrity_notes": {
+            "description": (
+                "The number of columns and rows entering Step 8 should match "
+                "what Step 7 produced. Any mismatch indicates manual editing "
+                "between pipeline steps."
+            ),
+            "expected_columns_from_step7": safe_get(feature_comp, "total_columns"),
+            "expected_rows_from_step7":    safe_get(dataset_summary, "engineered_total_rows"),
+        },
+
+        "full_step7_log_raw": step7_json_data,
+    }
+
+    return reference_section
+
+
+# --------------------------------------------------
+# FILE LOADERS (unchanged)
+# --------------------------------------------------
 def load_csv(file_path):
     """Load a CSV file and return DataFrame."""
     if not file_path.exists():
@@ -146,6 +457,7 @@ def check_existing_file(file_path):
 
 # --------------------------------------------------
 # SUB-TASK 1: HANDLE NaN VALUES
+# ⚠️ ALL CALCULATIONS PRESERVED EXACTLY — NO CHANGES
 # --------------------------------------------------
 def analyze_nan_values(df):
     """
@@ -172,7 +484,6 @@ def analyze_nan_values(df):
         total_nans += col_nan_count
 
         if col_nan_count > 0:
-            # Find exact row indices where NaN exists
             nan_row_indices = df.index[df[col].isna()].tolist()
 
             col_info = {
@@ -266,13 +577,9 @@ def handle_nan_values(df, nan_analysis):
         col_nan_count = int(df_clean[col].isna().sum())
 
         if col_nan_count > 0:
-            # Calculate median of non-NaN values
             median_val = float(df_clean[col].median())
-
-            # Find exact locations of NaN
             nan_indices = df_clean.index[df_clean[col].isna()].tolist()
 
-            # Record each imputation
             imputation_details = []
             for idx in nan_indices:
                 imputation_details.append({
@@ -282,7 +589,6 @@ def handle_nan_values(df, nan_analysis):
                     "imputation_method": "median",
                 })
 
-            # Perform imputation
             df_clean[col] = df_clean[col].fillna(median_val)
             total_imputed += col_nan_count
 
@@ -324,6 +630,7 @@ def handle_nan_values(df, nan_analysis):
 
 # --------------------------------------------------
 # SUB-TASK 2: HANDLE OUTLIERS (IQR CLIPPING)
+# ⚠️ ALL CALCULATIONS PRESERVED EXACTLY — NO CHANGES
 # --------------------------------------------------
 def analyze_outliers(df):
     """
@@ -357,7 +664,6 @@ def analyze_outliers(df):
         lower_bound = q1 - IQR_MULTIPLIER * iqr
         upper_bound = q3 + IQR_MULTIPLIER * iqr
 
-        # Find outlier positions
         below_mask = df[col] < lower_bound
         above_mask = df[col] > upper_bound
 
@@ -445,7 +751,6 @@ def clip_outliers(df, outlier_analysis):
             "clipped_values": [],
         }
 
-        # Clip values below lower bound
         for outlier_info in col_stats["outliers_below"]:
             row_idx = outlier_info["row_index"]
             original_val = outlier_info["original_value"]
@@ -464,7 +769,6 @@ def clip_outliers(df, outlier_analysis):
 
             print(f"   ✂️ {col} [row {row_idx}]: {original_val:.6f} → {lower_bound:.6f} (clipped UP to lower bound)")
 
-        # Clip values above upper bound
         for outlier_info in col_stats["outliers_above"]:
             row_idx = outlier_info["row_index"]
             original_val = outlier_info["original_value"]
@@ -527,7 +831,7 @@ def clip_outliers(df, outlier_analysis):
 
 
 # --------------------------------------------------
-# VERIFICATION
+# VERIFICATION (unchanged)
 # --------------------------------------------------
 def verify_cleaned_dataset(cleaned_df, original_df):
     """
@@ -616,7 +920,7 @@ def verify_cleaned_dataset(cleaned_df, original_df):
 
 
 # --------------------------------------------------
-# JSON LOG BUILDER
+# JSON LOG BUILDER (updated with Step 7 cross-reference)
 # --------------------------------------------------
 def build_cleaning_json_log(
     input_csv_path,
@@ -627,40 +931,41 @@ def build_cleaning_json_log(
     output_folder_path,
     original_df,
     cleaned_df,
-    step1_json_data,
+    step7_json_data,
     nan_analysis,
     nan_handling_log,
     outlier_analysis,
     clipping_log,
     verification_result,
     timestamp_str,
+    step7_reference_section,
+    step7_detection_result,
 ):
     """Build comprehensive JSON log for the cleaning pipeline."""
 
-    # Feature column statistics before and after
     feature_columns = [col for col in cleaned_df.columns if col != TARGET_COLUMN]
     feature_stats_before = {}
-    feature_stats_after = {}
+    feature_stats_after  = {}
 
     for col in feature_columns:
         if col in original_df.columns:
             orig_vals = original_df[col].dropna()
             if len(orig_vals) > 0:
                 feature_stats_before[col] = {
-                    "mean": float(orig_vals.mean()),
-                    "std": float(orig_vals.std()),
-                    "min": float(orig_vals.min()),
-                    "max": float(orig_vals.max()),
+                    "mean":   float(orig_vals.mean()),
+                    "std":    float(orig_vals.std()),
+                    "min":    float(orig_vals.min()),
+                    "max":    float(orig_vals.max()),
                     "median": float(orig_vals.median()),
                 }
 
         clean_vals = cleaned_df[col].dropna()
         if len(clean_vals) > 0:
             feature_stats_after[col] = {
-                "mean": float(clean_vals.mean()),
-                "std": float(clean_vals.std()),
-                "min": float(clean_vals.min()),
-                "max": float(clean_vals.max()),
+                "mean":   float(clean_vals.mean()),
+                "std":    float(clean_vals.std()),
+                "min":    float(clean_vals.min()),
+                "max":    float(clean_vals.max()),
                 "median": float(clean_vals.median()),
             }
 
@@ -672,24 +977,45 @@ def build_cleaning_json_log(
             "execution_date_readable": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "previous_step": "STEP 7 (Feature Engineering)",
         },
+
+        # NEW: Step 7 cross-reference for full pipeline traceability
+        "step7_pipeline_reference": step7_reference_section,
+
+        # NEW: Step 7 folder detection info
+        "step7_folder_detection": {
+            "description": (
+                "Auto-detection scan of Step 7 output folders in the input root. "
+                "Informational only — the user manually selected the input folder."
+            ),
+            "scanned_root":          str(INPUT_ROOT),
+            "total_folders_detected": step7_detection_result.get("total_folders", 0),
+            "latest_folder_detected": (
+                step7_detection_result["latest_folder"]
+                if step7_detection_result.get("found") else None
+            ),
+            "all_detected_folders":  step7_detection_result.get("all_folders", []),
+        },
+
         "file_paths": {
-            "input_folder": str(input_folder_path),
-            "input_csv": str(input_csv_path),
+            "input_folder":        str(input_folder_path),
+            "input_csv":           str(input_csv_path),
             "input_json_from_step7": str(input_json_path),
-            "output_folder": str(output_folder_path),
-            "output_cleaned_csv": str(output_csv_path),
-            "output_json_log": str(output_json_path),
+            "output_folder":       str(output_folder_path),
+            "output_cleaned_csv":  str(output_csv_path),
+            "output_json_log":     str(output_json_path),
         },
+
         "dataset_shape_summary": {
-            "input_rows": int(original_df.shape[0]),
-            "input_columns": int(original_df.shape[1]),
-            "output_rows": int(cleaned_df.shape[0]),
-            "output_columns": int(cleaned_df.shape[1]),
-            "rows_dropped": int(original_df.shape[0] - cleaned_df.shape[0]),
-            "columns_unchanged": int(original_df.shape[1]) == int(cleaned_df.shape[1]),
-            "feature_count": len(feature_columns),
-            "target_column": TARGET_COLUMN,
+            "input_rows":          int(original_df.shape[0]),
+            "input_columns":       int(original_df.shape[1]),
+            "output_rows":         int(cleaned_df.shape[0]),
+            "output_columns":      int(cleaned_df.shape[1]),
+            "rows_dropped":        int(original_df.shape[0] - cleaned_df.shape[0]),
+            "columns_unchanged":   int(original_df.shape[1]) == int(cleaned_df.shape[1]),
+            "feature_count":       len(feature_columns),
+            "target_column":       TARGET_COLUMN,
         },
+
         "sub_task_1_nan_handling": {
             "description": (
                 "NaN values were analyzed across all columns. "
@@ -699,9 +1025,10 @@ def build_cleaning_json_log(
                 "of each respective column. Median is preferred over mean for PPG data "
                 "because it is robust to outliers caused by motion artifacts and signal noise."
             ),
-            "nan_analysis": nan_analysis,
-            "nan_handling": nan_handling_log,
+            "nan_analysis":  nan_analysis,
+            "nan_handling":  nan_handling_log,
         },
+
         "sub_task_2_outlier_handling": {
             "description": (
                 f"Outliers were detected using the IQR (Interquartile Range) method "
@@ -714,19 +1041,16 @@ def build_cleaning_json_log(
                 f"and losing rows would reduce training data."
             ),
             "outlier_analysis": outlier_analysis,
-            "clipping_log": clipping_log,
+            "clipping_log":     clipping_log,
         },
+
         "feature_statistics": {
             "before_cleaning": feature_stats_before,
-            "after_cleaning": feature_stats_after,
+            "after_cleaning":  feature_stats_after,
         },
+
         "verification_results": verification_result,
-        "step7_reference": {
-            "step7_input_folder": str(input_folder_path),
-            "step7_json_file": str(input_json_path),
-            "step7_feature_composition": step1_json_data.get("feature_composition", {}),
-            "step7_pipeline_info": step1_json_data.get("pipeline_info", {}),
-        },
+
         "cleaning_rationale": {
             "why_median_imputation": (
                 "Median is robust to outliers and skewed distributions. "
@@ -752,23 +1076,23 @@ def build_cleaning_json_log(
 
 
 # --------------------------------------------------
-# SAVE OUTPUTS
+# SAVE OUTPUTS (updated naming)
 # --------------------------------------------------
 def save_outputs(cleaned_df, json_log, output_folder, timestamp_str):
     """
     Save cleaned dataset and JSON log.
-    Folder: removed_outliers_&_NaN_24_feature_data_set_YYYYMMDD_HHMMSS
-    CSV:    removed_outliers_&_NaN_24_feature_data_set_YYYYMMDD_HHMMSS.csv
-    JSON:   removed_outliers_&_NaN_24_feature_data_set_YYYYMMDD_HHMMSS.json
+    Folder : Master dataset 24F cleaned <timestamp>
+    CSV    : Master dataset 24F cleaned <timestamp>.csv
+    JSON   : Master dataset 24F cleaned <timestamp>.json
     """
-    folder_name = f"removed_outliers_&_NaN_24_feature_data_set_{timestamp_str}"
-    output_dir = output_folder / folder_name
+    folder_name = f"Master dataset 24F cleaned {timestamp_str}"
+    output_dir  = output_folder / folder_name
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    csv_name = f"removed_outliers_&_NaN_24_feature_data_set_{timestamp_str}.csv"
-    json_name = f"removed_outliers_&_NaN_24_feature_data_set_{timestamp_str}.json"
+    csv_name  = f"Master dataset 24F cleaned {timestamp_str}.csv"
+    json_name = f"Master dataset 24F cleaned {timestamp_str}.json"
 
-    csv_path = output_dir / csv_name
+    csv_path  = output_dir / csv_name
     json_path = output_dir / json_name
 
     # Check for existing files
@@ -776,34 +1100,40 @@ def save_outputs(cleaned_df, json_log, output_folder, timestamp_str):
 
     csv_pre = check_existing_file(csv_path)
     if csv_pre["exists"]:
-        replaced_files.append({"label": "Cleaned Dataset CSV", "path": str(csv_path),
-                                "old_size_kb": csv_pre["size_kb"]})
+        replaced_files.append({
+            "label":       "Cleaned Dataset CSV",
+            "path":        str(csv_path),
+            "old_size_kb": csv_pre["size_kb"],
+        })
 
     json_pre = check_existing_file(json_path)
     if json_pre["exists"]:
-        replaced_files.append({"label": "Cleaning Log JSON", "path": str(json_path),
-                                "old_size_kb": json_pre["size_kb"]})
+        replaced_files.append({
+            "label":       "Cleaning Log JSON",
+            "path":        str(json_path),
+            "old_size_kb": json_pre["size_kb"],
+        })
 
     # Save CSV
     cleaned_df.to_csv(csv_path, index=False)
     csv_post = check_existing_file(csv_path)
-    print(f"\n💾 Saved cleaned dataset: {csv_name}")
+    print(f"\n💾 Saved cleaned dataset : {csv_name}")
     print(f"   📊 Size: {csv_post['size_kb']:.2f} KB")
 
     # Save JSON
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_log, f, indent=4, default=str)
     json_post = check_existing_file(json_path)
-    print(f"💾 Saved cleaning log: {json_name}")
+    print(f"💾 Saved cleaning log    : {json_name}")
     print(f"   📊 Size: {json_post['size_kb']:.2f} KB")
 
     # Report replaced files
     if replaced_files:
-        print(f"\n♻️ REPLACED {len(replaced_files)} existing file(s):")
+        print(f"\n♻️  REPLACED {len(replaced_files)} existing file(s):")
         for rf in replaced_files:
             new_size = check_existing_file(rf["path"])["size_kb"]
-            old_str = f"{rf['old_size_kb']:.2f} KB" if rf["old_size_kb"] else "N/A"
-            new_str = f"{new_size:.2f} KB" if new_size else "N/A"
+            old_str  = f"{rf['old_size_kb']:.2f} KB" if rf["old_size_kb"] else "N/A"
+            new_str  = f"{new_size:.2f} KB"           if new_size          else "N/A"
             print(f"   {rf['label']}: {old_str} → {new_str}")
     else:
         print(f"\n🆕 All output files are newly created.")
@@ -829,31 +1159,36 @@ def main():
 
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 
-    # Generate timestamp
-    timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Generate timestamp (consistent format with Step 7)
+    timestamp_str = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
 
-    # ── Select input FOLDER (contains both CSV and JSON) ──
-    print(f"\n📂 Opening folder selector at: {INPUT_ROOT}")
+    # ── Step 1: Auto-detect latest Step 7 output folder (informational) ──
+    print(f"\n🔍 Scanning for latest Step 7 output folder...")
+    step7_detection_result = find_latest_step7_output_folder(INPUT_ROOT)
+    print_step7_folder_detection_report(step7_detection_result)
+
+    # ── Step 2: Select input FOLDER ──
+    print(f"📂 Opening folder selector at: {INPUT_ROOT}")
     input_folder = popup_folder_selector(INPUT_ROOT)
-    print(f"📁 Selected folder: {input_folder.name}")
-    print(f"   Full path: {input_folder}")
+    print(f"📁 Selected folder : {input_folder.name}")
+    print(f"   Full path       : {input_folder}")
 
-    # ── Auto-detect CSV and JSON inside the folder ──
+    # ── Step 3: Auto-detect CSV and JSON inside the folder ──
     print(f"\n{'─' * 60}")
     print(f"🔍 AUTO-DETECTING FILES INSIDE FOLDER")
     print(f"{'─' * 60}")
 
     input_csv_path, input_json_path = find_csv_and_json_in_folder(input_folder)
-    print(f"   📄 CSV found:  {input_csv_path.name}")
-    print(f"   📄 JSON found: {input_json_path.name}")
+    print(f"   📄 CSV found  : {input_csv_path.name}")
+    print(f"   📄 JSON found : {input_json_path.name}")
 
-    # ── Load input files ──
+    # ── Step 4: Load input files ──
     print(f"\n{'─' * 60}")
     print(f"📥 LOADING INPUT FILES")
     print(f"{'─' * 60}")
 
-    original_df = load_csv(input_csv_path)
-    step1_json_data = load_json(input_json_path)
+    original_df    = load_csv(input_csv_path)
+    step7_json_data = load_json(input_json_path)
 
     # Display input column inventory
     print(f"\n📋 Input columns ({len(original_df.columns)}):")
@@ -865,21 +1200,75 @@ def main():
 
     # Validate column count
     expected_features = 24
-    actual_features = len(original_df.columns) - 1
+    actual_features   = len(original_df.columns) - 1
     if actual_features != expected_features:
         print(f"\n   ⚠️ Expected {expected_features} features, found {actual_features}")
     else:
         print(f"\n   ✅ Feature count verified: {actual_features} features + 1 target")
 
-    # ── SUB-TASK 1: Analyze and Handle NaN ──
+    # ── Step 5: Validate this is a Step 7 output ──
+    print(f"\n{'─' * 60}")
+    print(f"🔍 VALIDATING SELECTED FOLDER IS STEP 7 OUTPUT")
+    print(f"{'─' * 60}")
+
+    step7_validation = validate_is_step7_output(input_folder, original_df, step7_json_data)
+
+    # Print warnings
+    for warning in step7_validation["warnings"]:
+        print(warning)
+
+    # Print errors and abort if any
+    if not step7_validation["passed"]:
+        print(f"\n❌ STEP 7 OUTPUT VALIDATION FAILED:")
+        for error in step7_validation["errors"]:
+            print(f"\n   ❌ {error}")
+        raise SystemExit(
+            "\n❌ Execution aborted: Selected folder is not a valid Step 7 output.\n"
+            f"   Please select a '{STEP7_FOLDER_IDENTIFIER}' folder from:\n"
+            f"   {INPUT_ROOT}"
+        )
+
+    print(f"   ✅ Step 7 output validation passed.")
+    print(f"   📊 Columns   : {step7_validation['column_count']}")
+    print(f"   📊 Rows      : {step7_validation['row_count']}")
+    print(f"   📄 JSON step : {step7_validation['json_pipeline_step']}")
+
+    # ── Step 6: Build Step 7 cross-reference ──
+    print(f"\n{'─' * 60}")
+    print(f"📋 BUILDING STEP 7 PIPELINE CROSS-REFERENCE")
+    print(f"{'─' * 60}")
+
+    step7_reference_section = build_step7_reference_section(
+        step7_json_data, input_json_path, input_csv_path
+    )
+
+    if step7_reference_section["status"] == "found":
+        prov = step7_reference_section.get("pipeline_provenance", {})
+        feat = step7_reference_section.get("feature_engineering_summary", {})
+        print(f"   ✅ Step 7 cross-reference built successfully.")
+        print(f"      Step 7 execution    : {prov.get('step7_execution_date', 'N/A')}")
+        print(f"      Total features      : {feat.get('total_features', 'N/A')}")
+        print(f"      Total columns       : {feat.get('total_columns', 'N/A')}")
+
+        # Check upstream chain
+        upstream = step7_reference_section.get("upstream_pipeline_chain", {})
+        step6_ref = upstream.get("step6_reference_from_step7", {})
+        if isinstance(step6_ref, dict) and step6_ref.get("status") == "found":
+            print(f"      Step 6 reference    : ✅ Found (full pipeline chain preserved)")
+        else:
+            print(f"      Step 6 reference    : ⚠️  Not found in Step 7 log")
+    else:
+        print(f"   ⚠️  Step 7 JSON data not available for cross-reference.")
+
+    # ── Step 7: SUB-TASK 1 — Analyze and Handle NaN ──
     nan_analysis = analyze_nan_values(original_df)
     df_after_nan, nan_handling_log = handle_nan_values(original_df, nan_analysis)
 
-    # ── SUB-TASK 2: Analyze and Clip Outliers ──
+    # ── Step 8: SUB-TASK 2 — Analyze and Clip Outliers ──
     outlier_analysis = analyze_outliers(df_after_nan)
     cleaned_df, clipping_log = clip_outliers(df_after_nan, outlier_analysis)
 
-    # ── Verify cleaned dataset ──
+    # ── Step 9: Verify cleaned dataset ──
     verification = verify_cleaned_dataset(cleaned_df, original_df)
 
     # ── Display before/after comparison ──
@@ -906,15 +1295,15 @@ def main():
 
         print(f"   {col:<35} {b_min:>12.6f} {a_min:>12.6f} {b_max:>12.6f} {a_max:>12.6f}{changed}")
 
-    # ── Build JSON log ──
+    # ── Step 10: Build JSON log ──
     print(f"\n{'─' * 60}")
     print(f"📝 BUILDING COMPREHENSIVE JSON LOG")
     print(f"{'─' * 60}")
 
-    folder_name = f"removed_outliers_&_NaN_24_feature_data_set_{timestamp_str}"
-    csv_name = f"removed_outliers_&_NaN_24_feature_data_set_{timestamp_str}.csv"
-    json_name = f"removed_outliers_&_NaN_24_feature_data_set_{timestamp_str}.json"
-    output_dir = OUTPUT_ROOT / folder_name
+    folder_name = f"Master dataset 24F cleaned {timestamp_str}"
+    csv_name    = f"Master dataset 24F cleaned {timestamp_str}.csv"
+    json_name   = f"Master dataset 24F cleaned {timestamp_str}.json"
+    output_dir  = OUTPUT_ROOT / folder_name
 
     json_log = build_cleaning_json_log(
         input_csv_path=input_csv_path,
@@ -925,17 +1314,19 @@ def main():
         output_folder_path=output_dir,
         original_df=original_df,
         cleaned_df=cleaned_df,
-        step1_json_data=step1_json_data,
+        step7_json_data=step7_json_data,
         nan_analysis=nan_analysis,
         nan_handling_log=nan_handling_log,
         outlier_analysis=outlier_analysis,
         clipping_log=clipping_log,
         verification_result=verification,
         timestamp_str=timestamp_str,
+        step7_reference_section=step7_reference_section,
+        step7_detection_result=step7_detection_result,
     )
     print(f"   ✅ JSON log structure built with {len(json_log)} top-level sections.")
 
-    # ── Save outputs ──
+    # ── Step 11: Save outputs ──
     print(f"\n{'─' * 60}")
     print(f"💾 SAVING OUTPUTS")
     print(f"{'─' * 60}")
@@ -949,33 +1340,33 @@ def main():
     print(f"📌 DATA CLEANING PIPELINE — FINAL SUMMARY")
     print(f"{'=' * 70}")
     print(f"")
-    print(f"   📥 Input folder: {input_folder.name}")
-    print(f"      CSV:   {input_csv_path.name}")
-    print(f"      JSON:  {input_json_path.name}")
-    print(f"      Shape: {original_df.shape[0]} rows × {original_df.shape[1]} columns")
+    print(f"   📥 Input folder : {input_folder.name}")
+    print(f"      CSV          : {input_csv_path.name}")
+    print(f"      JSON         : {input_json_path.name}")
+    print(f"      Shape        : {original_df.shape[0]} rows × {original_df.shape[1]} columns")
     print(f"")
     print(f"   📤 Output folder: {output_dir.name}")
-    print(f"      CSV:   {csv_path.name}")
-    print(f"      JSON:  {json_path.name}")
-    print(f"      Shape: {cleaned_df.shape[0]} rows × {cleaned_df.shape[1]} columns")
+    print(f"      CSV          : {csv_path.name}")
+    print(f"      JSON         : {json_path.name}")
+    print(f"      Shape        : {cleaned_df.shape[0]} rows × {cleaned_df.shape[1]} columns")
     print(f"")
     print(f"   🧹 Sub-task 1 — NaN Handling:")
-    print(f"      Total NaN found:           {nan_analysis['total_nan_count']}")
-    print(f"      Rows dropped (target NaN): {nan_handling_log['total_rows_dropped']}")
-    print(f"      Values imputed (median):   {nan_handling_log['total_values_imputed']}")
-    print(f"      Imputation method:         Median")
+    print(f"      Total NaN found           : {nan_analysis['total_nan_count']}")
+    print(f"      Rows dropped (target NaN) : {nan_handling_log['total_rows_dropped']}")
+    print(f"      Values imputed (median)   : {nan_handling_log['total_values_imputed']}")
+    print(f"      Imputation method         : Median")
     print(f"")
-    print(f"   ✂️ Sub-task 2 — Outlier Clipping:")
-    print(f"      IQR multiplier:            {IQR_MULTIPLIER}")
-    print(f"      Total outliers detected:   {outlier_analysis['total_outliers_detected']}")
-    print(f"      Total values clipped:      {clipping_log['total_values_clipped']}")
-    print(f"      Target column touched:     No")
+    print(f"   ✂️  Sub-task 2 — Outlier Clipping:")
+    print(f"      IQR multiplier            : {IQR_MULTIPLIER}")
+    print(f"      Total outliers detected   : {outlier_analysis['total_outliers_detected']}")
+    print(f"      Total values clipped      : {clipping_log['total_values_clipped']}")
+    print(f"      Target column touched     : No")
     print(f"")
-    print(f"   ✅ Verification: {'ALL PASSED' if verification['all_passed'] else 'SOME CHECKS FAILED'}")
+    print(f"   ✅ Verification : {'ALL PASSED' if verification['all_passed'] else 'SOME CHECKS FAILED'}")
     print(f"")
-    print(f"   📁 Output folder: {output_dir}")
-    print(f"   📄 Dataset CSV:   {csv_path.name}")
-    print(f"   📄 JSON Log:      {json_path.name}")
+    print(f"   📁 Output folder : {output_dir}")
+    print(f"   📄 Dataset CSV   : {csv_path.name}")
+    print(f"   📄 JSON Log      : {json_path.name}")
     print(f"")
     print(f"✅ Data cleaning pipeline completed successfully!")
     print(f"   → Output is ready for Step 8 Sub-task 3 & 4")
@@ -984,4 +1375,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as e:
+        print(f"\n{e}")
+    except Exception as e:
+        print(f"\n❌ Unexpected error: {e}")
+        traceback.print_exc()
