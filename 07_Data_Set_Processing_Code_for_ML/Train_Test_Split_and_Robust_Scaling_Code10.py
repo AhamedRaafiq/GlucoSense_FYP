@@ -33,7 +33,7 @@ OUTPUT_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\10_Robus
 
 # Train/Test split EXACT COUNTS (change as needed)
 # These two numbers MUST add up exactly to your total number of samples
-AMOUNT_OF_TRAIN_SAMPLES = 2   # ← PASTE EXACT TRAIN COUNT HERE
+AMOUNT_OF_TRAIN_SAMPLES = 3   # ← PASTE EXACT TRAIN COUNT HERE
 AMOUNT_OF_TEST_SAMPLES  = 1    # ← PASTE EXACT TEST COUNT HERE
 
 RANDOM_STATE = 42              # Fixed seed for reproducibility
