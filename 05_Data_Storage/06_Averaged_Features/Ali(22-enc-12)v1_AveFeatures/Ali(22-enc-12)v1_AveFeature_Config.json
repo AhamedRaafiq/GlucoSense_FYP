@@ -5,7 +5,7 @@
         "sampling_rate_fs": 400.0,
         "window_duration_sec": 15.0,
         "number_of_windows_used": 18,
-        "date_averaged": "2026-06-07 23:25:20"
+        "date_averaged": "2026-06-09 14:28:39"
     },
     "hyperparameters_reference": {
         "use_full_file": true,

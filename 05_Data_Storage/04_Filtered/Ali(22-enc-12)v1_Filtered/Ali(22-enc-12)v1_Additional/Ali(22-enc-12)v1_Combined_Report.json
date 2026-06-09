@@ -1,6 +1,6 @@
 {
     "subject": "Ali(22-enc-12)v1",
-    "processing_date": "2026-06-07 23:10:36",
+    "processing_date": "2026-06-10 03:22:21",
     "input_folder": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1",
     "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
     "total_windows": 18,
@@ -111,19 +111,19 @@
             },
             "golden_features": {
                 "HR_Global": 64.02276364929753,
-                "Width_Avg": 0.6220170454545455,
-                "Area_Avg": 119.74152466724294,
-                "Amp_Avg": 0.7160863335223909,
-                "Skew_Avg": -0.25232519922486163,
-                "Kurt_Avg": -1.248227373252448,
+                "Width_Avg": 0.6146022727272727,
+                "Area_Avg": 119.47380375161367,
+                "Amp_Avg": 0.7122877930124962,
+                "Skew_Avg": -0.2531622435597346,
+                "Kurt_Avg": -1.2455110469046695,
                 "PI_Global": 3.001518539884205
             },
             "ensemble": {
-                "beats_used": 14,
+                "beats_used": 13,
                 "total_segmented": 15,
                 "rejected_candidates": 0,
-                "rejected_pulses": 1,
-                "avg_beat_duration_s": 0.94375,
+                "rejected_pulses": 2,
+                "avg_beat_duration_s": 0.9325,
                 "fiducials": {
                     "a": 5,
                     "b": 21,
@@ -220,24 +220,24 @@
             "golden_features": {
                 "HR_Global": 64.21691045308597,
                 "Width_Avg": 0.5860227272727272,
-                "Area_Avg": 111.89970007799627,
-                "Amp_Avg": 0.8009210736402832,
-                "Skew_Avg": -0.28674947234053166,
-                "Kurt_Avg": -1.2561759383250533,
+                "Area_Avg": 111.87302440502127,
+                "Amp_Avg": 0.8012150409775001,
+                "Skew_Avg": -0.2742514327919863,
+                "Kurt_Avg": -1.25696431582339,
                 "PI_Global": 2.2807850898360864
             },
             "ensemble": {
-                "beats_used": 15,
+                "beats_used": 14,
                 "total_segmented": 15,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
+                "rejected_pulses": 1,
                 "avg_beat_duration_s": 0.955,
                 "fiducials": {
                     "a": 5,
                     "b": 20,
                     "c": 46,
                     "d": 55,
-                    "e": 75
+                    "e": 76
                 }
             },
             "validation_status": "PASS"
@@ -327,25 +327,25 @@
             },
             "golden_features": {
                 "HR_Global": 69.97084548104957,
-                "Width_Avg": 0.5417727272727273,
-                "Area_Avg": 120.45822313818826,
-                "Amp_Avg": 0.7554448110581469,
-                "Skew_Avg": -0.2170934274431797,
-                "Kurt_Avg": -1.359818802121598,
+                "Width_Avg": 0.5409090909090909,
+                "Area_Avg": 120.41137896526114,
+                "Amp_Avg": 0.7685756460317752,
+                "Skew_Avg": -0.19503741098324492,
+                "Kurt_Avg": -1.3505752022538102,
                 "PI_Global": 1.308098665398065
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 15,
                 "total_segmented": 16,
                 "rejected_candidates": 1,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.87,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.875,
                 "fiducials": {
-                    "a": 3,
-                    "b": 18,
-                    "c": 46,
-                    "d": 57,
-                    "e": 76
+                    "a": 6,
+                    "b": 19,
+                    "c": 47,
+                    "d": 58,
+                    "e": 77
                 }
             },
             "validation_status": "PASS"
@@ -435,19 +435,19 @@
             },
             "golden_features": {
                 "HR_Global": 70.12417823228634,
-                "Width_Avg": 0.514090909090909,
-                "Area_Avg": 117.9707434251372,
-                "Amp_Avg": 0.7614413916531184,
-                "Skew_Avg": -0.09484917227264966,
-                "Kurt_Avg": -1.384533257358011,
+                "Width_Avg": 0.5130681818181818,
+                "Area_Avg": 117.850441491423,
+                "Amp_Avg": 0.7767957050107217,
+                "Skew_Avg": -0.06299191292689835,
+                "Kurt_Avg": -1.3685272865936429,
                 "PI_Global": 1.6371366180127946
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 15,
                 "total_segmented": 16,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.87,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.875,
                 "fiducials": {
                     "a": 6,
                     "b": 19,
@@ -543,19 +543,19 @@
             },
             "golden_features": {
                 "HR_Global": 70.17543859649123,
-                "Width_Avg": 0.5018522727272727,
-                "Area_Avg": 116.21460786484494,
-                "Amp_Avg": 0.7552442796861261,
-                "Skew_Avg": 0.0032576409498147503,
-                "Kurt_Avg": -1.3689870108044566,
+                "Width_Avg": 0.5014204545454545,
+                "Area_Avg": 116.00714144192808,
+                "Amp_Avg": 0.7622472445742919,
+                "Skew_Avg": 0.04679736560675062,
+                "Kurt_Avg": -1.3452221684680559,
                 "PI_Global": 1.6359373987772516
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 15,
                 "total_segmented": 16,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.87625,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.8825,
                 "fiducials": {
                     "a": 7,
                     "b": 20,
@@ -705,23 +705,23 @@
             },
             "golden_features": {
                 "HR_Global": 67.63103513056546,
-                "Width_Avg": 0.5634090909090909,
-                "Area_Avg": 117.76861427316555,
-                "Amp_Avg": 0.7760234125975195,
-                "Skew_Avg": -0.17074295407921466,
-                "Kurt_Avg": -1.3496744938254743,
+                "Width_Avg": 0.5265,
+                "Area_Avg": 117.9852909696543,
+                "Amp_Avg": 0.7817185584283435,
+                "Skew_Avg": -0.1464692797378734,
+                "Kurt_Avg": -1.355386606001552,
                 "PI_Global": 4.17559185344066
             },
             "ensemble": {
-                "beats_used": 15,
+                "beats_used": 13,
                 "total_segmented": 15,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.925,
+                "rejected_pulses": 2,
+                "avg_beat_duration_s": 0.8775,
                 "fiducials": {
                     "a": 6,
                     "b": 19,
-                    "c": 45,
+                    "c": 46,
                     "d": 55,
                     "e": 76
                 }
@@ -759,25 +759,25 @@
             },
             "golden_features": {
                 "HR_Global": 67.63103513056546,
-                "Width_Avg": 0.5645454545454546,
-                "Area_Avg": 118.72607268089922,
-                "Amp_Avg": 0.772846161468556,
-                "Skew_Avg": -0.17452595015042177,
-                "Kurt_Avg": -1.3458764047715512,
+                "Width_Avg": 0.5481818181818182,
+                "Area_Avg": 118.79766407597793,
+                "Amp_Avg": 0.7740459758955038,
+                "Skew_Avg": -0.16400999604290684,
+                "Kurt_Avg": -1.3510044245706476,
                 "PI_Global": 1.8752477948122883
             },
             "ensemble": {
-                "beats_used": 15,
+                "beats_used": 14,
                 "total_segmented": 15,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.92,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.9,
                 "fiducials": {
                     "a": 6,
                     "b": 19,
-                    "c": 45,
-                    "d": 55,
-                    "e": 74
+                    "c": 46,
+                    "d": 56,
+                    "e": 75
                 }
             },
             "validation_status": "PASS"
@@ -813,25 +813,25 @@
             },
             "golden_features": {
                 "HR_Global": 67.59373349762366,
-                "Width_Avg": 0.5279999999999999,
-                "Area_Avg": 115.9449573372142,
-                "Amp_Avg": 0.8312571205223379,
-                "Skew_Avg": -0.23663840319566085,
-                "Kurt_Avg": -1.3210566822800083,
+                "Width_Avg": 0.5165568181818181,
+                "Area_Avg": 116.20387200357189,
+                "Amp_Avg": 0.8373933706094574,
+                "Skew_Avg": -0.2241716319125098,
+                "Kurt_Avg": -1.3268179481614242,
                 "PI_Global": 3.8179319980952684
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 14,
                 "total_segmented": 16,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.8799999999999999,
+                "rejected_pulses": 2,
+                "avg_beat_duration_s": 0.8674999999999999,
                 "fiducials": {
                     "a": 4,
                     "b": 18,
                     "c": 45,
-                    "d": 55,
-                    "e": 75
+                    "d": 56,
+                    "e": 76
                 }
             },
             "validation_status": "PASS"
@@ -867,25 +867,25 @@
             },
             "golden_features": {
                 "HR_Global": 67.60563380281691,
-                "Width_Avg": 0.532,
-                "Area_Avg": 117.02917866623207,
-                "Amp_Avg": 0.8363419676121226,
-                "Skew_Avg": -0.24383555567280663,
-                "Kurt_Avg": -1.3172929131431426,
+                "Width_Avg": 0.528,
+                "Area_Avg": 117.10362120702412,
+                "Amp_Avg": 0.8383890199415859,
+                "Skew_Avg": -0.2386870620022506,
+                "Kurt_Avg": -1.3224218519131832,
                 "PI_Global": 1.6936501312996894
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 15,
                 "total_segmented": 16,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
+                "rejected_pulses": 1,
                 "avg_beat_duration_s": 0.88,
                 "fiducials": {
-                    "a": 5,
+                    "a": 4,
                     "b": 18,
-                    "c": 45,
+                    "c": 46,
                     "d": 56,
-                    "e": 76
+                    "e": 77
                 }
             },
             "validation_status": "PASS"
@@ -921,24 +921,24 @@
             },
             "golden_features": {
                 "HR_Global": 66.75938803894297,
-                "Width_Avg": 0.5281250000000001,
-                "Area_Avg": 119.5564882803221,
-                "Amp_Avg": 0.8960908263943399,
-                "Skew_Avg": -0.2452697741540727,
-                "Kurt_Avg": -1.3134420009764454,
+                "Width_Avg": 0.5218636363636364,
+                "Area_Avg": 119.64323214940484,
+                "Amp_Avg": 0.9003867026945548,
+                "Skew_Avg": -0.23879063142562285,
+                "Kurt_Avg": -1.3175032908209037,
                 "PI_Global": 2.9548264363275996
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 15,
                 "total_segmented": 16,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.89375,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.89,
                 "fiducials": {
                     "a": 5,
                     "b": 18,
                     "c": 45,
-                    "d": 55,
+                    "d": 56,
                     "e": 74
                 }
             },
@@ -975,25 +975,25 @@
             },
             "golden_features": {
                 "HR_Global": 66.66666666666667,
-                "Width_Avg": 0.5273863636363637,
-                "Area_Avg": 120.15911584239404,
-                "Amp_Avg": 0.9018899190326738,
-                "Skew_Avg": -0.24524748066732746,
-                "Kurt_Avg": -1.310717369865952,
+                "Width_Avg": 0.5218636363636364,
+                "Area_Avg": 120.28572721589566,
+                "Amp_Avg": 0.906467891988767,
+                "Skew_Avg": -0.23963518462254213,
+                "Kurt_Avg": -1.3159892241915414,
                 "PI_Global": 1.315284902669624
             },
             "ensemble": {
-                "beats_used": 16,
+                "beats_used": 15,
                 "total_segmented": 16,
                 "rejected_candidates": 0,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.8925000000000001,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.89,
                 "fiducials": {
                     "a": 4,
                     "b": 18,
-                    "c": 45,
-                    "d": 55,
-                    "e": 75
+                    "c": 46,
+                    "d": 56,
+                    "e": 76
                 }
             },
             "validation_status": "PASS"
@@ -1191,19 +1191,19 @@
             },
             "golden_features": {
                 "HR_Global": 63.84110657918071,
-                "Width_Avg": 0.5931193181818182,
-                "Area_Avg": 115.55050637381896,
-                "Amp_Avg": 0.7789401474438588,
-                "Skew_Avg": -0.32001219201406783,
-                "Kurt_Avg": -1.2457093638284953,
+                "Width_Avg": 0.5939090909090909,
+                "Area_Avg": 115.52148027412653,
+                "Amp_Avg": 0.7822858042659405,
+                "Skew_Avg": -0.31057930953603086,
+                "Kurt_Avg": -1.2467649780080021,
                 "PI_Global": 17.88718351292635
             },
             "ensemble": {
-                "beats_used": 14,
+                "beats_used": 13,
                 "total_segmented": 14,
                 "rejected_candidates": 1,
-                "rejected_pulses": 0,
-                "avg_beat_duration_s": 0.93875,
+                "rejected_pulses": 1,
+                "avg_beat_duration_s": 0.94,
                 "fiducials": {
                     "a": 5,
                     "b": 18,
@@ -2069,14 +2069,14 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 8.881784197001252e-16,
+                            "max_abs_diff": 4.440892098500626e-16,
                             "reason": "within_tolerance"
                         },
                         "Red_SDPPG": {
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 2.842170943040401e-14,
+                            "max_abs_diff": 1.4210854715202004e-14,
                             "reason": "within_tolerance"
                         },
                         "Time_IR_s": {
@@ -2112,7 +2112,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win0_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49371
+                    "size_bytes": 49096
                 }
             ],
             "issues": []
@@ -2221,7 +2221,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 2.842170943040401e-14,
+                            "max_abs_diff": 5.684341886080802e-14,
                             "reason": "within_tolerance"
                         },
                         "Time_IR_s": {
@@ -2257,7 +2257,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win1_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49698
+                    "size_bytes": 49434
                 }
             ],
             "issues": []
@@ -2402,7 +2402,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win10_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51864
+                    "size_bytes": 51610
                 }
             ],
             "issues": []
@@ -2547,7 +2547,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win11_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51358
+                    "size_bytes": 51103
                 }
             ],
             "issues": []
@@ -2635,7 +2635,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 9.71445146547012e-17,
+                            "max_abs_diff": 8.326672684688674e-17,
                             "reason": "within_tolerance"
                         },
                         "Red_Ensemble_Avg": {
@@ -2692,7 +2692,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win12_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51372
+                    "size_bytes": 51124
                 }
             ],
             "issues": []
@@ -2925,7 +2925,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 1.1102230246251565e-16,
+                            "max_abs_diff": 9.107298248878237e-17,
                             "reason": "within_tolerance"
                         },
                         "Red_Ensemble_Avg": {
@@ -2939,7 +2939,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 4.440892098500626e-16,
+                            "max_abs_diff": 1.7763568394002505e-15,
                             "reason": "within_tolerance"
                         },
                         "Red_SDPPG": {
@@ -2953,14 +2953,14 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 1.1102230246251565e-16,
+                            "max_abs_diff": 9.280770596475918e-17,
                             "reason": "within_tolerance"
                         },
                         "IR_Ensemble_Avg": {
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 8.326672684688674e-17,
+                            "max_abs_diff": 1.1102230246251565e-16,
                             "reason": "within_tolerance"
                         },
                         "IR_VPG": {
@@ -2974,7 +2974,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 1.4210854715202004e-14,
+                            "max_abs_diff": 5.684341886080802e-14,
                             "reason": "within_tolerance"
                         }
                     }
@@ -2982,7 +2982,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win14_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49693
+                    "size_bytes": 48869
                 }
             ],
             "issues": []
@@ -3091,28 +3091,28 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 1.4210854715202004e-14,
+                            "max_abs_diff": 2.842170943040401e-14,
                             "reason": "within_tolerance"
                         },
                         "Time_IR_s": {
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 9.540979117872439e-17,
+                            "max_abs_diff": 9.71445146547012e-17,
                             "reason": "within_tolerance"
                         },
                         "IR_Ensemble_Avg": {
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 9.71445146547012e-17,
+                            "max_abs_diff": 1.1102230246251565e-16,
                             "reason": "within_tolerance"
                         },
                         "IR_VPG": {
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 1.7763568394002505e-15,
+                            "max_abs_diff": 4.440892098500626e-16,
                             "reason": "within_tolerance"
                         },
                         "IR_SDPPG": {
@@ -3127,7 +3127,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win15_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51338
+                    "size_bytes": 50541
                 }
             ],
             "issues": []
@@ -3243,7 +3243,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 8.326672684688674e-17,
+                            "max_abs_diff": 9.71445146547012e-17,
                             "reason": "within_tolerance"
                         },
                         "IR_Ensemble_Avg": {
@@ -3272,7 +3272,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win16_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51285
+                    "size_bytes": 50796
                 }
             ],
             "issues": []
@@ -3526,7 +3526,7 @@
                             "match": true,
                             "length_mem": 220,
                             "length_disk": 220,
-                            "max_abs_diff": 5.684341886080802e-14,
+                            "max_abs_diff": 2.842170943040401e-14,
                             "reason": "within_tolerance"
                         },
                         "Time_IR_s": {
@@ -3562,7 +3562,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win2_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 48626
+                    "size_bytes": 48361
                 }
             ],
             "issues": []

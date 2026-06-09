@@ -9,6 +9,8 @@
 # - Step 7 cross-reference in JSON log for full traceability
 # - Variable naming cleanup (step1_json_data → step7_json_data)
 # - All NaN / Outlier calculations preserved exactly
+# - FIX: STEP7_FOLDER_IDENTIFIER now uses underscores to match
+#        actual Step 7 output folder naming convention
 # ==========================================
 
 import os
@@ -39,7 +41,9 @@ TARGET_COLUMN = "Glucose level (mg/dl)"
 IQR_MULTIPLIER = 1.5
 
 # Step 7 output identification patterns
-STEP7_FOLDER_IDENTIFIER     = "Master dataset with 24F"
+# NOTE: Step 7 produces folders named like "Master_Dataset_With_24F_2026-06-09_15-43-05"
+# So the identifier must use underscores (not spaces) to match correctly.
+STEP7_FOLDER_IDENTIFIER     = "Master_Dataset_With_24F"
 STEP7_JSON_PIPELINE_STEP_ID = "STEP 7"
 
 
@@ -159,11 +163,11 @@ def popup_folder_selector(initial_dir):
             "Select the Step 7 OUTPUT FOLDER to process.\n\n"
             "──────────────────────────────────────────\n"
             "EXPECTED FOLDER NAME PATTERN:\n"
-            "   Master dataset with 24F <timestamp>\n\n"
+            "   Master_Dataset_With_24F_<timestamp>\n\n"
             "EXPECTED CONTENTS:\n"
-            "   Master dataset with 24F <timestamp>/\n"
-            "       ├── Master dataset with 24F <timestamp>.csv\n"
-            "       └── Master dataset with 24F <timestamp>.json\n\n"
+            "   Master_Dataset_With_24F_<timestamp>/\n"
+            "       ├── Master_Dataset_With_24F_<timestamp>.csv\n"
+            "       └── Master_Dataset_With_24F_<timestamp>.json\n\n"
             "──────────────────────────────────────────\n"
             "The script will automatically:\n"
             "  1. Find the CSV and JSON files inside\n"
@@ -177,7 +181,7 @@ def popup_folder_selector(initial_dir):
 
     selected_folder = filedialog.askdirectory(
         initialdir=str(initial_dir),
-        title="Select Step 7 Output FOLDER (Master dataset with 24F ...)",
+        title="Select Step 7 Output FOLDER (Master_Dataset_With_24F_...)",
     )
 
     root.destroy()
