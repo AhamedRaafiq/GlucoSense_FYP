@@ -6,7 +6,8 @@
         "total_samples": 6000,
         "duration_sec": 15.0,
         "nyquist_rate": 200.0,
-        "date_processed": "2026-06-10 03:23:09"
+        "date_processed": "2026-06-11 03:29:03",
+        "status": "SUCCESS"
     },
     "hyperparameters": {
         "use_full_file": true,
@@ -29,6 +30,8 @@
         "norm_selection": 1,
         "norm_type": "MinMax",
         "ensemble_target_len": 220,
+        "min_valid_beats_ir": 8,
+        "min_valid_beats_red": 8,
         "peak_min_distance_sec": 0.4,
         "peak_prom_factor": 0.2,
         "valley_min_distance_sec": 0.35,
@@ -851,8 +854,8 @@
             "e": 75
         },
         "plot_paths": {
-            "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Ensemble\\Ali(22-enc-12)v1_Win14_RED_11_Ensemble.png",
-            "debug_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Debug\\Ali(22-enc-12)v1_Win14_RED_11_FootCheck.png",
+            "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\10_Ensemble\\Ali(22-enc-12)v1_Win14_RED_10_Ensemble.png",
+            "debug_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\09_Debug\\Ali(22-enc-12)v1_Win14_RED_09_FootCheck.png",
             "numbering_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_PulseNumbering\\Ali(22-enc-12)v1_Win14_RED_11_Numbering.png"
         }
     },
@@ -1459,8 +1462,8 @@
             "e": 76
         },
         "plot_paths": {
-            "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Ensemble\\Ali(22-enc-12)v1_Win14_IR_11_Ensemble.png",
-            "debug_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_Debug\\Ali(22-enc-12)v1_Win14_IR_11_FootCheck.png",
+            "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\10_Ensemble\\Ali(22-enc-12)v1_Win14_IR_10_Ensemble.png",
+            "debug_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\09_Debug\\Ali(22-enc-12)v1_Win14_IR_09_FootCheck.png",
             "numbering_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\11_PulseNumbering\\Ali(22-enc-12)v1_Win14_IR_11_Numbering.png"
         }
     }
