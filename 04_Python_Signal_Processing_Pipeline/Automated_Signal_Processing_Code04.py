@@ -57,6 +57,11 @@ NORM_SELECTION = 1                    # 1=MinMax (0-1), 2=ZScore (Mean=0, Std=1)
 
 # --- Ensemble Settings ---
 ENSEMBLE_TARGET_LEN = 220             # Target length for resampled average beat
+
+# 🔑 WINDOW REJECTION LIMITS (Tune per channel)
+MIN_VALID_BEATS_IR = 8                # Min valid beats required for IR ensemble (reject window if less)
+MIN_VALID_BEATS_RED = 8               # Min valid beats required for RED ensemble (reject window if less)
+
 PEAK_MIN_DISTANCE_SEC = 0.40          # Min time between peaks (sec). Heart rate dependent
 PEAK_PROM_FACTOR = 0.20               # Peak prominence factor relative to STD
 VALLEY_MIN_DISTANCE_SEC = 0.35        # Min time between valleys (sec)
@@ -69,7 +74,7 @@ MAX_ABS_VPG_AT_FOOT = 0.5             # Max VPG value allowed at foot (near zero
 EDGE_EXCLUSION_SEC = 0.1              # Ignore candidates near signal edges
 MIN_BEAT_DURATION_SEC = 0.35          # Min valid beat duration
 MAX_BEAT_DURATION_SEC = 1.50          # Max valid beat duration
-MAIN_PEAK_SEARCH_WINDOW_SEC = 0.3     # Search window after foot for main peak
+MAIN_PEAK_SEARCH_WINDOW_SEC = 0.2     # Search window after foot for main peak
 MAIN_PEAK_MIN_DELAY_SEC = 0.02        # Min delay before searching for main peak
 START_INCOMPLETE_MARGIN_SEC = 0.10    # Margin for start edge incompleteness
 END_INCOMPLETE_MARGIN_SEC = 0.01      # Margin for end edge incompleteness
@@ -175,42 +180,80 @@ def ensure_clean_output(root_path):
         print(f"📂 Created new output root: {root_path}")
 
 # ==========================================
-# 🖥️ STEP 1: SELECT INPUT FOLDER
+# 🖥️ STEP 1: SELECT INPUT (BATCH OR SINGLE)
 # ==========================================
 
-root = tk.Tk()
-root.withdraw()
-root.attributes('-topmost', True)
+def prompt_processing_mode():
+    """Prompts user to choose between Batch (all subfolders) or Single (one folder)."""
+    print("\n" + "=" * 70)
+    print("  SELECT PROCESSING MODE")
+    print("=" * 70)
+    print(f"  1) BATCH  — Process ALL subfolders inside:")
+    print(f"              {INPUT_ROOT_PATH}")
+    print(f"  2) SINGLE — Pop up dialog to choose ONE folder")
+    print("=" * 70)
+    while True:
+        choice = input("  Enter choice [1 or 2]: ").strip()
+        if choice in ("1", "2"):
+            return int(choice)
+        print("  ❌ Invalid choice. Please enter 1 or 2.")
 
-selected_folder = filedialog.askdirectory(
-    initialdir=INPUT_ROOT_PATH,
-    title="Select Input Folder (containing .csv files)"
-)
+def collect_folders_to_process(mode):
+    """Returns a list of folders to process based on mode."""
+    folders = []
+    if mode == 1:
+        if not os.path.isdir(INPUT_ROOT_PATH):
+            raise FileNotFoundError(f"❌ Batch root not found: {INPUT_ROOT_PATH}")
+        subfolders = sorted([
+            os.path.join(INPUT_ROOT_PATH, d)
+            for d in os.listdir(INPUT_ROOT_PATH)
+            if os.path.isdir(os.path.join(INPUT_ROOT_PATH, d))
+        ])
+        if not subfolders:
+            raise FileNotFoundError(f"❌ No subfolders inside: {INPUT_ROOT_PATH}")
+        folders = subfolders
+        print(f"\n📦 BATCH MODE — found {len(folders)} subfolder(s) to process:")
+        for f in folders:
+            print(f"   • {os.path.basename(f)}")
+    else:
+        selected = None
+        # Try Tk dialog with safe init/teardown
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.attributes('-topmost', True)
+            root.update_idletasks()
+            root.update()
+            selected = filedialog.askdirectory(
+                parent=root,
+                initialdir=INPUT_ROOT_PATH,
+                title="Select Input Folder (containing .csv files)"
+            )
+            root.update()
+            root.destroy()
+        except Exception as tk_err:
+            print(f"\n⚠️  GUI dialog failed: {tk_err}")
+            print("    Falling back to manual path entry.")
+            selected = None
+        
+        # Fallback: manual entry
+        if not selected:
+            print(f"\n📁 Default base path: {INPUT_ROOT_PATH}")
+            typed = input("    Type folder path (or press Enter to use default): ").strip().strip('"').strip("'")
+            if typed:
+                selected = typed
+            else:
+                selected = INPUT_ROOT_PATH
+        
+        if not selected or not os.path.isdir(selected):
+            raise ValueError(f"❌ Invalid or missing folder: {selected}")
+        
+        folders = [selected]
+        print(f"\n📁 SINGLE MODE — selected: {selected}")
+    return folders
 
-root.destroy()
-
-if not selected_folder:
-    raise ValueError("❌ No folder selected. Stopping automation.")
-
-# Find all CSV files
-csv_files = sorted(glob.glob(os.path.join(selected_folder, "*.csv")))
-
-if not csv_files:
-    raise FileNotFoundError(f"❌ No CSV files found in: {selected_folder}")
-
-print(f"✅ Selected Folder: {selected_folder}")
-print(f"🔍 Found {len(csv_files)} CSV files to process.\n")
-
-# Prepare Combined Report Structure
-combined_report = {
-    "processing_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    "input_folder": selected_folder,
-    "output_root": SAVE_ROOT_FIXED,
-    "total_files_found": len(csv_files),
-    "files_processed": [],
-    "errors_log": [],
-    "summary_table": [] 
-}
+MODE = prompt_processing_mode()
+folders_to_process = collect_folders_to_process(MODE)
 
 ensure_clean_output(SAVE_ROOT_FIXED)
 
@@ -801,8 +844,6 @@ print("✅ Quality & feature extraction functions (Steps 9, 10, 12) loaded.")
 
 # ==========================================
 # ⚙️ STEP 11: ENSEMBLE DETECTION + SDPPG CORE
-# Input : normalized PPG signal, fs
-# Output: beats, ensemble avg, VPG, SDPPG, fiducials, metadata, saved plots
 # ==========================================
 
 import numpy as np
@@ -1091,28 +1132,48 @@ def build_candidate_foot_peak_pairs(smooth_sig, vpg, sdppg, peaks, valleys, fs):
     n = len(smooth_sig)
     candidate_num = 0
 
+    edge_margin_samples = int(EDGE_EXCLUSION_SEC * fs)
+    min_ft_pk_samples = int(MIN_FOOT_TO_PEAK_SEC * fs)
+
     for p in peaks:
         p = int(p)
         candidate_num += 1
 
-        if p < int(EDGE_EXCLUSION_SEC * fs):
-            log_candidate_rejection(rejected_candidates, "edge_candidate_peak_start", candidate_num=candidate_num, peak=p)
+        if p < edge_margin_samples:
+            log_candidate_rejection(
+                rejected_candidates, "edge_candidate_peak_start",
+                candidate_num=candidate_num, peak=p,
+                actual_value=f"peak_idx={p}",
+                accepted_range=f">= {edge_margin_samples} samples"
+            )
             continue
-        if p > n - int(EDGE_EXCLUSION_SEC * fs):
-            log_candidate_rejection(rejected_candidates, "edge_candidate_peak_end", candidate_num=candidate_num, peak=p)
+        if p > n - edge_margin_samples:
+            log_candidate_rejection(
+                rejected_candidates, "edge_candidate_peak_end",
+                candidate_num=candidate_num, peak=p,
+                actual_value=f"peak_idx={p}",
+                accepted_range=f"<= {n - edge_margin_samples} samples"
+            )
             continue
 
         left_valleys = valleys[valleys < p]
         if len(left_valleys) == 0:
-            log_candidate_rejection(rejected_candidates, "no_left_valley_found", candidate_num=candidate_num, peak=p)
+            log_candidate_rejection(
+                rejected_candidates, "no_left_valley_found",
+                candidate_num=candidate_num, peak=p,
+                actual_value="0 valleys before peak",
+                accepted_range=">= 1 valley"
+            )
             continue
 
         valley_idx = int(left_valleys[-1])
 
-        if (p - valley_idx) < int(MIN_FOOT_TO_PEAK_SEC * fs):
+        if (p - valley_idx) < min_ft_pk_samples:
             log_candidate_rejection(
                 rejected_candidates, "valley_too_close_to_peak",
-                candidate_num=candidate_num, peak=p, valley=valley_idx
+                candidate_num=candidate_num, peak=p, valley=valley_idx,
+                actual_value=f"{(p - valley_idx)/fs:.3f}s",
+                accepted_range=f">= {MIN_FOOT_TO_PEAK_SEC:.3f}s"
             )
             continue
 
@@ -1125,10 +1186,31 @@ def build_candidate_foot_peak_pairs(smooth_sig, vpg, sdppg, peaks, valleys, fs):
             refined_foot, p, valley_idx, smooth_sig, vpg, fs
         )
         if ambiguous:
+            # Compute actual + accepted-range per specific reason
+            av, ar = "n/a", "n/a"
+            if refined_foot is not None:
+                ftp = (p - refined_foot) / fs
+                vtf = (refined_foot - valley_idx) / fs
+                pulse_amp = float(smooth_sig[p] - smooth_sig[valley_idx])
+                if ambiguity_reason == "foot_to_peak_too_short":
+                    av, ar = f"{ftp:.3f}s", f">= {MIN_FOOT_TO_PEAK_SEC:.3f}s"
+                elif ambiguity_reason == "foot_to_peak_too_long":
+                    av, ar = f"{ftp:.3f}s", f"<= {MAX_FOOT_TO_PEAK_SEC:.3f}s"
+                elif ambiguity_reason == "foot_too_far_from_valley":
+                    av, ar = f"{vtf:.3f}s", f"<= {MAX_VALLEY_TO_FOOT_SEC:.3f}s"
+                elif ambiguity_reason == "foot_too_high_on_pulse":
+                    rel = (smooth_sig[refined_foot] - smooth_sig[valley_idx]) / pulse_amp if pulse_amp > 0 else 0
+                    av, ar = f"{rel:.3f}", f"<= {MAX_FOOT_REL_HEIGHT:.3f}"
+                elif ambiguity_reason == "vpg_not_near_zero_at_foot":
+                    av, ar = f"{float(vpg[refined_foot]):.3f}", f"|x| <= {MAX_ABS_VPG_AT_FOOT:.3f}"
+                elif ambiguity_reason == "pulse_amplitude_non_positive":
+                    av, ar = f"{pulse_amp:.4f}", "> 0"
             log_candidate_rejection(
                 rejected_candidates, ambiguity_reason,
                 candidate_num=candidate_num, peak=p, foot=refined_foot,
-                valley=valley_idx, vpg_at_foot=float(vpg[refined_foot]) if refined_foot is not None else None
+                valley=valley_idx,
+                vpg_at_foot=float(vpg[refined_foot]) if refined_foot is not None else None,
+                actual_value=av, accepted_range=ar
             )
             continue
 
@@ -1136,9 +1218,21 @@ def build_candidate_foot_peak_pairs(smooth_sig, vpg, sdppg, peaks, valleys, fs):
             refined_foot, p, valley_idx, smooth_sig, fs
         )
         if not valid_pair:
+            av, ar = "n/a", "n/a"
+            if refined_foot is not None:
+                ftp = (p - refined_foot) / fs
+                if invalid_reason == "foot_to_peak_too_short":
+                    av, ar = f"{ftp:.3f}s", f">= {MIN_FOOT_TO_PEAK_SEC:.3f}s"
+                elif invalid_reason == "foot_to_peak_too_long":
+                    av, ar = f"{ftp:.3f}s", f"<= {MAX_FOOT_TO_PEAK_SEC:.3f}s"
+                elif invalid_reason == "peak_foot_amplitude_too_small":
+                    amp = float(smooth_sig[p] - smooth_sig[refined_foot])
+                    thr = max(0.01, 0.02 * float(np.std(smooth_sig)))
+                    av, ar = f"{amp:.4f}", f"> {thr:.4f}"
             log_candidate_rejection(
                 rejected_candidates, invalid_reason,
-                candidate_num=candidate_num, peak=p, foot=refined_foot, valley=valley_idx
+                candidate_num=candidate_num, peak=p, foot=refined_foot, valley=valley_idx,
+                actual_value=av, accepted_range=ar
             )
             continue
 
@@ -1209,6 +1303,12 @@ def detect_beats_foot_to_foot(signal_data, fs):
     beat_info = []
     rejected_pulses = []
 
+    sig_len = len(smooth_sig)
+    end_margin_samples = int(END_INCOMPLETE_MARGIN_SEC * fs)
+    start_margin_samples = int(START_INCOMPLETE_MARGIN_SEC * fs)
+    search_lo_s = MAIN_PEAK_MIN_DELAY_SEC
+    search_hi_s = MAIN_PEAK_SEARCH_WINDOW_SEC
+
     for seg in segmented_pulses_all:
         pulse_num = seg["pulse_num"]
         f1 = seg["foot"]
@@ -1220,7 +1320,9 @@ def detect_beats_foot_to_foot(signal_data, fs):
             seg["reason_text"] = explain_pulse_reason("no_peak_between_two_feet")
             log_pulse_rejection(
                 rejected_pulses, "no_peak_between_two_feet",
-                pulse_num=pulse_num, foot=f1, next_foot=f2
+                pulse_num=pulse_num, foot=f1, next_foot=f2,
+                actual_value="0 peaks",
+                accepted_range=">= 1 peak between feet"
             )
             continue
 
@@ -1230,20 +1332,30 @@ def detect_beats_foot_to_foot(signal_data, fs):
             seg["reason_text"] = explain_pulse_reason("no_main_peak_after_foot")
             log_pulse_rejection(
                 rejected_pulses, "no_main_peak_after_foot",
-                pulse_num=pulse_num, foot=f1, next_foot=f2
+                pulse_num=pulse_num, foot=f1, next_foot=f2,
+                actual_value=f"no peak in foot+[{search_lo_s:.3f}s,{search_hi_s:.3f}s]",
+                accepted_range=f"peak within foot+[{search_lo_s:.3f}s,{search_hi_s:.3f}s]"
             )
             continue
 
         edge_incomplete, edge_reason = is_incomplete_edge_pulse(
             foot_idx=f1, peak_idx=p, next_foot_idx=f2,
-            signal_len=len(smooth_sig), fs=fs
+            signal_len=sig_len, fs=fs
         )
         if edge_incomplete:
             seg["status"] = "rejected"
             seg["reason_text"] = explain_pulse_reason(edge_reason)
+            av, ar = "n/a", "n/a"
+            if edge_reason == "incomplete_at_signal_start":
+                av, ar = f"foot_idx={f1}", f">= {start_margin_samples} samples"
+            elif edge_reason == "incomplete_at_signal_end":
+                av, ar = f"peak_idx={p}", f"<= {sig_len - end_margin_samples} samples"
+            elif edge_reason == "next_foot_too_close_to_signal_end":
+                av, ar = f"next_foot_idx={f2}", f"<= {sig_len - end_margin_samples} samples"
             log_pulse_rejection(
                 rejected_pulses, edge_reason,
-                pulse_num=pulse_num, foot=f1, peak=p, next_foot=f2
+                pulse_num=pulse_num, foot=f1, peak=p, next_foot=f2,
+                actual_value=av, accepted_range=ar
             )
             continue
 
@@ -1251,9 +1363,25 @@ def detect_beats_foot_to_foot(signal_data, fs):
         if not valid_beat:
             seg["status"] = "rejected"
             seg["reason_text"] = explain_pulse_reason(beat_reason)
+            av, ar = "n/a", "n/a"
+            beat_dur = (f2 - f1) / fs
+            ftp_dur = (p - f1) / fs
+            if beat_reason == "beat_duration_out_of_range":
+                av, ar = f"{beat_dur:.3f}s", f"[{MIN_BEAT_DURATION_SEC:.2f}, {MAX_BEAT_DURATION_SEC:.2f}]s"
+            elif beat_reason == "foot_to_peak_distance_out_of_range":
+                av, ar = f"{ftp_dur:.3f}s", f"[{MIN_FOOT_TO_PEAK_SEC:.2f}, {MAX_FOOT_TO_PEAK_SEC:.2f}]s"
+            elif beat_reason == "peak_foot_amplitude_too_small":
+                amp = float(smooth_sig[p] - smooth_sig[f1])
+                thr = max(0.01, 0.02 * float(np.std(smooth_sig)))
+                av, ar = f"{amp:.4f}", f"> {thr:.4f}"
+            elif beat_reason == "upstroke_too_weak":
+                upmax = float(np.max(vpg[f1:p + 1])) if p > f1 else 0.0
+                thr = max(0.05, 0.05 * float(np.std(vpg)))
+                av, ar = f"{upmax:.4f}", f"> {thr:.4f}"
             log_pulse_rejection(
                 rejected_pulses, beat_reason,
-                pulse_num=pulse_num, peak=p, foot=f1, next_foot=f2
+                pulse_num=pulse_num, peak=p, foot=f1, next_foot=f2,
+                actual_value=av, accepted_range=ar
             )
             continue
 
@@ -1263,7 +1391,9 @@ def detect_beats_foot_to_foot(signal_data, fs):
             seg["reason_text"] = explain_pulse_reason("beat_too_short_after_segmentation")
             log_pulse_rejection(
                 rejected_pulses, "beat_too_short_after_segmentation",
-                pulse_num=pulse_num, peak=p, foot=f1, next_foot=f2, beat_len=len(beat)
+                pulse_num=pulse_num, peak=p, foot=f1, next_foot=f2, beat_len=len(beat),
+                actual_value=f"{len(beat)} samples",
+                accepted_range="> 10 samples"
             )
             continue
 
@@ -1409,17 +1539,42 @@ def detect_sdppg_abcde(sdppg, fs_eff):
 # -------------------------------------------------
 # PLOTTERS
 # -------------------------------------------------
-def plot_ensemble_sdppg(signal_data, fs, title, color_avg, target_len=220, save_file=None, verbose=False):
+def plot_ensemble_sdppg(signal_data, fs, title, color_avg, min_valid_beats=3,
+                        target_len=220, save_file=None, verbose=False):
+    """
+    Returns:
+      - On success: tuple of (avg_wave, vpg, sdppg_s, beats_rs_aligned, n_beats, fid, meta)
+      - On rejection: dict with rejection info (status="REJECTED", reason, n_beats, etc.)
+    """
     (
         peaks, feet, beats, valid_feet, beat_info,
         smooth_sig, vpg_raw, sdppg_raw, valleys,
         rejected_candidates, rejected_pulses, pulse_map
     ) = detect_beats_foot_to_foot(signal_data, fs)
 
-    if len(beats) < 3:
+    if len(beats) < min_valid_beats:
+        reason = (f"Not enough valid beats for ensemble: found {len(beats)}, "
+                  f"required >= {min_valid_beats}.")
         if verbose:
-            print(f"⚠️ Not enough valid beats in {title}.")
-        return None
+            print(f"⚠️ {title}: {reason}")
+        # Return rejection diagnostic instead of None
+        return {
+            "status": "REJECTED",
+            "reason": reason,
+            "beats_found": int(len(beats)),
+            "min_required": int(min_valid_beats),
+            "rejected_candidates": int(len(rejected_candidates)),
+            "rejected_pulses": int(len(rejected_pulses)),
+            "segmented_pulses_total": int(len(pulse_map)),
+            "rejected_candidates_info": rejected_candidates,
+            "rejected_pulses_info": rejected_pulses,
+            "pulse_map": pulse_map,
+            "smooth_sig": smooth_sig,
+            "peaks": peaks,
+            "valleys": valleys,
+            "feet": feet,
+            "rejection_reason_summary": summarize_reason_counts(rejected_pulses, "reason_key")
+        }
 
     beats_rs, _, _ = build_ensemble_from_beats(beats, target_len=target_len)
 
@@ -1605,27 +1760,94 @@ def debug_plot_feet(signal_data, fs, title="Foot Check", save_file=None, verbose
         print(f"✅ {title}: peaks={len(peaks)}, feet={len(feet)}, accepted={len(beats)}")
 
 # -------------------------------------------------
+# REJECTED WINDOW PLOT
+# -------------------------------------------------
+def plot_rejected_window(signal_data, fs, title, color_avg, reason_text,
+                         beats_found, min_required, save_file=None):
+    """
+    Generates a rejection summary plot showing the normalized signal,
+    detected peaks/feet/valleys, and a clear text annotation of the reason.
+    """
+    (
+        peaks, feet, beats, valid_feet, beat_info,
+        smooth_sig, vpg, sdppg, valleys,
+        rejected_candidates, rejected_pulses, pulse_map
+    ) = detect_beats_foot_to_foot(signal_data, fs)
+
+    t = np.arange(len(signal_data)) / fs
+    fig, ax = plt.subplots(figsize=(14, 6))
+
+    ax.plot(t, smooth_sig, color=color_avg, linewidth=1.6, label="Smoothed PPG")
+
+    if len(peaks):
+        ax.plot(t[peaks], smooth_sig[peaks], "ro", markersize=6, label=f"Detected Peaks ({len(peaks)})")
+    if len(valleys):
+        ax.plot(t[valleys], smooth_sig[valleys], "gv", markersize=6, alpha=0.7, label=f"Valleys ({len(valleys)})")
+
+    accepted_feet = np.array([b["foot"] for b in beat_info], dtype=int) if len(beat_info) else np.array([], dtype=int)
+    if len(accepted_feet):
+        ax.plot(t[accepted_feet], smooth_sig[accepted_feet], "ko", markersize=7, label=f"Accepted Feet ({len(accepted_feet)})")
+
+    # Highlight rejected pulse regions
+    for item in pulse_map:
+        if item["status"] != "accepted":
+            ax.axvspan(t[item["foot"]], t[item["next_foot"]], alpha=0.10, color="red")
+
+    # Build reason text
+    rej_summary = summarize_reason_counts(rejected_pulses, "reason_key")
+    rej_lines = [f"  • {k}: {v}" for k, v in rej_summary.items()]
+    rej_block = "\n".join(rej_lines) if rej_lines else "  (no per-pulse rejections logged)"
+
+    info_text = (
+        f"REJECTION REASON:\n  {reason_text}\n\n"
+        f"Beats Found: {beats_found}    |    Required: {min_required}\n"
+        f"Total Pulses Segmented: {len(pulse_map)}\n"
+        f"Pulse-level Rejections:\n{rej_block}"
+    )
+
+    ax.text(0.02, 0.98, info_text, transform=ax.transAxes,
+            fontsize=10, verticalalignment='top',
+            bbox=dict(boxstyle='round,pad=0.6', facecolor='lightyellow',
+                      edgecolor='red', alpha=0.9))
+
+    ax.set_title(f"[REJECTED WINDOW] — {title}", fontsize=13, fontweight='bold', color='darkred')
+    ax.set_xlabel("Time (s)")
+    ax.set_ylabel("Amplitude")
+    ax.grid(True, alpha=0.3)
+    ax.legend(loc="upper right")
+    plt.tight_layout()
+
+    save_if_requested(fig, save_file)
+
+# -------------------------------------------------
 # FULL ENSEMBLE WRAPPER
 # -------------------------------------------------
-def run_step11_ensemble(signal_data, fs, channel_name, plot_root, base_name, target_len=ENSEMBLE_TARGET_LEN):
+def run_step11_ensemble(signal_data, fs, channel_name, plot_root, base_name,
+                        target_len=ENSEMBLE_TARGET_LEN, min_valid_beats=3):
     """
     Runs Step 11 and saves the 3 ensemble plots:
-      1) Ensemble average
-      2) Foot verification
-      3) Pulse numbering
+      1) Ensemble average    → 10_Ensemble/
+      2) Foot verification   → 09_Debug/
+      3) Pulse numbering     → 11_PulseNumbering/
+    
+    Returns:
+      - On success: dict with avg_wave, vpg, sdppg, meta, plot_paths
+      - On rejection: dict with status="REJECTED", reason, rejection_plot path
     """
     channel_tag = str(channel_name).upper()
 
-    ensemble_dir = os.path.join(plot_root, "11_Ensemble")
-    debug_dir = os.path.join(plot_root, "11_Debug")
+    # 🆕 RENAMED FOLDERS (per user request)
+    ensemble_dir = os.path.join(plot_root, "10_Ensemble")
+    debug_dir = os.path.join(plot_root, "09_Debug")
     numbering_dir = os.path.join(plot_root, "11_PulseNumbering")
 
     os.makedirs(ensemble_dir, exist_ok=True)
     os.makedirs(debug_dir, exist_ok=True)
     os.makedirs(numbering_dir, exist_ok=True)
 
-    ensemble_plot = os.path.join(ensemble_dir, f"{base_name}_{channel_tag}_11_Ensemble.png")
-    debug_plot = os.path.join(debug_dir, f"{base_name}_{channel_tag}_11_FootCheck.png")
+    # 🆕 RENAMED FILES (per user request)
+    ensemble_plot = os.path.join(ensemble_dir, f"{base_name}_{channel_tag}_10_Ensemble.png")
+    debug_plot = os.path.join(debug_dir, f"{base_name}_{channel_tag}_09_FootCheck.png")
     numbering_plot = os.path.join(numbering_dir, f"{base_name}_{channel_tag}_11_Numbering.png")
 
     ensemble_result = plot_ensemble_sdppg(
@@ -1633,19 +1855,38 @@ def run_step11_ensemble(signal_data, fs, channel_name, plot_root, base_name, tar
         fs=fs,
         title=f"{channel_tag} Channel",
         color_avg=("red" if channel_tag == "RED" else "blue"),
+        min_valid_beats=min_valid_beats,
         target_len=target_len,
         save_file=ensemble_plot,
         verbose=False
     )
 
-    if ensemble_result is None:
-        return None
-
-    avg_wave, vpg, sdppg_s, beats_rs_aligned, n_beats, fid, meta = ensemble_result
-
-    # Save the supporting plots
+    # Always save the supporting plots (foot check + numbering) even on rejection
+    # so user can visually inspect why
     debug_plot_feet(signal_data, fs, title=f"{channel_tag} Foot Verification", save_file=debug_plot, verbose=False)
     plot_pulse_numbering(signal_data, fs, title=f"{channel_tag} Pulse Numbering", save_file=numbering_plot, verbose=False)
+
+    # If rejected → return rejection package + generate dedicated rejection plot
+    if isinstance(ensemble_result, dict) and ensemble_result.get("status") == "REJECTED":
+        rejection_plot = os.path.join(ensemble_dir, f"{base_name}_{channel_tag}_REJECTED.png")
+        plot_rejected_window(
+            signal_data=signal_data,
+            fs=fs,
+            title=f"{channel_tag} Channel — {base_name}",
+            color_avg=("red" if channel_tag == "RED" else "blue"),
+            reason_text=ensemble_result["reason"],
+            beats_found=ensemble_result["beats_found"],
+            min_required=ensemble_result["min_required"],
+            save_file=rejection_plot
+        )
+        ensemble_result["plot_paths"] = {
+            "rejection_plot": rejection_plot,
+            "debug_plot": debug_plot,
+            "numbering_plot": numbering_plot
+        }
+        return ensemble_result
+
+    avg_wave, vpg, sdppg_s, beats_rs_aligned, n_beats, fid, meta = ensemble_result
 
     # Add plot paths into metadata
     meta["plot_paths"] = {
@@ -1655,6 +1896,7 @@ def run_step11_ensemble(signal_data, fs, channel_name, plot_root, base_name, tar
     }
 
     return {
+        "status": "SUCCESS",
         "avg_wave": avg_wave,
         "vpg": vpg,
         "sdppg": sdppg_s,
@@ -1674,8 +1916,6 @@ print("✅ Ensemble + SDPPG core functions loaded.")
 
 # ==========================================
 # ⚙️ STEP 13: PER-WINDOW PROCESSING + SAVING + VALIDATION
-# Input : single CSV file path
-# Output: saves data files + plots, returns per-window result dict
 # ==========================================
 
 def make_padded_column(arr, target_len):
@@ -1695,9 +1935,9 @@ def build_window_paths(filepath, output_root):
     else:
         subject_prefix = filename_no_ext
     
-    main_folder = f"{subject_prefix}_Filtered"           # e.g. abeeha(23-enc-19)v5_Filtered
-    window_folder = f"{filename_no_ext}_Filtered"         # e.g. abeeha(23-enc-19)v5_Win0_Filtered
-    additional_folder = f"{subject_prefix}_Additional"    # e.g. abeeha(23-enc-19)v5_Additional
+    main_folder = f"{subject_prefix}_Filtered"
+    window_folder = f"{filename_no_ext}_Filtered"
+    additional_folder = f"{subject_prefix}_Additional"
     
     main_path = os.path.join(output_root, main_folder)
     window_path = os.path.join(main_path, window_folder)
@@ -1720,159 +1960,103 @@ def build_window_paths(filepath, output_root):
     }
 
 def validate_saved_data(window_path, paths, expected_lengths, in_memory_arrays=None):
-    """
-    Validates saved CSVs by:
-    1. Checking file existence
-    2. Verifying row counts
-    3. Numerically comparing saved data against in-memory arrays
-       (uses tolerance to allow CSV float round-trip precision loss)
-    
-    in_memory_arrays: dict of {column_name: numpy_array} for data integrity check
-    """
+    """Validates saved CSVs (file existence, row counts, numerical integrity)."""
     report = {"status": "PASS", "checks": [], "issues": []}
     
-    # Tolerance for float comparison (CSV round-trip can lose ~1e-10 precision)
-    RTOL = 1e-9   # relative tolerance
-    ATOL = 1e-9   # absolute tolerance
+    RTOL = 1e-9
+    ATOL = 1e-9
     
     def compare_arrays(name, mem_arr, disk_arr):
-        """Returns dict with comparison results."""
         mem = np.asarray(mem_arr, dtype=np.float64)
         disk = np.asarray(disk_arr, dtype=np.float64)
         
         if len(mem) != len(disk):
-            return {
-                "match": False,
-                "length_mem": len(mem),
-                "length_disk": len(disk),
-                "max_abs_diff": None,
-                "reason": "length_mismatch"
-            }
+            return {"match": False, "length_mem": len(mem), "length_disk": len(disk),
+                    "max_abs_diff": None, "reason": "length_mismatch"}
         
-        # Handle NaN positions: they must match in both arrays
         nan_mem = np.isnan(mem)
         nan_disk = np.isnan(disk)
         
         if not np.array_equal(nan_mem, nan_disk):
-            return {
-                "match": False,
-                "length_mem": len(mem),
-                "length_disk": len(disk),
-                "max_abs_diff": None,
-                "reason": "nan_position_mismatch"
-            }
+            return {"match": False, "length_mem": len(mem), "length_disk": len(disk),
+                    "max_abs_diff": None, "reason": "nan_position_mismatch"}
         
-        # Compare non-NaN values with tolerance
         valid_mask = ~nan_mem
         if not np.any(valid_mask):
-            # All NaN — that's a match since NaN positions agree
-            return {
-                "match": True,
-                "length_mem": len(mem),
-                "length_disk": len(disk),
-                "max_abs_diff": 0.0,
-                "reason": "all_nan_match"
-            }
+            return {"match": True, "length_mem": len(mem), "length_disk": len(disk),
+                    "max_abs_diff": 0.0, "reason": "all_nan_match"}
         
         diff = np.abs(mem[valid_mask] - disk[valid_mask])
         max_abs_diff = float(np.max(diff))
         
-        # Use isclose for tolerance-based comparison
-        close = np.allclose(
-            mem[valid_mask], disk[valid_mask],
-            rtol=RTOL, atol=ATOL, equal_nan=False
-        )
+        close = np.allclose(mem[valid_mask], disk[valid_mask],
+                            rtol=RTOL, atol=ATOL, equal_nan=False)
         
-        return {
-            "match": bool(close),
-            "length_mem": len(mem),
-            "length_disk": len(disk),
-            "max_abs_diff": max_abs_diff,
-            "reason": "within_tolerance" if close else "exceeds_tolerance"
-        }
+        return {"match": bool(close), "length_mem": len(mem), "length_disk": len(disk),
+                "max_abs_diff": max_abs_diff,
+                "reason": "within_tolerance" if close else "exceeds_tolerance"}
     
-    # ----- Check Full CSV -----
+    # Full CSV
     full_csv_path = os.path.join(window_path, paths["file_full"])
     if os.path.exists(full_csv_path):
         df_full = pd.read_csv(full_csv_path)
-        check = {
-            "file": paths["file_full"],
-            "exists": True,
-            "rows": len(df_full),
-            "cols": list(df_full.columns),
-            "expected_rows": expected_lengths["full_len"],
-            "row_match": len(df_full) == expected_lengths["full_len"]
-        }
+        check = {"file": paths["file_full"], "exists": True, "rows": len(df_full),
+                 "cols": list(df_full.columns), "expected_rows": expected_lengths["full_len"],
+                 "row_match": len(df_full) == expected_lengths["full_len"]}
         if not check["row_match"]:
             report["issues"].append(f"Full CSV row mismatch: got {len(df_full)}, expected {expected_lengths['full_len']}")
             report["status"] = "FAIL"
         
-        # Numerical integrity check
         if in_memory_arrays and "full" in in_memory_arrays:
             data_check = {}
             for col, in_mem_arr in in_memory_arrays["full"].items():
                 if col in df_full.columns:
-                    reloaded = df_full[col].to_numpy()
-                    cmp = compare_arrays(col, in_mem_arr, reloaded)
+                    cmp = compare_arrays(col, in_mem_arr, df_full[col].to_numpy())
                     data_check[col] = cmp
                     if not cmp["match"]:
                         report["issues"].append(
-                            f"Full CSV column '{col}' mismatch ({cmp['reason']}, "
-                            f"max_diff={cmp['max_abs_diff']})"
+                            f"Full CSV column '{col}' mismatch ({cmp['reason']}, max_diff={cmp['max_abs_diff']})"
                         )
                         report["status"] = "FAIL"
             check["data_check"] = data_check
-        
         report["checks"].append(check)
     else:
         report["issues"].append(f"Missing file: {paths['file_full']}")
         report["status"] = "FAIL"
     
-    # ----- Check Ensemble CSV -----
+    # Ensemble CSV
     ens_csv_path = os.path.join(window_path, paths["file_ensemble"])
     if os.path.exists(ens_csv_path):
         df_ens = pd.read_csv(ens_csv_path)
-        check = {
-            "file": paths["file_ensemble"],
-            "exists": True,
-            "rows": len(df_ens),
-            "cols": list(df_ens.columns),
-            "expected_rows": expected_lengths["ensemble_len"],
-            "row_match": len(df_ens) == expected_lengths["ensemble_len"]
-        }
+        check = {"file": paths["file_ensemble"], "exists": True, "rows": len(df_ens),
+                 "cols": list(df_ens.columns), "expected_rows": expected_lengths["ensemble_len"],
+                 "row_match": len(df_ens) == expected_lengths["ensemble_len"]}
         if not check["row_match"]:
             report["issues"].append(f"Ensemble CSV row mismatch: got {len(df_ens)}, expected {expected_lengths['ensemble_len']}")
             report["status"] = "FAIL"
         
-        # Numerical integrity check (handles NaN padding)
         if in_memory_arrays and "ensemble" in in_memory_arrays:
             data_check = {}
             for col, in_mem_arr in in_memory_arrays["ensemble"].items():
                 if col in df_ens.columns:
-                    reloaded = df_ens[col].to_numpy()
-                    cmp = compare_arrays(col, in_mem_arr, reloaded)
+                    cmp = compare_arrays(col, in_mem_arr, df_ens[col].to_numpy())
                     data_check[col] = cmp
                     if not cmp["match"]:
                         report["issues"].append(
-                            f"Ensemble CSV column '{col}' mismatch ({cmp['reason']}, "
-                            f"max_diff={cmp['max_abs_diff']})"
+                            f"Ensemble CSV column '{col}' mismatch ({cmp['reason']}, max_diff={cmp['max_abs_diff']})"
                         )
                         report["status"] = "FAIL"
             check["data_check"] = data_check
-        
         report["checks"].append(check)
     else:
         report["issues"].append(f"Missing file: {paths['file_ensemble']}")
         report["status"] = "FAIL"
     
-    # ----- Check Config JSON -----
+    # Config JSON
     cfg_path = os.path.join(window_path, paths["file_config"])
     if os.path.exists(cfg_path):
-        report["checks"].append({
-            "file": paths["file_config"],
-            "exists": True,
-            "size_bytes": os.path.getsize(cfg_path)
-        })
+        report["checks"].append({"file": paths["file_config"], "exists": True,
+                                 "size_bytes": os.path.getsize(cfg_path)})
     else:
         report["issues"].append(f"Missing file: {paths['file_config']}")
         report["status"] = "FAIL"
@@ -1880,10 +2064,7 @@ def validate_saved_data(window_path, paths, expected_lengths, in_memory_arrays=N
     return report
 
 def process_single_window(filepath, output_root, file_idx, total_files):
-    """
-    Runs the full pipeline for a single CSV file.
-    Returns a dict with results & status.
-    """
+    """Runs full pipeline for one CSV. Returns dict with status SUCCESS / REJECTED / FAILED."""
     filename = os.path.basename(filepath)
     paths = build_window_paths(filepath, output_root)
     
@@ -1893,11 +2074,12 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         "filename_no_ext": paths["filename_no_ext"],
         "status": "SUCCESS",
         "error": None,
+        "rejection_reason": None,
         "output_window_folder": paths["window_path"]
     }
     
     try:
-        # --- Prepare folders (overwrite if exists) ---
+        # Prepare folders
         if os.path.exists(paths["window_path"]):
             shutil.rmtree(paths["window_path"])
             result["folder_replaced"] = True
@@ -1908,7 +2090,6 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         os.makedirs(paths["additional_path"], exist_ok=True)
         os.makedirs(paths["plots_root"], exist_ok=True)
         
-        # Define plot subfolders
         plot_dirs = {
             "02": os.path.join(paths["plots_root"], "02_Raw_Selection"),
             "03": os.path.join(paths["plots_root"], "03_Despiked"),
@@ -1923,36 +2104,21 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         
         base_name = paths["filename_no_ext"]
         
-        # ============ STEP 2: LOAD ============
+        # STEP 2-8
         full_clean_df, selected_df, s_start, s_end = load_and_validate_csv(filepath)
         plot_step2_raw(full_clean_df, selected_df, s_start, s_end, plot_dirs["02"], base_name)
-        
-        # ============ STEP 3: DESPIKE ============
         ir_despiked, red_despiked = step3_spike_removal(selected_df, plot_dirs["03"], base_name)
-        
-        # ============ STEP 4: INVERT ============
         ir_inverted, red_inverted = step4_inversion(ir_despiked, red_despiked, plot_dirs["04"], base_name)
-        
-        # ============ STEP 5: LOW-PASS ============
         ir_filtered, red_filtered = step5_lowpass(ir_inverted, red_inverted, plot_dirs["05"], base_name)
-        
-                # ============ STEP 6: SG SMOOTH ============
-        # Note: SG is OFF by default (SG_ENABLE=False), so ir_smoothed == ir_filtered.
-        # If enabled, SG output feeds correctly into Step 7 (proper sequential chain).
         ir_smoothed, red_smoothed = step6_savgol(ir_filtered, red_filtered, plot_dirs["06"], base_name)
-        
-        # ============ STEP 7: HIGH-PASS ============
-        # Takes SG output as input (proper pipeline chaining).
-        # When SG_ENABLE=False, this is equivalent to using LP output directly.
-        ir_hpf, red_hpf = step7_highpass(ir_smoothed, red_smoothed, plot_dirs["07"], base_name)        
-        # ============ STEP 8: NORMALIZE ============
+        ir_hpf, red_hpf = step7_highpass(ir_smoothed, red_smoothed, plot_dirs["07"], base_name)
         ir_norm, red_norm = step8_normalize(ir_hpf, red_hpf, plot_dirs["08"], base_name)
         
-        # ============ STEP 9: QUALITY CHECK ============
+        # STEP 9
         sqi_ir = step9_quality_check(ir_hpf, selected_df['IR'].values, FS)
         sqi_red = step9_quality_check(red_hpf, selected_df['RED'].values, FS)
         
-        # ============ STEP 10: PIPELINE DIAGNOSTIC ============
+        # STEP 10
         stages = {
             "1_Raw":       (selected_df['IR'].values, selected_df['RED'].values),
             "2_Despiked":  (ir_despiked, red_despiked),
@@ -1965,17 +2131,108 @@ def process_single_window(filepath, output_root, file_idx, total_files):
             stages, selected_df['IR'].values, selected_df['RED'].values, FS
         )
         
-        # ============ STEP 11a: PPG FEATURES (per-channel) ============
+        # STEP 11a — per-channel features
         feat_red = extract_glucose_features(red_norm, selected_df['RED'].values, FS)
         feat_ir = extract_glucose_features(ir_norm, selected_df['IR'].values, FS)
         
-        # ============ STEP 11b: ENSEMBLE (RED) ============
-        ens_red = run_step11_ensemble(red_norm, FS, "RED", paths["plots_root"], base_name, ENSEMBLE_TARGET_LEN)
-        ens_ir = run_step11_ensemble(ir_norm, FS, "IR", paths["plots_root"], base_name, ENSEMBLE_TARGET_LEN)
+        # STEP 11b — Ensemble (with per-channel min beat thresholds)
+        ens_red = run_step11_ensemble(
+            red_norm, FS, "RED", paths["plots_root"], base_name,
+            target_len=ENSEMBLE_TARGET_LEN, min_valid_beats=MIN_VALID_BEATS_RED
+        )
+        ens_ir = run_step11_ensemble(
+            ir_norm, FS, "IR", paths["plots_root"], base_name,
+            target_len=ENSEMBLE_TARGET_LEN, min_valid_beats=MIN_VALID_BEATS_IR
+        )
         
-        if ens_red is None or ens_ir is None:
-            raise RuntimeError("Not enough valid beats for ensemble (need >= 3).")
+        # 🆕 SOFT REJECTION HANDLING (instead of raising exception)
+        red_rejected = (ens_red.get("status") == "REJECTED")
+        ir_rejected = (ens_ir.get("status") == "REJECTED")
         
+        if red_rejected or ir_rejected:
+            reason_parts = []
+            if ir_rejected:
+                reason_parts.append(f"IR: {ens_ir['reason']}")
+            if red_rejected:
+                reason_parts.append(f"RED: {ens_red['reason']}")
+            full_reason = " | ".join(reason_parts)
+            
+            # Save a rejection-config JSON so it's preserved on disk
+            rejection_config = {
+                "metadata": {
+                    "source_file": filepath,
+                    "filename": filename,
+                    "sampling_rate_fs": float(FS),
+                    "date_processed": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "status": "REJECTED"
+                },
+                "rejection": {
+                    "overall_reason": full_reason,
+                    "min_valid_beats_ir": MIN_VALID_BEATS_IR,
+                    "min_valid_beats_red": MIN_VALID_BEATS_RED,
+                    "IR_channel": {
+                        "rejected": ir_rejected,
+                        "reason": ens_ir.get("reason") if ir_rejected else None,
+                        "beats_found": ens_ir.get("beats_found") if ir_rejected else ens_ir.get("beats_used"),
+                        "rejected_pulses": ens_ir.get("rejected_pulses"),
+                        "pulse_rejection_summary": ens_ir.get("rejection_reason_summary") if ir_rejected else None
+                    },
+                    "RED_channel": {
+                        "rejected": red_rejected,
+                        "reason": ens_red.get("reason") if red_rejected else None,
+                        "beats_found": ens_red.get("beats_found") if red_rejected else ens_red.get("beats_used"),
+                        "rejected_pulses": ens_red.get("rejected_pulses"),
+                        "pulse_rejection_summary": ens_red.get("rejection_reason_summary") if red_rejected else None
+                    },
+                    "rejection_plots": {
+                        "IR": ens_ir.get("plot_paths", {}).get("rejection_plot") if ir_rejected else None,
+                        "RED": ens_red.get("plot_paths", {}).get("rejection_plot") if red_rejected else None
+                    }
+                },
+                "signal_quality": {"IR": sqi_ir, "RED": sqi_red},
+                "pipeline_diagnostic": pipeline_diag
+            }
+            
+            path_config = os.path.join(paths["window_path"], paths["file_config"])
+            with open(path_config, "w") as f:
+                json.dump(to_json_safe(rejection_config), f, indent=4)
+            
+            result["status"] = "REJECTED"
+            result["rejection_reason"] = full_reason
+            result["rejection_details"] = {
+                "IR_rejected": ir_rejected,
+                "RED_rejected": red_rejected,
+                "IR_reason": ens_ir.get("reason") if ir_rejected else None,
+                "RED_reason": ens_red.get("reason") if red_rejected else None,
+                "IR_beats_found": ens_ir.get("beats_found") if ir_rejected else ens_ir.get("beats_used"),
+                "RED_beats_found": ens_red.get("beats_found") if red_rejected else ens_red.get("beats_used"),
+                "min_required_IR": MIN_VALID_BEATS_IR,
+                "min_required_RED": MIN_VALID_BEATS_RED
+            }
+            # 🆕 Per-channel rejected-beat info (for terminal detail table)
+            result["rejection_beat_details"] = {
+                "IR": {
+                    "rejected": ir_rejected,
+                    "beats_found": ens_ir.get("beats_found", ens_ir.get("beats_used", 0)),
+                    "min_required": MIN_VALID_BEATS_IR,
+                    "segmented_pulses_total": ens_ir.get("segmented_pulses_total", 0),
+                    "rejected_pulses_info": ens_ir.get("rejected_pulses_info", []),
+                    "rejected_candidates_info": ens_ir.get("rejected_candidates_info", [])
+                },
+                "RED": {
+                    "rejected": red_rejected,
+                    "beats_found": ens_red.get("beats_found", ens_red.get("beats_used", 0)),
+                    "min_required": MIN_VALID_BEATS_RED,
+                    "segmented_pulses_total": ens_red.get("segmented_pulses_total", 0),
+                    "rejected_pulses_info": ens_red.get("rejected_pulses_info", []),
+                    "rejected_candidates_info": ens_red.get("rejected_candidates_info", [])
+                }
+            }
+            result["sqi_ir"] = sqi_ir
+            result["sqi_red"] = sqi_red
+            return result
+        
+        # SUCCESS PATH
         avg_wave_red = ens_red["avg_wave"]
         vpg_red = ens_red["vpg"]
         sdppg_red = ens_red["sdppg"]
@@ -1986,7 +2243,7 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         sdppg_ir = ens_ir["sdppg"]
         meta_ir = ens_ir["meta"]
         
-        # ============ STEP 12: GOLDEN STANDARD ============
+        # STEP 12
         gs_red = extract_features_from_ensemble_wave(
             avg_wave_red, feat_red['hr'], selected_df['RED'].values, meta_red['fs_eff']
         )
@@ -1994,7 +2251,7 @@ def process_single_window(filepath, output_root, file_idx, total_files):
             avg_wave_ir, feat_ir['hr'], selected_df['IR'].values, meta_ir['fs_eff']
         )
         
-        # ============ STEP 13a: SAVE FULL CSV ============
+        # STEP 13a — Full CSV
         df_full = pd.DataFrame({
             "Red_AC_HighPass": red_hpf,
             "IR_AC_HighPass": ir_hpf,
@@ -2006,7 +2263,7 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         path_full = os.path.join(paths["window_path"], paths["file_full"])
         df_full.to_csv(path_full, index=False)
         
-        # ============ STEP 13b: SAVE ENSEMBLE CSV ============
+        # STEP 13b — Ensemble CSV
         max_len = max(len(avg_wave_red), len(avg_wave_ir))
         df_ensemble = pd.DataFrame({
             "Time_Red_s":       make_padded_column(meta_red["time_axis"], max_len),
@@ -2021,7 +2278,7 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         path_ensemble = os.path.join(paths["window_path"], paths["file_ensemble"])
         df_ensemble.to_csv(path_ensemble, index=False)
         
-        # ============ STEP 13c: SAVE CONFIG JSON (per-window) ============
+        # STEP 13c — Config JSON
         total_samples = len(red_hpf)
         plot_time = total_samples / float(FS)
         nyquist_rate = float(FS) / 2.0
@@ -2034,7 +2291,8 @@ def process_single_window(filepath, output_root, file_idx, total_files):
                 "total_samples": int(total_samples),
                 "duration_sec": float(plot_time),
                 "nyquist_rate": float(nyquist_rate),
-                "date_processed": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                "date_processed": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "status": "SUCCESS"
             },
             "hyperparameters": {
                 "use_full_file": USE_FULL_FILE,
@@ -2057,6 +2315,8 @@ def process_single_window(filepath, output_root, file_idx, total_files):
                 "norm_selection": NORM_SELECTION,
                 "norm_type": "MinMax" if NORM_SELECTION == 1 else "ZScore",
                 "ensemble_target_len": ENSEMBLE_TARGET_LEN,
+                "min_valid_beats_ir": MIN_VALID_BEATS_IR,
+                "min_valid_beats_red": MIN_VALID_BEATS_RED,
                 "peak_min_distance_sec": PEAK_MIN_DISTANCE_SEC,
                 "peak_prom_factor": PEAK_PROM_FACTOR,
                 "valley_min_distance_sec": VALLEY_MIN_DISTANCE_SEC,
@@ -2081,19 +2341,10 @@ def process_single_window(filepath, output_root, file_idx, total_files):
                 "window_folder": paths["window_path"],
                 "additional_folder": paths["additional_path"]
             },
-            "signal_quality": {
-                "IR": sqi_ir,
-                "RED": sqi_red
-            },
+            "signal_quality": {"IR": sqi_ir, "RED": sqi_red},
             "pipeline_diagnostic": pipeline_diag,
-            "ppg_features_per_channel": {
-                "IR": feat_ir,
-                "RED": feat_red
-            },
-            "golden_standard_features": {
-                "IR": gs_ir,
-                "RED": gs_red
-            },
+            "ppg_features_per_channel": {"IR": feat_ir, "RED": feat_red},
+            "golden_standard_features": {"IR": gs_ir, "RED": gs_red},
             "ensemble_RED": meta_red,
             "ensemble_IR": meta_ir
         }
@@ -2102,7 +2353,7 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         with open(path_config, "w") as f:
             json.dump(to_json_safe(window_config), f, indent=4)
         
-                # ============ STEP 13d: VALIDATE SAVED DATA (with hash check) ============
+        # STEP 13d — Validate
         in_memory_for_validation = {
             "full": {
                 "Red_AC_HighPass": red_hpf,
@@ -2125,13 +2376,11 @@ def process_single_window(filepath, output_root, file_idx, total_files):
         }
         
         validation = validate_saved_data(
-            paths["window_path"],
-            paths,
+            paths["window_path"], paths,
             expected_lengths={"full_len": len(df_full), "ensemble_len": len(df_ensemble)},
             in_memory_arrays=in_memory_for_validation
         )
         
-        # ============ COLLECT RESULTS ============
         result.update({
             "samples_processed": int(total_samples),
             "duration_sec": float(plot_time),
@@ -2171,20 +2420,13 @@ def process_single_window(filepath, output_root, file_idx, total_files):
 print("✅ Per-window pipeline runner loaded.")
 
 
-
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 
 
 # ==========================================
 # 🚀 STEP 14: MAIN AUTOMATION LOOP
-# Input : csv_files list, processing functions
-# Output: per-file processing, terminal tables, combined JSON
 # ==========================================
 
-# -------------------------------------------------
-# TABLE PRINTERS
-# -------------------------------------------------
 def print_section(title, char="=", width=110):
     print("\n" + char * width)
     print(f"  {title}")
@@ -2203,7 +2445,9 @@ def print_sqi_table(results):
     print(header)
     print("-" * len(header))
     for r in results:
-        if r["status"] != "SUCCESS":
+        if r["status"] not in ("SUCCESS", "REJECTED"):
+            continue
+        if "sqi_ir" not in r or "sqi_red" not in r:
             continue
         for ch, sqi in [("IR", r["sqi_ir"]), ("RED", r["sqi_red"])]:
             passes = sum(1 for k in ["skewness_status", "kurtosis_status", "perfusion_index_status", "zcr_status", "snr_status"]
@@ -2254,6 +2498,26 @@ def print_ensemble_table(results):
                   f"{e['beats_used']:>6} | {e['total_segmented']:>10} | "
                   f"{e['rejected_pulses']:>10} | {fmt_num(e['avg_beat_duration_s'],3):>10}")
 
+def print_rejection_table(results):
+    """Prints a clear table of REJECTED windows with reasons."""
+    rejected = [r for r in results if r["status"] == "REJECTED"]
+    if not rejected:
+        return
+    print_section("⚠️  REJECTED WINDOWS — INSUFFICIENT BEATS")
+    header = f"{'Window':<35} | {'CH':<4} | {'Beats':>6} | {'Required':>9} | {'Reason'}"
+    print(header)
+    print("-" * 110)
+    for r in rejected:
+        d = r.get("rejection_details", {})
+        if d.get("IR_rejected"):
+            print(f"{r['filename_no_ext']:<35} | {'IR':<4} | "
+                  f"{d.get('IR_beats_found','?'):>6} | {d.get('min_required_IR','?'):>9} | "
+                  f"{d.get('IR_reason','')}")
+        if d.get("RED_rejected"):
+            print(f"{r['filename_no_ext']:<35} | {'RED':<4} | "
+                  f"{d.get('RED_beats_found','?'):>6} | {d.get('min_required_RED','?'):>9} | "
+                  f"{d.get('RED_reason','')}")
+
 def print_validation_table(results):
     print_section("✅ SAVE & VALIDATION CHECK — STEP 13")
     header = f"{'Window':<35} | {'Folder Replaced':>16} | {'Files Saved':>12} | {'Validation':>10}"
@@ -2261,7 +2525,8 @@ def print_validation_table(results):
     print("-" * len(header))
     for r in results:
         if r["status"] != "SUCCESS":
-            print(f"{r['filename_no_ext']:<35} | {'-':>16} | {'-':>12} | {'SKIPPED':>10}")
+            label = r["status"]
+            print(f"{r['filename_no_ext']:<35} | {'-':>16} | {'-':>12} | {label:>10}")
             continue
         replaced = "YES" if r.get("folder_replaced") else "NO"
         n_files = len([c for c in r["validation"]["checks"] if c.get("exists")])
@@ -2269,9 +2534,9 @@ def print_validation_table(results):
         print(f"{r['filename_no_ext']:<35} | {replaced:>16} | {n_files:>12} | {status:>10}")
 
 def print_error_summary(results):
-    failed = [r for r in results if r["status"] != "SUCCESS"]
+    failed = [r for r in results if r["status"] == "FAILED"]
     if not failed:
-        print_section("✅ NO ERRORS — ALL FILES PROCESSED SUCCESSFULLY")
+        print_section("✅ NO PROCESSING ERRORS")
         return
     
     print_section("❌ FILES WITH ERRORS")
@@ -2280,78 +2545,188 @@ def print_error_summary(results):
 
 def print_final_summary(results, output_root):
     success = sum(1 for r in results if r["status"] == "SUCCESS")
-    failed = len(results) - success
+    rejected = sum(1 for r in results if r["status"] == "REJECTED")
+    failed = sum(1 for r in results if r["status"] == "FAILED")
     
     print_section("🎯 FINAL SUMMARY", char="=")
     print(f"  Total files     : {len(results)}")
     print(f"  ✅ Successful   : {success}")
+    print(f"  ⚠️  Rejected    : {rejected}")
     print(f"  ❌ Failed       : {failed}")
     print(f"  📂 Output root  : {output_root}")
     print("=" * 110)
 
 # -------------------------------------------------
-# MAIN LOOP
+# REJECTED-BEATS DETAIL TABLE (per window)
+# -------------------------------------------------
+def print_rejected_beats_detail(result):
+    """
+    Prints a per-window table of all individual beats/pulses that were
+    rejected inside a REJECTED window, with reason + actual value + accepted range.
+    Reads from result['rejection_beat_details'] (set in process_single_window).
+    """
+    details = result.get("rejection_beat_details", {})
+    if not details:
+        return
+    
+    for ch in ("IR", "RED"):
+        ch_info = details.get(ch)
+        if not ch_info:
+            continue
+        
+        rej_pulses = ch_info.get("rejected_pulses_info", [])
+        seg_total = ch_info.get("segmented_pulses_total", 0)
+        beats_found = ch_info.get("beats_found", 0)
+        min_req = ch_info.get("min_required", 0)
+        
+        if not rej_pulses and seg_total == 0:
+            continue
+        
+        print(f"          └─ {ch} channel — segmented pulses: {seg_total}, "
+              f"accepted: {beats_found}, required: >= {min_req}")
+        
+        if not rej_pulses:
+            print(f"             (no per-pulse rejections logged — likely too few pulses segmented)")
+            continue
+        
+        # Header (with two new columns: Actual + AcceptedRange)
+        print(f"             {'Pulse#':>6} | {'Foot':>6} | {'Peak':>6} | {'NextFt':>6} | "
+              f"{'Actual':>22} | {'AcceptedRange':>28} | Reason")
+        print(f"             {'-'*6}-+-{'-'*6}-+-{'-'*6}-+-{'-'*6}-+-"
+              f"{'-'*22}-+-{'-'*28}-+-{'-'*40}")
+        
+        for rp in rej_pulses:
+            pnum   = rp.get("pulse_num", "?")
+            foot   = rp.get("foot", "-")
+            peak   = rp.get("peak", "-")
+            nfoot  = rp.get("next_foot", "-")
+            reason = rp.get("reason_text", rp.get("reason_key", "unknown"))
+            actual = rp.get("actual_value", "n/a")
+            acc    = rp.get("accepted_range", "n/a")
+            
+            foot_s   = str(foot)   if foot   is not None else "-"
+            peak_s   = str(peak)   if peak   is not None else "-"
+            nfoot_s  = str(nfoot)  if nfoot  is not None else "-"
+            actual_s = str(actual) if actual is not None else "n/a"
+            acc_s    = str(acc)    if acc    is not None else "n/a"
+            
+            # Truncate long fields
+            if len(actual_s) > 22: actual_s = actual_s[:19] + "..."
+            if len(acc_s)    > 28: acc_s    = acc_s[:25] + "..."
+            
+            print(f"             {pnum:>6} | {foot_s:>6} | {peak_s:>6} | {nfoot_s:>6} | "
+                  f"{actual_s:>22} | {acc_s:>28} | {reason}")
+
+
+# -------------------------------------------------
+# MAIN LOOP (handles batch & single)
 # -------------------------------------------------
 print_section("🚀 STARTING AUTOMATED PIPELINE", char="=")
-print(f"  Input folder  : {selected_folder}")
-print(f"  Output folder : {SAVE_ROOT_FIXED}")
-print(f"  Files to run  : {len(csv_files)}")
-print(f"  Sampling rate : {FS} Hz")
+print(f"  Mode             : {'BATCH' if MODE == 1 else 'SINGLE'}")
+print(f"  Folders to run   : {len(folders_to_process)}")
+print(f"  Output folder    : {SAVE_ROOT_FIXED}")
+print(f"  Sampling rate    : {FS} Hz")
+print(f"  MIN_VALID_BEATS_IR  : {MIN_VALID_BEATS_IR}")
+print(f"  MIN_VALID_BEATS_RED : {MIN_VALID_BEATS_RED}")
 print("=" * 110)
 
-all_results = []
+# Process each folder in sequence
+all_results_global = []        # all windows across all folders
+folder_results_map = {}        # {folder_path: [results]}
 
-for idx, filepath in enumerate(csv_files, start=1):
-    filename = os.path.basename(filepath)
-    print(f"\n[{idx:>3}/{len(csv_files)}] 🔄 Processing: {filename}")
+for folder_idx, folder_path in enumerate(folders_to_process, start=1):
+    print_section(f"📁 [{folder_idx}/{len(folders_to_process)}] FOLDER: {os.path.basename(folder_path)}", char="-")
     
-    result = process_single_window(filepath, SAVE_ROOT_FIXED, idx, len(csv_files))
-    all_results.append(result)
+    csv_files = sorted(glob.glob(os.path.join(folder_path, "*.csv")))
+    if not csv_files:
+        print(f"  ⚠️  No CSV files in this folder — skipping.")
+        continue
     
-    if result["status"] == "SUCCESS":
-        beats_r = result["ensemble_red_summary"]["beats_used"]
-        beats_i = result["ensemble_ir_summary"]["beats_used"]
-        replaced_str = " (overwrote existing)" if result.get("folder_replaced") else ""
-        val_str = result["validation"]["status"]
-        print(f"        ✅ DONE — RED beats: {beats_r}, IR beats: {beats_i} | Validation: {val_str}{replaced_str}")
-    else:
-        print(f"        ❌ FAILED — {result['error']}")
-        # Trim traceback to last 500 chars for compact JSON
-        trimmed_tb = result.get("traceback", "")
-        if len(trimmed_tb) > 500:
-            trimmed_tb = "...[truncated]...\n" + trimmed_tb[-500:]
-        combined_report["errors_log"].append({
-            "filename": filename,
-            "error": result["error"],
-            "traceback_tail": trimmed_tb
-        })
+    print(f"  🔍 Found {len(csv_files)} CSV file(s)")
+    
+    # 🆕 WIPE EXISTING SUBJECT OUTPUT FOLDERS (force full reprocessing)
+    subject_prefixes_in_folder = set()
+    for fp in csv_files:
+        fn_noext = os.path.splitext(os.path.basename(fp))[0]
+        subj = fn_noext.split("_Win")[0] if "_Win" in fn_noext else fn_noext
+        subject_prefixes_in_folder.add(subj)
+    
+    for subj in sorted(subject_prefixes_in_folder):
+        subj_out_folder = os.path.join(SAVE_ROOT_FIXED, f"{subj}_Filtered")
+        if os.path.exists(subj_out_folder):
+            try:
+                shutil.rmtree(subj_out_folder)
+                print(f"  🗑️  Wiped existing output folder: {subj}_Filtered")
+            except Exception as wipe_err:
+                print(f"  ⚠️  Could not wipe {subj}_Filtered: {wipe_err}")
+    
+    folder_results = []
+    for idx, filepath in enumerate(csv_files, start=1):
+        filename = os.path.basename(filepath)
+        print(f"\n  [{idx:>3}/{len(csv_files)}] 🔄 {filename}")
+        
+        result = process_single_window(filepath, SAVE_ROOT_FIXED, idx, len(csv_files))
+        folder_results.append(result)
+        all_results_global.append(result)
+        
+        if result["status"] == "SUCCESS":
+            beats_r = result["ensemble_red_summary"]["beats_used"]
+            beats_i = result["ensemble_ir_summary"]["beats_used"]
+            replaced_str = " (overwrote existing)" if result.get("folder_replaced") else ""
+            val_str = result["validation"]["status"]
+            print(f"        ✅ DONE — RED beats: {beats_r}, IR beats: {beats_i} | Validation: {val_str}{replaced_str}")
+        elif result["status"] == "REJECTED":
+            print(f"        ⚠️  REJECTED — {result['rejection_reason']}")
+            print_rejected_beats_detail(result)
+        else:
+            print(f"        ❌ FAILED — {result['error']}")
+    
+    folder_results_map[folder_path] = folder_results
 
 # -------------------------------------------------
-# PRINT ALL SUMMARY TABLES
+# PRINT SUMMARY TABLES (across all folders)
 # -------------------------------------------------
-print_sqi_table(all_results)
-print_feature_table(all_results)
-print_golden_table(all_results)
-print_ensemble_table(all_results)
-print_validation_table(all_results)
-print_error_summary(all_results)
+print_sqi_table(all_results_global)
+print_feature_table(all_results_global)
+print_golden_table(all_results_global)
+print_ensemble_table(all_results_global)
+print_rejection_table(all_results_global)
+print_validation_table(all_results_global)
+print_error_summary(all_results_global)
 
 # -------------------------------------------------
-# BUILD COMBINED REPORT JSON
+# WRITE PER-SUBJECT COMBINED JSON REPORTS
 # -------------------------------------------------
-combined_report["files_processed"] = [r["filename"] for r in all_results if r["status"] == "SUCCESS"]
-combined_report["files_failed"] = [r["filename"] for r in all_results if r["status"] != "SUCCESS"]
-combined_report["total_success"] = len(combined_report["files_processed"])
-combined_report["total_failed"] = len(combined_report["files_failed"])
+combined_report_root = {
+    "processing_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "mode": "BATCH" if MODE == 1 else "SINGLE",
+    "folders_processed": [str(f) for f in folders_to_process],
+    "output_root": SAVE_ROOT_FIXED,
+    "min_valid_beats_ir": MIN_VALID_BEATS_IR,
+    "min_valid_beats_red": MIN_VALID_BEATS_RED,
+    "total_files": len(all_results_global),
+    "total_success": sum(1 for r in all_results_global if r["status"] == "SUCCESS"),
+    "total_rejected": sum(1 for r in all_results_global if r["status"] == "REJECTED"),
+    "total_failed": sum(1 for r in all_results_global if r["status"] == "FAILED"),
+}
 
-# Build summary table (one row per window per channel)
+# Build summary rows
 summary_rows = []
-for r in all_results:
-    if r["status"] != "SUCCESS":
+for r in all_results_global:
+    if r["status"] == "FAILED":
         summary_rows.append({
             "filename": r["filename"],
-            "status": r["status"],
+            "status": "FAILED",
             "error": r["error"]
+        })
+        continue
+    
+    if r["status"] == "REJECTED":
+        summary_rows.append({
+            "filename": r["filename"],
+            "status": "REJECTED",
+            "rejection_reason": r["rejection_reason"],
+            "rejection_details": r.get("rejection_details", {})
         })
         continue
     
@@ -2374,46 +2749,45 @@ for r in all_results:
             "validation_status": r["validation"]["status"]
         })
 
-combined_report["summary_table"] = summary_rows
-
-# Detailed validation reports
-combined_report["validation_reports"] = {
-    r["filename"]: r["validation"] for r in all_results if r["status"] == "SUCCESS"
-}
-
-# Save combined JSON in each subject's Additional folder
-# (Group results by subject_prefix → one combined JSON per subject)
+# Group by subject prefix
 subject_groups = {}
-for r in all_results:
-    if r["status"] != "SUCCESS":
-        continue
-    # Extract subject prefix from filename
+for r in all_results_global:
     fname = r["filename_no_ext"]
     subj = fname.split("_Win")[0] if "_Win" in fname else fname
-    if subj not in subject_groups:
-        subject_groups[subj] = []
-    subject_groups[subj].append(r)
+    subject_groups.setdefault(subj, []).append(r)
 
-# Write one combined JSON per subject
 print_section("📝 WRITING COMBINED JSON REPORTS", char="=")
 for subj, subj_results in subject_groups.items():
     main_folder = os.path.join(SAVE_ROOT_FIXED, f"{subj}_Filtered")
     additional_folder = os.path.join(main_folder, f"{subj}_Additional")
     os.makedirs(additional_folder, exist_ok=True)
     
+    subj_summary_rows = [row for row in summary_rows
+                         if row.get("filename", "").startswith(subj)]
+    
     subj_report = {
         "subject": subj,
-        "processing_date": combined_report["processing_date"],
-        "input_folder": combined_report["input_folder"],
-        "output_root": combined_report["output_root"],
+        "processing_date": combined_report_root["processing_date"],
+        "mode": combined_report_root["mode"],
+        "min_valid_beats_ir": MIN_VALID_BEATS_IR,
+        "min_valid_beats_red": MIN_VALID_BEATS_RED,
+        "output_root": SAVE_ROOT_FIXED,
         "total_windows": len(subj_results),
-        "windows_processed": [r["filename"] for r in subj_results],
-        "errors_log": [e for e in combined_report["errors_log"]
-                       if e["filename"].startswith(subj)],
-        "summary_table": [row for row in summary_rows
-                          if row.get("filename", "").startswith(subj)],
+        "windows_success": [r["filename"] for r in subj_results if r["status"] == "SUCCESS"],
+        "windows_rejected": [
+            {"filename": r["filename"],
+             "reason": r["rejection_reason"],
+             "details": r.get("rejection_details", {})}
+            for r in subj_results if r["status"] == "REJECTED"
+        ],
+        "windows_failed": [
+            {"filename": r["filename"], "error": r["error"]}
+            for r in subj_results if r["status"] == "FAILED"
+        ],
+        "summary_table": subj_summary_rows,
         "validation_reports": {
-            r["filename"]: r["validation"] for r in subj_results
+            r["filename"]: r["validation"]
+            for r in subj_results if r["status"] == "SUCCESS"
         }
     }
     
@@ -2421,10 +2795,10 @@ for subj, subj_results in subject_groups.items():
     with open(json_path, "w") as f:
         json.dump(to_json_safe(subj_report), f, indent=4)
     
-    print(f"  ✅ {subj}: {len(subj_results)} windows → {json_path}")
+    n_succ = len(subj_report["windows_success"])
+    n_rej = len(subj_report["windows_rejected"])
+    n_fail = len(subj_report["windows_failed"])
+    print(f"  ✅ {subj}: {len(subj_results)} windows ({n_succ} ok, {n_rej} rejected, {n_fail} failed) → {json_path}")
 
-# -------------------------------------------------
-# FINAL SUMMARY
-# -------------------------------------------------
-print_final_summary(all_results, SAVE_ROOT_FIXED)
+print_final_summary(all_results_global, SAVE_ROOT_FIXED)
 print("\n🎉 Pipeline complete.\n")

@@ -1,10 +1,12 @@
 {
     "subject": "Ali(22-enc-12)v1",
-    "processing_date": "2026-06-10 03:22:21",
-    "input_folder": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1",
+    "processing_date": "2026-06-11 03:30:23",
+    "mode": "SINGLE",
+    "min_valid_beats_ir": 8,
+    "min_valid_beats_red": 8,
     "output_root": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered",
     "total_windows": 18,
-    "windows_processed": [
+    "windows_success": [
         "Ali(22-enc-12)v1_Win0.csv",
         "Ali(22-enc-12)v1_Win1.csv",
         "Ali(22-enc-12)v1_Win10.csv",
@@ -24,7 +26,8 @@
         "Ali(22-enc-12)v1_Win8.csv",
         "Ali(22-enc-12)v1_Win9.csv"
     ],
-    "errors_log": [],
+    "windows_rejected": [],
+    "windows_failed": [],
     "summary_table": [
         {
             "filename": "Ali(22-enc-12)v1_Win0.csv",
@@ -2112,7 +2115,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win0_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49096
+                    "size_bytes": 49195
                 }
             ],
             "issues": []
@@ -2257,7 +2260,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win1_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49434
+                    "size_bytes": 49533
                 }
             ],
             "issues": []
@@ -2402,7 +2405,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win10_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51610
+                    "size_bytes": 51709
                 }
             ],
             "issues": []
@@ -2547,7 +2550,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win11_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51103
+                    "size_bytes": 51202
                 }
             ],
             "issues": []
@@ -2692,7 +2695,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win12_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51124
+                    "size_bytes": 51223
                 }
             ],
             "issues": []
@@ -2837,7 +2840,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win13_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51302
+                    "size_bytes": 51401
                 }
             ],
             "issues": []
@@ -2982,7 +2985,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win14_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 48869
+                    "size_bytes": 48968
                 }
             ],
             "issues": []
@@ -3127,7 +3130,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win15_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 50541
+                    "size_bytes": 50640
                 }
             ],
             "issues": []
@@ -3272,7 +3275,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win16_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 50796
+                    "size_bytes": 50895
                 }
             ],
             "issues": []
@@ -3417,7 +3420,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win17_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51379
+                    "size_bytes": 51478
                 }
             ],
             "issues": []
@@ -3562,7 +3565,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win2_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 48361
+                    "size_bytes": 48460
                 }
             ],
             "issues": []
@@ -3707,7 +3710,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win3_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49761
+                    "size_bytes": 49860
                 }
             ],
             "issues": []
@@ -3852,7 +3855,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win4_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49728
+                    "size_bytes": 49827
                 }
             ],
             "issues": []
@@ -3997,7 +4000,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win5_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 50231
+                    "size_bytes": 50330
                 }
             ],
             "issues": []
@@ -4142,7 +4145,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win6_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49599
+                    "size_bytes": 49698
                 }
             ],
             "issues": []
@@ -4287,7 +4290,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win7_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 49796
+                    "size_bytes": 49895
                 }
             ],
             "issues": []
@@ -4432,7 +4435,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win8_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 48758
+                    "size_bytes": 48857
                 }
             ],
             "issues": []
@@ -4577,7 +4580,7 @@
                 {
                     "file": "Ali(22-enc-12)v1_Win9_Filtered_Configuration.json",
                     "exists": true,
-                    "size_bytes": 51305
+                    "size_bytes": 51404
                 }
             ],
             "issues": []
