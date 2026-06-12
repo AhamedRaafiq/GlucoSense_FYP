@@ -66,19 +66,22 @@ PEAK_MIN_DISTANCE_SEC = 0.40          # Min time between peaks (sec). Heart rate
 PEAK_PROM_FACTOR = 0.20               # Peak prominence factor relative to STD
 VALLEY_MIN_DISTANCE_SEC = 0.35        # Min time between valleys (sec)
 VALLEY_PROM_FACTOR = 0.10             # Valley prominence factor
-MIN_FOOT_TO_PEAK_SEC = 0.12           # Min valid foot-to-peak duration
+MIN_FOOT_TO_PEAK_SEC = 0.08           # Min valid foot-to-peak duration
 MAX_FOOT_TO_PEAK_SEC = 0.4            # Max valid foot-to-peak duration
 MAX_VALLEY_TO_FOOT_SEC = 0.20         # Max distance valley to refined foot
 MAX_FOOT_REL_HEIGHT = 0.20            # Max relative height of foot within pulse
 MAX_ABS_VPG_AT_FOOT = 0.5             # Max VPG value allowed at foot (near zero-cross)
 EDGE_EXCLUSION_SEC = 0.1              # Ignore candidates near signal edges
 MIN_BEAT_DURATION_SEC = 0.35          # Min valid beat duration
-MAX_BEAT_DURATION_SEC = 1.50          # Max valid beat duration
-MAIN_PEAK_SEARCH_WINDOW_SEC = 0.2     # Search window after foot for main peak
+MAX_BEAT_DURATION_SEC = 1.50          # Hard upper limit on beat duration (safety net)
+BEAT_DURATION_MEDIAN_TOLERANCE = 1.35  # Adaptive: reject beats > median*this or < median/this (1.0 = strict, 2.0 = lenient, 0 = disabled)
+MAIN_PEAK_SEARCH_WINDOW_SEC = 0.3     # Search window after foot for main peak
 MAIN_PEAK_MIN_DELAY_SEC = 0.02        # Min delay before searching for main peak
 START_INCOMPLETE_MARGIN_SEC = 0.10    # Margin for start edge incompleteness
 END_INCOMPLETE_MARGIN_SEC = 0.01      # Margin for end edge incompleteness
-VERBOSE_REJECTION = False             # Print rejected pulses? (Set True for debugging only)
+
+VERBOSE_REJECTION = True             # Print rejected pulses? (Set True for debugging only)
+VERBOSE_BEAT_DETECTION_DIAG = False   # Print peak/valley/candidate diagnostic info? (True for tuning)
 
 # --- Plotting ---
 SUBPLOT_HEIGHT = 4.0                  # Height of individual subplots (inches)
@@ -1251,22 +1254,50 @@ def build_candidate_foot_peak_pairs(smooth_sig, vpg, sdppg, peaks, valleys, fs):
 def detect_beats_foot_to_foot(signal_data, fs):
     smooth_sig, vpg, sdppg = compute_smoothed_derivatives(signal_data, fs)
 
+    sig_range = float(np.max(smooth_sig) - np.min(smooth_sig))
+    if sig_range <= 0:
+        sig_range = 1.0
+
+    peak_prom_thr   = max(0.015, sig_range * PEAK_PROM_FACTOR)
+    valley_prom_thr = max(0.010, sig_range * VALLEY_PROM_FACTOR)
+
     peaks, _ = find_peaks(
         smooth_sig,
         distance=int(PEAK_MIN_DISTANCE_SEC * fs),
-        prominence=max(0.015, np.std(smooth_sig) * PEAK_PROM_FACTOR)
+        prominence=peak_prom_thr
     )
 
     valleys, _ = find_peaks(
         -smooth_sig,
         distance=int(VALLEY_MIN_DISTANCE_SEC * fs),
-        prominence=max(0.01, np.std(smooth_sig) * VALLEY_PROM_FACTOR)
+        prominence=valley_prom_thr
     )
+
+    # 🔬 DIAGNOSTIC PRINT — controlled by VERBOSE_BEAT_DETECTION_DIAG flag
+    if VERBOSE_BEAT_DETECTION_DIAG:
+        print(f"        🔬 DIAG: sig_range={sig_range:.4f}, "
+              f"peak_prom_thr={peak_prom_thr:.4f}, valley_prom_thr={valley_prom_thr:.4f}")
+        print(f"        🔬 DIAG: peaks found={len(peaks)}, valleys found={len(valleys)}")
+        print(f"        🔬 DIAG: peak indices (first 30): {peaks[:30].tolist()}")
+        print(f"        🔬 DIAG: valley indices (first 30): {valleys[:30].tolist()}")
 
     candidate_pairs, rejected_candidates = build_candidate_foot_peak_pairs(
         smooth_sig, vpg, sdppg, peaks, valleys, fs
     )
 
+    if VERBOSE_BEAT_DETECTION_DIAG:
+        all_feet_in_candidates = [c["foot"] for c in candidate_pairs]
+        unique_feet = sorted(set(all_feet_in_candidates))
+        print(f"        🔬 DIAG: candidate_pairs={len(candidate_pairs)}, "
+              f"unique feet from candidates={len(unique_feet)}")
+        print(f"        🔬 DIAG: rejected_candidates={len(rejected_candidates)}")
+        if rejected_candidates:
+            reasons_count = {}
+            for rc in rejected_candidates:
+                k = rc.get("reason_key", "unknown")
+                reasons_count[k] = reasons_count.get(k, 0) + 1
+            print(f"        🔬 DIAG: candidate rejection reasons: {reasons_count}")
+        print(f"        🔬 DIAG: unique feet list (first 30): {unique_feet[:30]}")
     if len(candidate_pairs) == 0:
         return (
             peaks, np.array([]), [], [], [],
@@ -1414,6 +1445,51 @@ def detect_beats_foot_to_foot(signal_data, fs):
             "sdppg_at_foot": float(sdppg[f1]),
             "status": "accepted"
         })
+
+    # 🆕 ADAPTIVE OUTLIER FILTER — reject beats whose duration deviates too far from median
+    # This catches motion artifacts that create abnormally long "beats" (e.g., foot6→foot7
+    # spanning a distorted region with no detectable peak between).
+    if BEAT_DURATION_MEDIAN_TOLERANCE > 0 and len(beat_info) >= 3:
+        durations = np.array([bi["beat_duration"] for bi in beat_info])
+        median_dur = float(np.median(durations))
+        upper_limit = median_dur * BEAT_DURATION_MEDIAN_TOLERANCE
+        lower_limit = median_dur / BEAT_DURATION_MEDIAN_TOLERANCE
+
+        new_beats = []
+        new_valid_feet = []
+        new_beat_info = []
+        outlier_count = 0
+
+        for i, bi in enumerate(beat_info):
+            dur = bi["beat_duration"]
+            if dur > upper_limit or dur < lower_limit:
+                # Mark as rejected in pulse_map
+                pnum = bi["pulse_num"]
+                for seg in segmented_pulses_all:
+                    if seg["pulse_num"] == pnum:
+                        seg["status"] = "rejected"
+                        seg["reason_text"] = explain_pulse_reason("beat_duration_out_of_range")
+                        break
+                log_pulse_rejection(
+                    rejected_pulses, "beat_duration_out_of_range",
+                    pulse_num=bi["pulse_num"], foot=bi["foot"],
+                    peak=bi["peak"], next_foot=bi["next_foot"],
+                    actual_value=f"{dur:.3f}s",
+                    accepted_range=f"median±tol: [{lower_limit:.2f}, {upper_limit:.2f}]s (median={median_dur:.2f}s)"
+                )
+                outlier_count += 1
+            else:
+                new_beats.append(beats[i])
+                new_valid_feet.append(valid_feet[i])
+                new_beat_info.append(bi)
+
+        if VERBOSE_BEAT_DETECTION_DIAG and outlier_count > 0:
+            print(f"        🔬 DIAG: adaptive filter removed {outlier_count} outlier beats "
+                  f"(median={median_dur:.3f}s, range=[{lower_limit:.2f},{upper_limit:.2f}]s)")
+
+        beats = new_beats
+        valid_feet = new_valid_feet
+        beat_info = new_beat_info
 
     pulse_map = []
     for seg in segmented_pulses_all:
@@ -2563,7 +2639,8 @@ def print_rejected_beats_detail(result):
     """
     Prints a per-window table of all individual beats/pulses that were
     rejected inside a REJECTED window, with reason + actual value + accepted range.
-    Reads from result['rejection_beat_details'] (set in process_single_window).
+    Column widths auto-expand to fit the longest value (no truncation),
+    so user can clearly see actual vs accepted range for hyperparameter tuning.
     """
     details = result.get("rejection_beat_details", {})
     if not details:
@@ -2589,12 +2666,8 @@ def print_rejected_beats_detail(result):
             print(f"             (no per-pulse rejections logged — likely too few pulses segmented)")
             continue
         
-        # Header (with two new columns: Actual + AcceptedRange)
-        print(f"             {'Pulse#':>6} | {'Foot':>6} | {'Peak':>6} | {'NextFt':>6} | "
-              f"{'Actual':>22} | {'AcceptedRange':>28} | Reason")
-        print(f"             {'-'*6}-+-{'-'*6}-+-{'-'*6}-+-{'-'*6}-+-"
-              f"{'-'*22}-+-{'-'*28}-+-{'-'*40}")
-        
+        # First pass: stringify everything and compute max widths
+        rows = []
         for rp in rej_pulses:
             pnum   = rp.get("pulse_num", "?")
             foot   = rp.get("foot", "-")
@@ -2604,19 +2677,41 @@ def print_rejected_beats_detail(result):
             actual = rp.get("actual_value", "n/a")
             acc    = rp.get("accepted_range", "n/a")
             
-            foot_s   = str(foot)   if foot   is not None else "-"
-            peak_s   = str(peak)   if peak   is not None else "-"
-            nfoot_s  = str(nfoot)  if nfoot  is not None else "-"
-            actual_s = str(actual) if actual is not None else "n/a"
-            acc_s    = str(acc)    if acc    is not None else "n/a"
-            
-            # Truncate long fields
-            if len(actual_s) > 22: actual_s = actual_s[:19] + "..."
-            if len(acc_s)    > 28: acc_s    = acc_s[:25] + "..."
-            
-            print(f"             {pnum:>6} | {foot_s:>6} | {peak_s:>6} | {nfoot_s:>6} | "
-                  f"{actual_s:>22} | {acc_s:>28} | {reason}")
-
+            rows.append({
+                "pnum":   str(pnum),
+                "foot":   str(foot)   if foot   is not None else "-",
+                "peak":   str(peak)   if peak   is not None else "-",
+                "nfoot":  str(nfoot)  if nfoot  is not None else "-",
+                "actual": str(actual) if actual is not None else "n/a",
+                "acc":    str(acc)    if acc    is not None else "n/a",
+                "reason": str(reason),
+            })
+        
+        # Auto-size each column to the widest entry (or header), no truncation
+        w_pnum   = max(len("Pulse#"),        max(len(r["pnum"])   for r in rows))
+        w_foot   = max(len("Foot"),          max(len(r["foot"])   for r in rows))
+        w_peak   = max(len("Peak"),          max(len(r["peak"])   for r in rows))
+        w_nfoot  = max(len("NextFt"),        max(len(r["nfoot"])  for r in rows))
+        w_actual = max(len("Actual"),        max(len(r["actual"]) for r in rows))
+        w_acc    = max(len("AcceptedRange"), max(len(r["acc"])    for r in rows))
+        w_reason = max(len("Reason"),        max(len(r["reason"]) for r in rows))
+        
+        # Build header
+        header = (f"             {'Pulse#':>{w_pnum}} | {'Foot':>{w_foot}} | "
+                  f"{'Peak':>{w_peak}} | {'NextFt':>{w_nfoot}} | "
+                  f"{'Actual':>{w_actual}} | {'AcceptedRange':>{w_acc}} | "
+                  f"{'Reason':<{w_reason}}")
+        sep = (f"             {'-'*w_pnum}-+-{'-'*w_foot}-+-{'-'*w_peak}-+-"
+               f"{'-'*w_nfoot}-+-{'-'*w_actual}-+-{'-'*w_acc}-+-{'-'*w_reason}")
+        
+        print(header)
+        print(sep)
+        
+        for r in rows:
+            print(f"             {r['pnum']:>{w_pnum}} | {r['foot']:>{w_foot}} | "
+                  f"{r['peak']:>{w_peak}} | {r['nfoot']:>{w_nfoot}} | "
+                  f"{r['actual']:>{w_actual}} | {r['acc']:>{w_acc}} | "
+                  f"{r['reason']:<{w_reason}}")
 
 # -------------------------------------------------
 # MAIN LOOP (handles batch & single)
