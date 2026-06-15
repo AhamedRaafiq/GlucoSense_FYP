@@ -1,11 +1,16 @@
 # ==========================================
-# STEP 3: FEATURE EXTRACTION (AUTO BATCH, POPUP SELECTOR)
+# STEP 3: FEATURE EXTRACTION (BATCH-AWARE + REJECTED-SAFE)
 # Updated for compatibility with new automated signal processing pipeline
+# - Detects & skips REJECTED windows (no output folder created)
+# - Supports BATCH mode (process all subject folders inside input root)
+# - Supports SINGLE mode (popup folder selector)
+# - Preserves all calculations, output naming, and downstream compatibility
 # ==========================================
 
 import os
 import re
 import json
+import shutil
 import traceback
 from pathlib import Path
 import tkinter as tk
@@ -27,7 +32,7 @@ OUTPUT_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\05_Featu
 
 
 # --------------------------------------------------
-# HELPER FUNCTIONS
+# HELPER FUNCTIONS (calculations preserved exactly)
 # --------------------------------------------------
 def safe_array(x):
     x = np.asarray(x, dtype=float)
@@ -80,7 +85,7 @@ def detect_ppg_peaks(x, fs):
         return np.array([], dtype=int)
 
     x0 = x - np.mean(x)
-    min_distance = max(1, int(0.33 * fs))   # ~180 BPM upper bound
+    min_distance = max(1, int(0.33 * fs))
     prominence = max(0.01, 0.10 * np.std(x0))
 
     peaks, _ = find_peaks(x0, distance=min_distance, prominence=prominence)
@@ -287,12 +292,14 @@ def remove_trailing_window(name):
 
 
 def derive_window_base_name(file_ensemble, file_full):
-    if file_ensemble.endswith("_Filtered_Ensemble.csv"):
+    if file_ensemble and file_ensemble.endswith("_Filtered_Ensemble.csv"):
         return file_ensemble.replace("_Filtered_Ensemble.csv", "")
-    elif file_full.endswith("_Filtered_Full.csv"):
+    elif file_full and file_full.endswith("_Filtered_Full.csv"):
         return file_full.replace("_Filtered_Full.csv", "")
-    else:
+    elif file_ensemble:
         return os.path.splitext(file_ensemble)[0].replace("_Filtered_Ensemble", "")
+    else:
+        return "unknown"
 
 
 def derive_subject_base_name(folder_path, file_ensemble, file_full):
@@ -319,6 +326,7 @@ def find_required_files(window_folder):
 
 
 def load_window_data(window_folder):
+    """Loads CSVs + config for a SUCCESS window only."""
     file_full, file_ensemble, file_config = find_required_files(window_folder)
 
     if file_full is None:
@@ -338,7 +346,7 @@ def load_window_data(window_folder):
     with open(cfg_path, "r", encoding="utf-8") as f:
         cfg = json.load(f)
 
-    # ----- FIX #1: Support both NEW (lowercase) and OLD (uppercase) JSON keys -----
+    # ----- Support both NEW (lowercase) and OLD (uppercase) JSON keys -----
     metadata = cfg.get("metadata") or cfg.get("Metadata") or {}
 
     fs = (
@@ -363,73 +371,179 @@ def get_win_index_from_folder(folder_path):
     return int(m.group(1)) if m else 999999
 
 
-def resolve_selected_folder():
+# ==========================================================
+# 🆕 BATCH / SINGLE MODE SELECTOR (mirrors Automated Signal Processing)
+# ==========================================================
+def prompt_processing_mode():
+    """Console prompt to choose BATCH vs SINGLE mode."""
+    print("\n" + "=" * 70)
+    print("  SELECT FEATURE EXTRACTION MODE")
+    print("=" * 70)
+    print(f"  1) BATCH  — Process ALL subject folders inside:")
+    print(f"              {INPUT_ROOT}")
+    print(f"  2) SINGLE — Pop up dialog to choose ONE subject folder")
+    print("=" * 70)
+    while True:
+        choice = input("  Enter choice [1 or 2]: ").strip()
+        if choice in ("1", "2"):
+            return int(choice)
+        print("  ❌ Invalid choice. Please enter 1 or 2.")
+
+
+def collect_subject_folders(mode):
+    """Returns a list of subject folders (e.g. *_Filtered) to process."""
     if not INPUT_ROOT.exists():
-        raise SystemExit("❌ Invalid input root path")
+        raise SystemExit(f"❌ Invalid input root path: {INPUT_ROOT}")
 
-    root = tk.Tk()
-    root.withdraw()
-    root.attributes("-topmost", True)
+    folders = []
 
-    selected = filedialog.askdirectory(
-        initialdir=str(INPUT_ROOT),
-        title="Select 1st-step Filtered folder (example: mirzan(...)_Filtered)"
-    )
+    if mode == 1:
+        # BATCH — find all *_Filtered subfolders inside INPUT_ROOT
+        all_dirs = [
+            INPUT_ROOT / d for d in os.listdir(INPUT_ROOT)
+            if (INPUT_ROOT / d).is_dir()
+        ]
+        subject_dirs = sorted(
+            [d for d in all_dirs if d.name.endswith("_Filtered")],
+            key=lambda p: p.name.lower()
+        )
+        if not subject_dirs:
+            raise SystemExit(f"❌ No *_Filtered subject folders found inside: {INPUT_ROOT}")
+        folders = subject_dirs
+        print(f"\n📦 BATCH MODE — found {len(folders)} subject folder(s) to process:")
+        for f in folders:
+            print(f"   • {f.name}")
+    else:
+        # SINGLE — popup dialog (with safe Tk init + fallback)
+        selected = None
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.attributes("-topmost", True)
+            root.update_idletasks()
+            root.update()
+            selected = filedialog.askdirectory(
+                parent=root,
+                initialdir=str(INPUT_ROOT),
+                title="Select 1st-step Filtered folder (example: mirzan(...)_Filtered)"
+            )
+            root.update()
+            root.destroy()
+        except Exception as tk_err:
+            print(f"\n⚠️  GUI dialog failed: {tk_err}")
+            print("    Falling back to manual path entry.")
+            selected = None
 
-    root.destroy()
+        if not selected:
+            print(f"\n📁 Default base path: {INPUT_ROOT}")
+            typed = input("    Type folder path (or press Enter to cancel): ").strip().strip('"').strip("'")
+            if typed:
+                selected = typed
+            else:
+                raise SystemExit("❌ No folder selected. Stopping.")
 
-    if not selected:
-        raise SystemExit("❌ No folder selected")
+        folder = Path(selected)
+        if not folder.exists() or not folder.is_dir():
+            raise SystemExit(f"❌ Selected folder does not exist: {folder}")
 
-    folder = Path(selected)
+        folders = [folder]
+        print(f"\n📁 SINGLE MODE — selected: {folder}")
 
-    if not folder.exists():
-        raise SystemExit("❌ Selected folder does not exist")
+    return folders
 
-    return folder
+
+# ==========================================================
+# 🆕 CHANGE #1 — REJECTED WINDOW DETECTION (CRITICAL)
+# ==========================================================
+def detect_window_status(window_folder):
+    """
+    Checks the config JSON to determine if this window was REJECTED by
+    the signal processing pipeline. Returns dict with:
+      - status: "SUCCESS" | "REJECTED" | "UNKNOWN"
+      - rejection_reason: text (if REJECTED or UNKNOWN)
+      - rejection_details: per-channel info (if REJECTED)
+      - file_full, file_ensemble, file_config: detected file names
+    """
+    file_full, file_ensemble, file_config = find_required_files(window_folder)
+
+    info = {
+        "status": "UNKNOWN",
+        "rejection_reason": None,
+        "rejection_details": None,
+        "file_full": file_full,
+        "file_ensemble": file_ensemble,
+        "file_config": file_config,
+    }
+
+    if file_config is None:
+        info["rejection_reason"] = "No configuration JSON found in folder"
+        return info
+
+    cfg_path = os.path.join(window_folder, file_config)
+    try:
+        with open(cfg_path, "r", encoding="utf-8") as f:
+            cfg = json.load(f)
+    except Exception as e:
+        info["rejection_reason"] = f"Could not read config JSON: {e}"
+        return info
+
+    metadata = cfg.get("metadata") or cfg.get("Metadata") or {}
+    pipeline_status = metadata.get("status", "SUCCESS")  # default SUCCESS for old configs
+
+    if pipeline_status == "REJECTED":
+        info["status"] = "REJECTED"
+        rejection_block = cfg.get("rejection", {})
+        info["rejection_reason"] = rejection_block.get("overall_reason", "Window rejected (no reason given)")
+        info["rejection_details"] = {
+            "IR_channel": rejection_block.get("IR_channel", {}),
+            "RED_channel": rejection_block.get("RED_channel", {}),
+            "min_valid_beats_ir": rejection_block.get("min_valid_beats_ir"),
+            "min_valid_beats_red": rejection_block.get("min_valid_beats_red"),
+        }
+        return info
+
+    # SUCCESS path: ensure required CSVs exist
+    if file_full is None or file_ensemble is None:
+        info["status"] = "UNKNOWN"
+        missing = []
+        if file_full is None:
+            missing.append("_Filtered_Full.csv")
+        if file_ensemble is None:
+            missing.append("_Filtered_Ensemble.csv")
+        info["rejection_reason"] = f"Config says SUCCESS but missing: {', '.join(missing)}"
+        return info
+
+    info["status"] = "SUCCESS"
+    return info
 
 
 def build_filtered_configuration_summary(cfg, flat_features):
-    """
-    Build a properly organized Filtered_Configuration JSON that preserves
-    the valuable original data and appends the extracted features.
-
-    Supports BOTH new (lowercase) and old (uppercase) JSON key conventions
-    from the automated signal processing pipeline.
-    """
+    """Builds an organized Filtered_Configuration JSON preserving original data + features."""
     summary = {}
 
-    # ----- Metadata (new: lowercase, old: uppercase) -----
     metadata = cfg.get("metadata") or cfg.get("Metadata")
     if metadata:
         summary["metadata"] = metadata
 
-    # ----- Hyperparameters (only available in new pipeline) -----
     if "hyperparameters" in cfg:
         summary["hyperparameters"] = cfg["hyperparameters"]
 
-    # ----- Folder Structure -----
     folder_struct = cfg.get("folder_structure") or cfg.get("Folder_Structure")
     if folder_struct:
         summary["folder_structure"] = folder_struct
 
-    # ----- Signal Quality (only in new pipeline) -----
     if "signal_quality" in cfg:
         summary["signal_quality"] = cfg["signal_quality"]
 
-    # ----- Pipeline Diagnostic (only in new pipeline) -----
     if "pipeline_diagnostic" in cfg:
         summary["pipeline_diagnostic"] = cfg["pipeline_diagnostic"]
 
-    # ----- PPG Features per Channel (only in new pipeline) -----
     if "ppg_features_per_channel" in cfg:
         summary["ppg_features_per_channel"] = cfg["ppg_features_per_channel"]
 
-    # ----- Golden Standard Features (only in new pipeline) -----
     if "golden_standard_features" in cfg:
         summary["golden_standard_features"] = cfg["golden_standard_features"]
 
-    # ----- Compact ensemble summary (drop bulky time_axis & per-pulse logs) -----
     def ensemble_summary(ens):
         if not isinstance(ens, dict):
             return {}
@@ -451,7 +565,6 @@ def build_filtered_configuration_summary(cfg, flat_features):
             out["rejected_pulses_info"] = ens["rejected_pulses_info"]
         return out
 
-    # Ensemble keys: new pipeline uses lowercase prefix, old uses uppercase
     if "ensemble_RED" in cfg:
         summary["ensemble_RED"] = ensemble_summary(cfg["ensemble_RED"])
     elif "Ensemble_RED" in cfg:
@@ -462,22 +575,14 @@ def build_filtered_configuration_summary(cfg, flat_features):
     elif "Ensemble_IR" in cfg:
         summary["ensemble_IR"] = ensemble_summary(cfg["Ensemble_IR"])
 
-    # ----- Append extracted features -----
     summary["extracted_features"] = flat_features
 
     return summary
 
 
 def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
-    """
-    Save a 4-panel plot:
-      1. DC Component (Low Pass) - Baseline Drift
-      2. AC Component (High Pass) - Pulsatile Signal
-      3. Normalized Signal (0..1)
-      4. Ensemble Average (Single Beat Template)
-    """
+    """4-panel plot of DC / AC / Normalized / Ensemble signals."""
     try:
-        # Time axis for full signal
         if "Time_s" in df_full.columns:
             t_full = df_full["Time_s"].values
         elif "Time" in df_full.columns:
@@ -499,7 +604,6 @@ def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
 
         fig, axes = plt.subplots(4, 1, figsize=(10, 11))
 
-        # 1. DC
         axes[0].plot(t_full, red_dc, color="darkred", label="Red DC", linewidth=1)
         axes[0].plot(t_full, ir_dc, color="blue", label="IR DC", linewidth=1)
         axes[0].set_title("1. DC Component (Low Pass Filtered) - Baseline Drift")
@@ -507,7 +611,6 @@ def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
         axes[0].legend(loc="upper right")
         axes[0].grid(True, alpha=0.3)
 
-        # 2. AC
         axes[1].plot(t_full, red_ac, color="red", label="Red AC", linewidth=0.8)
         axes[1].plot(t_full, ir_ac, color="blue", label="IR AC", linewidth=0.8)
         axes[1].set_title("2. AC Component (High Pass Filtered) - Pulsatile Signal")
@@ -515,7 +618,6 @@ def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
         axes[1].legend(loc="upper right")
         axes[1].grid(True, alpha=0.3)
 
-        # 3. Normalized
         axes[2].plot(t_full, red_norm, color="red", label="Red Norm", linewidth=0.8)
         axes[2].plot(t_full, ir_norm, color="blue", label="IR Norm", linewidth=0.8)
         axes[2].set_title("3. Normalized Signal (0 to 1 Scaled) - Shape Analysis")
@@ -523,7 +625,6 @@ def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
         axes[2].legend(loc="upper right")
         axes[2].grid(True, alpha=0.3)
 
-        # 4. Ensemble Average
         axes[3].plot(t_red_ens, red_ens, color="red", label="Red Avg Beat", linewidth=2)
         axes[3].plot(t_ir_ens, ir_ens, color="blue", label="IR Avg Beat", linewidth=2)
         axes[3].set_title("4. Ensemble Average (Cleaned Single Beat Template)")
@@ -548,31 +649,18 @@ def save_signal_plot(df_full, df_ens, output_folder_path, base_name):
 # FILE REPLACEMENT TRACKING HELPERS
 # --------------------------------------------------
 def check_existing_file(file_path):
-    """
-    Check if a file already exists before saving.
-    Returns a dict with existence status and file size info.
-    """
     p = Path(file_path)
     if p.exists() and p.is_file():
         try:
             size_bytes = p.stat().st_size
             size_kb = size_bytes / 1024.0
-            return {
-                "exists": True,
-                "path": str(p),
-                "size_bytes": size_bytes,
-                "size_kb": size_kb,
-            }
+            return {"exists": True, "path": str(p), "size_bytes": size_bytes, "size_kb": size_kb}
         except Exception:
             return {"exists": True, "path": str(p), "size_bytes": None, "size_kb": None}
     return {"exists": False, "path": str(p), "size_bytes": None, "size_kb": None}
 
 
 def report_replaced_files(replaced_list, output_folder_path):
-    """
-    Print a clean terminal report of all files that were replaced inside
-    the given output folder.
-    """
     if not replaced_list:
         print(f"🆕 No existing files found — all output files are newly created.")
         return
@@ -593,7 +681,78 @@ def report_replaced_files(replaced_list, output_folder_path):
         print(f"      ↳ Old size: {size_old_str}  →  New size: {size_new_str}")
 
 
+# ==========================================================
+# 🆕 CHANGE #2 — process_window() now returns status dict
+# ==========================================================
 def process_window(folder_path):
+    """
+    Runs feature extraction for ONE window folder.
+    Returns dict with status: "SUCCESS" | "REJECTED" | "FAILED"
+    
+    For REJECTED windows: NO output folder is created (per user decision).
+    """
+    folder_basename = os.path.basename(os.path.normpath(folder_path))
+    
+    # 🆕 CHANGE #1 — Detect status BEFORE attempting feature extraction
+    status_info = detect_window_status(folder_path)
+    
+    # ----- REJECTED PATH (Option B: detect during processing) -----
+    if status_info["status"] == "REJECTED":
+        # 🆕 CLEANUP — If a stale output folder exists from a previous run
+        # (when the window was SUCCESS but is now REJECTED), delete it.
+        # This keeps the output directory consistent with the current pipeline state.
+        stale_cleanup_info = None
+        try:
+            # Derive what the output folder path would have been
+            file_full = status_info.get("file_full")
+            file_ensemble = status_info.get("file_ensemble")
+            
+            stale_subject_name = derive_subject_base_name(folder_path, file_ensemble, file_full)
+            stale_main_folder = OUTPUT_ROOT / f"{stale_subject_name}_Features"
+            
+            # For rejected windows, derive base name from folder (CSVs don't exist)
+            if file_ensemble or file_full:
+                stale_base = derive_window_base_name(file_ensemble, file_full)
+            else:
+                stale_base = re.sub(r"_Filtered$", "", folder_basename)
+            
+            stale_output_folder = stale_main_folder / f"{stale_base}_Feature"
+            
+            if stale_output_folder.exists():
+                # Count files before deletion (for reporting)
+                stale_files_count = sum(
+                    1 for _ in stale_output_folder.rglob("*") if _.is_file()
+                )
+                shutil.rmtree(stale_output_folder)
+                stale_cleanup_info = {
+                    "removed_path": str(stale_output_folder),
+                    "files_removed": stale_files_count,
+                }
+                print(f"🧹 CLEANUP — removed stale output folder (window now REJECTED):")
+                print(f"   📁 {stale_output_folder}")
+                print(f"   🗑️  Files removed: {stale_files_count}")
+        except Exception as cleanup_err:
+            print(f"⚠️  Stale folder cleanup failed: {cleanup_err}")
+        
+        return {
+            "status": "REJECTED",
+            "window_folder": folder_basename,
+            "rejection_reason": status_info["rejection_reason"],
+            "rejection_details": status_info["rejection_details"],
+            "output_folder": None,  # Per user decision: NO output folder created
+            "stale_cleanup": stale_cleanup_info,  # 🆕 cleanup info (None if nothing to clean)
+        }
+    
+    # ----- UNKNOWN PATH (treat as failed) -----
+    if status_info["status"] == "UNKNOWN":
+        return {
+            "status": "FAILED",
+            "window_folder": folder_basename,
+            "error": status_info["rejection_reason"] or "Unknown window status",
+            "output_folder": None,
+        }
+    
+    # ----- SUCCESS PATH — full feature extraction -----
     df_full, df_ens, cfg, file_full, file_ensemble, file_config, fs = load_window_data(folder_path)
 
     required_full_cols = [
@@ -626,7 +785,6 @@ def process_window(folder_path):
 
     red_norm = df_full["Red_Normalized"].values
     ir_norm = df_full["IR_Normalized"].values
-
     red_dc = df_full["Red_DC_LowPass"].values
     ir_dc = df_full["IR_DC_LowPass"].values
 
@@ -644,6 +802,7 @@ def process_window(folder_path):
     ir_features = {}
     combined_features = {}
 
+    # ---- RED features (calculations preserved exactly) ----
     red_rr = peak_interval_bpm_hrv(red_norm, fs)
     red_teo = teo_features(red_norm)
 
@@ -655,6 +814,7 @@ def process_window(folder_path):
     red_features["TEO Mean"] = red_teo["TEO Mean"]
     red_features["TEO std dev"] = red_teo["TEO std dev"]
 
+    # ---- IR features (calculations preserved exactly) ----
     ir_rr = peak_interval_bpm_hrv(ir_norm, fs)
     ir_teo = teo_features(ir_norm)
 
@@ -666,6 +826,7 @@ def process_window(folder_path):
     ir_features["TEO Mean"] = ir_teo["TEO Mean"]
     ir_features["TEO std dev"] = ir_teo["TEO std dev"]
 
+    # ---- Ensemble-based features (calculations preserved) ----
     red_features["Skewness"] = skew(red_ens, bias=False) if len(red_ens) > 2 else np.nan
     red_features["Kurtosis"] = kurtosis(red_ens, fisher=True, bias=False) if len(red_ens) > 3 else np.nan
     red_features["pulse width"] = pulse_width_feature(red_ens, time_red_ens)
@@ -718,24 +879,21 @@ def process_window(folder_path):
     rows = []
     for feat in feature_order:
         if feat == "Ensemble ratio":
-            rows.append(
-                {
-                    "Feature": feat,
-                    "Red_Value": combined_features.get(feat, np.nan),
-                    "IR_Value": np.nan,
-                }
-            )
+            rows.append({
+                "Feature": feat,
+                "Red_Value": combined_features.get(feat, np.nan),
+                "IR_Value": np.nan,
+            })
         else:
-            rows.append(
-                {
-                    "Feature": feat,
-                    "Red_Value": red_features.get(feat, np.nan),
-                    "IR_Value": ir_features.get(feat, np.nan),
-                }
-            )
+            rows.append({
+                "Feature": feat,
+                "Red_Value": red_features.get(feat, np.nan),
+                "IR_Value": ir_features.get(feat, np.nan),
+            })
 
     df_feature_table = pd.DataFrame(rows)
 
+    # ----- Output paths (preserved naming convention) -----
     subject_base_name = derive_subject_base_name(folder_path, file_ensemble, file_full)
     main_output_folder_name = f"{subject_base_name}_Features"
     main_output_folder_path = OUTPUT_ROOT / main_output_folder_name
@@ -744,15 +902,10 @@ def process_window(folder_path):
     output_folder_name = f"{base_name}_Feature"
     output_folder_path = main_output_folder_path / output_folder_name
 
-    # --------------------------------------------------
-    # CLEAN REPLACE: If the output folder already exists,
-    # delete it entirely and recreate fresh.
-    # This guarantees no stale files remain from previous runs.
-    # --------------------------------------------------
+    # Clean replace
     folder_was_replaced = False
     if output_folder_path.exists():
         try:
-            import shutil
             shutil.rmtree(output_folder_path)
             folder_was_replaced = True
             print(f"♻️  Existing folder removed and will be recreated fresh:")
@@ -761,7 +914,6 @@ def process_window(folder_path):
             print(f"⚠️  Could not remove existing folder: {e}")
             print(f"   Proceeding with overwrite of individual files instead.")
 
-    # Recreate folders (fresh if replaced, or new if first time)
     main_output_folder_path.mkdir(parents=True, exist_ok=True)
     output_folder_path.mkdir(parents=True, exist_ok=True)
 
@@ -782,9 +934,6 @@ def process_window(folder_path):
     dst_config_path = output_folder_path / file_config
     plot_path_planned = output_folder_path / f"{output_folder_name}_Signal_Overview.png"
 
-    # --------------------------------------------------
-    # PRE-CHECK for existing files (BEFORE saving)
-    # --------------------------------------------------
     pre_check_files = [
         ("Features Table CSV", table_csv_path),
         ("Features Flat CSV", flat_csv_path),
@@ -797,49 +946,37 @@ def process_window(folder_path):
     for label, fp in pre_check_files:
         info = check_existing_file(fp)
         if info["exists"]:
-            existing_before.append(
-                {
-                    "label": label,
-                    "path": info["path"],
-                    "old_size_kb": info["size_kb"],
-                }
-            )
+            existing_before.append({
+                "label": label,
+                "path": info["path"],
+                "old_size_kb": info["size_kb"],
+            })
 
-    # --------------------------------------------------
-    # Save outputs (will overwrite existing files)
-    # --------------------------------------------------
     df_feature_table.to_csv(table_csv_path, index=False)
     df_features_flat.to_csv(flat_csv_path, index=False)
 
-    # Pure features JSON (unchanged behavior)
     with open(feature_json_path, "w", encoding="utf-8") as f:
         json.dump(flat_features, f, indent=4)
 
-    # Properly organized Filtered_Configuration JSON
     organized_config = build_filtered_configuration_summary(cfg, flat_features)
     with open(dst_config_path, "w", encoding="utf-8") as f:
         json.dump(organized_config, f, indent=4)
 
-    # Save signal overview plot
     plot_path = save_signal_plot(df_full, df_ens, output_folder_path, output_folder_name)
 
-    # --------------------------------------------------
-    # POST-CHECK — get new sizes for replaced files
-    # --------------------------------------------------
     replaced_files_info = []
     for entry in existing_before:
         new_info = check_existing_file(entry["path"])
-        replaced_files_info.append(
-            {
-                "label": entry["label"],
-                "path": entry["path"],
-                "old_size_kb": entry["old_size_kb"],
-                "new_size_kb": new_info["size_kb"],
-            }
-        )
+        replaced_files_info.append({
+            "label": entry["label"],
+            "path": entry["path"],
+            "old_size_kb": entry["old_size_kb"],
+            "new_size_kb": new_info["size_kb"],
+        })
 
     return {
-        "window_folder": os.path.basename(folder_path),
+        "status": "SUCCESS",
+        "window_folder": folder_basename,
         "output_folder": str(output_folder_path),
         "table_csv": str(table_csv_path),
         "flat_csv": str(flat_csv_path),
@@ -847,37 +984,31 @@ def process_window(folder_path):
         "filtered_config_json": str(dst_config_path),
         "signal_plot": plot_path,
         "replaced_files": replaced_files_info,
-        "folder_was_replaced": folder_was_replaced,  # NEW
+        "folder_was_replaced": folder_was_replaced,
     }
 
 
-def main():
-    print("\n" + "=" * 60)
-    print("🧠 EXTRACTING FEATURES (AUTO BATCH, PYTHON SCRIPT)")
-    print("=" * 60)
+# ==========================================================
+# 🆕 PROCESS A SINGLE SUBJECT FOLDER
+# ==========================================================
+def process_subject_folder(subject_folder):
+    """Processes all window folders inside ONE subject folder."""
+    print("\n" + "=" * 70)
+    print(f"📁 SUBJECT: {subject_folder.name}")
+    print("=" * 70)
 
-    if not INPUT_ROOT.exists():
-        raise SystemExit("❌ Invalid input root path")
-
-    OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
-
-    selected_main_folder = resolve_selected_folder()
-    print(f"\n📂 Selected main folder:\n{selected_main_folder}")
-
-    # ----- FIX #3: Skip *_Additional folder (Plots + Combined_Report.json) -----
     all_subfolders = [
-        str(selected_main_folder / f)
-        for f in os.listdir(selected_main_folder)
-        if (selected_main_folder / f).is_dir()
+        str(subject_folder / f)
+        for f in os.listdir(subject_folder)
+        if (subject_folder / f).is_dir()
     ]
 
-    # Filter out the *_Additional folder (not a window folder)
+    # Skip *_Additional folder (it's not a window folder)
     window_folders = [
         f for f in all_subfolders
         if not os.path.basename(f).endswith("_Additional")
     ]
-
-    skipped_folders = [
+    skipped_non_window = [
         f for f in all_subfolders
         if os.path.basename(f).endswith("_Additional")
     ]
@@ -885,83 +1016,194 @@ def main():
     window_folders = sorted(window_folders, key=get_win_index_from_folder)
 
     if len(window_folders) == 0:
-        raise SystemExit("❌ No window folders found inside selected main folder")
+        print(f"  ⚠️  No window folders found — skipping this subject.")
+        return {
+            "subject": subject_folder.name,
+            "success": [],
+            "rejected": [],
+            "failed": [],
+            "total_replaced_files": 0,
+            "folders_with_replacements": 0,
+        }
 
-    print(f"\n✅ Found {len(window_folders)} window folders")
-    if skipped_folders:
-        print(f"⏭️  Skipped {len(skipped_folders)} non-window folder(s):")
-        for sf in skipped_folders:
+    print(f"✅ Found {len(window_folders)} window folders")
+    if skipped_non_window:
+        print(f"⏭️  Skipped {len(skipped_non_window)} non-window folder(s):")
+        for sf in skipped_non_window:
             print(f"   • {os.path.basename(sf)}")
 
-    processed_ok = []
-    processed_failed = []
+    success_list = []
+    rejected_list = []
+    failed_list = []
 
-    # Track total replacement summary
     total_replaced_count = 0
     folders_with_replacements = 0
 
+    # 🆕 CHANGE #3 — Main loop handles SUCCESS / REJECTED / FAILED separately
     for idx, folder_path in enumerate(window_folders, start=1):
-        print("\n" + "=" * 60)
-        print(f"🔄 PROCESSING WINDOW {idx}/{len(window_folders)}")
-        print(f"📂 {folder_path}")
-        print("=" * 60)
+        print("\n" + "-" * 70)
+        print(f"🔄 [{idx}/{len(window_folders)}] {os.path.basename(folder_path)}")
+        print("-" * 70)
 
         try:
             result = process_window(folder_path)
 
-            print("✅ Saved successfully")
-            print(f"📁 Window output folder:\n{result['output_folder']}")
-            print(f"💾 Table CSV:\n{result['table_csv']}")
-            print(f"💾 Flat CSV:\n{result['flat_csv']}")
-            print(f"💾 Features JSON:\n{result['feature_json']}")
-            print(f"💾 Organized Filtered Config JSON:\n{result['filtered_config_json']}")
-            if result.get("signal_plot"):
-                print(f"🖼️ Signal Plot:\n{result['signal_plot']}")
+            # ----- SUCCESS -----
+            if result["status"] == "SUCCESS":
+                print("✅ Saved successfully")
+                print(f"📁 Window output:   {result['output_folder']}")
+                print(f"💾 Table CSV:       {os.path.basename(result['table_csv'])}")
+                print(f"💾 Flat CSV:        {os.path.basename(result['flat_csv'])}")
+                print(f"💾 Features JSON:   {os.path.basename(result['feature_json'])}")
+                print(f"💾 Config JSON:     {os.path.basename(result['filtered_config_json'])}")
+                if result.get("signal_plot"):
+                    print(f"🖼️ Signal Plot:     {os.path.basename(result['signal_plot'])}")
 
-            # Print file replacement report for this window
-            replaced = result.get("replaced_files", [])
-            folder_replaced = result.get("folder_was_replaced", False)
+                replaced = result.get("replaced_files", [])
+                folder_replaced = result.get("folder_was_replaced", False)
 
-            if folder_replaced:
-                print(f"\n♻️  WHOLE FOLDER REPLACED — fresh files written.")
-                folders_with_replacements += 1
-            else:
-                report_replaced_files(replaced, result["output_folder"])
-                if replaced:
-                    total_replaced_count += len(replaced)
+                if folder_replaced:
+                    print(f"\n♻️  WHOLE FOLDER REPLACED — fresh files written.")
                     folders_with_replacements += 1
+                else:
+                    report_replaced_files(replaced, result["output_folder"])
+                    if replaced:
+                        total_replaced_count += len(replaced)
+                        folders_with_replacements += 1
 
-            processed_ok.append(result["window_folder"])
+                success_list.append(result["window_folder"])
+
+            # ----- REJECTED (skip silently — no output created) -----
+            elif result["status"] == "REJECTED":
+                print(f"⚠️  REJECTED by signal processing pipeline — SKIPPED (no output created)")
+                print(f"   Reason: {result['rejection_reason']}")
+                rejected_list.append({
+                    "window_folder": result["window_folder"],
+                    "reason": result["rejection_reason"],
+                })
+
+            # ----- FAILED (status returned by process_window) -----
+            elif result["status"] == "FAILED":
+                print(f"❌ Failed: {result['window_folder']}")
+                print(f"   Reason: {result.get('error', 'Unknown')}")
+                failed_list.append((result["window_folder"], result.get("error", "Unknown")))
 
         except Exception as e:
+            # Unexpected crash during feature extraction
             failed_name = os.path.basename(folder_path)
-            processed_failed.append((failed_name, str(e)))
+            failed_list.append((failed_name, str(e)))
             print(f"❌ Failed: {failed_name}")
             print(f"   Reason: {e}")
             print("   Traceback:")
             print(traceback.format_exc())
             continue
 
-    print("\n" + "=" * 60)
-    print("📌 FINAL PROCESSING SUMMARY")
-    print("=" * 60)
+    return {
+        "subject": subject_folder.name,
+        "success": success_list,
+        "rejected": rejected_list,
+        "failed": failed_list,
+        "total_replaced_files": total_replaced_count,
+        "folders_with_replacements": folders_with_replacements,
+    }
 
-    print(f"✅ Successfully processed: {len(processed_ok)}")
-    for name in processed_ok:
-        print(f"   - {name}")
 
-    print(f"\n❌ Failed: {len(processed_failed)}")
-    for name, reason in processed_failed:
-        print(f"   - {name}")
-        print(f"     Reason: {reason}")
+# ==========================================================
+# 🆕 MAIN — BATCH-AWARE WITH REJECTED HANDLING
+# ==========================================================
+def main():
+    print("\n" + "=" * 70)
+    print("🧠 EXTRACTING FEATURES (BATCH AWARE + REJECTED SAFE)")
+    print("=" * 70)
 
-    # Global replacement summary
-    print("\n" + "=" * 60)
-    print("♻️ FILE REPLACEMENT SUMMARY")
-    print("=" * 60)
-    print(f"📊 Total files replaced:        {total_replaced_count}")
-    print(f"📁 Folders with replacements:   {folders_with_replacements}")
-    print(f"🆕 Folders fully fresh:         {len(processed_ok) - folders_with_replacements}")
+    if not INPUT_ROOT.exists():
+        raise SystemExit(f"❌ Invalid input root path: {INPUT_ROOT}")
+
+    OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+
+    mode = prompt_processing_mode()
+    subject_folders = collect_subject_folders(mode)
+
+    all_subject_reports = []
+
+    for subj_idx, subject_folder in enumerate(subject_folders, start=1):
+        print("\n" + "=" * 70)
+        print(f"📦 [{subj_idx}/{len(subject_folders)}] STARTING SUBJECT")
+        print("=" * 70)
+
+        try:
+            report = process_subject_folder(subject_folder)
+            all_subject_reports.append(report)
+        except Exception as e:
+            print(f"❌ Subject-level error for {subject_folder.name}: {e}")
+            traceback.print_exc()
+            all_subject_reports.append({
+                "subject": subject_folder.name,
+                "success": [],
+                "rejected": [],
+                "failed": [(subject_folder.name, str(e))],
+                "total_replaced_files": 0,
+                "folders_with_replacements": 0,
+            })
+
+    # ==================================================
+    # FINAL SUMMARY (across all subjects)
+    # ==================================================
+    print("\n" + "=" * 70)
+    print("📌 FINAL BATCH SUMMARY")
+    print("=" * 70)
+
+    grand_success = 0
+    grand_rejected = 0
+    grand_failed = 0
+    grand_replaced_files = 0
+    grand_folders_with_replacements = 0
+
+    for report in all_subject_reports:
+        n_succ = len(report["success"])
+        n_rej = len(report["rejected"])
+        n_fail = len(report["failed"])
+        grand_success += n_succ
+        grand_rejected += n_rej
+        grand_failed += n_fail
+        grand_replaced_files += report["total_replaced_files"]
+        grand_folders_with_replacements += report["folders_with_replacements"]
+
+        print(f"\n📁 {report['subject']}")
+        print(f"   ✅ Success : {n_succ}")
+        print(f"   ⚠️  Rejected: {n_rej}")
+        print(f"   ❌ Failed  : {n_fail}")
+
+        if report["rejected"]:
+            print(f"   ── Rejected windows (skipped, no output) ──")
+            for rej in report["rejected"]:
+                print(f"      • {rej['window_folder']}")
+                reason_short = rej["reason"]
+                if reason_short and len(reason_short) > 100:
+                    reason_short = reason_short[:97] + "..."
+                print(f"        Reason: {reason_short}")
+
+        if report["failed"]:
+            print(f"   ── Failed windows ──")
+            for fname, reason in report["failed"]:
+                print(f"      • {fname}")
+                reason_short = reason
+                if reason_short and len(reason_short) > 100:
+                    reason_short = reason_short[:97] + "..."
+                print(f"        Reason: {reason_short}")
+
+    print("\n" + "=" * 70)
+    print("🎯 GRAND TOTALS")
+    print("=" * 70)
+    print(f"  Subjects processed          : {len(all_subject_reports)}")
+    print(f"  ✅ Successful windows        : {grand_success}")
+    print(f"  ⚠️  Rejected windows (skipped): {grand_rejected}")
+    print(f"  ❌ Failed windows            : {grand_failed}")
+    print(f"  📊 Total files replaced     : {grand_replaced_files}")
+    print(f"  📁 Folders with replacements: {grand_folders_with_replacements}")
+    print(f"  📂 Output root              : {OUTPUT_ROOT}")
+    print("=" * 70)
+    print("\n🎉 Feature extraction complete.\n")
 
 
 if __name__ == "__main__":

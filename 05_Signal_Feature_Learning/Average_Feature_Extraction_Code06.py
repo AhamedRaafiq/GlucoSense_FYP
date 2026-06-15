@@ -1,7 +1,9 @@
 # ==========================================
-# AVERAGE FEATURE EXTRACTION (PYTHON SCRIPT)
+# AVERAGE FEATURE EXTRACTION (BATCH-AWARE)
 # Updated for compatibility with new feature extraction pipeline
-# Fixed: pre-existence snapshot captured BEFORE folder wipe
+# - Adds BATCH mode (process all *_Features folders in INPUT_ROOT_PATH)
+# - Adds SINGLE mode (popup folder selector — original behavior)
+# - Preserves all calculations, plot generation, output naming, and file tracking
 # ==========================================
 
 import pandas as pd
@@ -69,7 +71,7 @@ def report_replaced_files(replaced_list, output_folder_path_str):
 
 
 # --------------------------------------------------
-# CONFIG HELPERS (UPDATED FOR NEW PIPELINE)
+# CONFIG HELPERS (preserved exactly)
 # --------------------------------------------------
 def load_json_safe(path):
     try:
@@ -114,17 +116,12 @@ def is_flat_feature_json(cfg):
 
 
 def get_metadata_from_config(cfg):
-    """
-    Extracts metadata block from config.
-    Supports BOTH new (lowercase 'metadata') and old (uppercase 'Metadata').
-    """
     if not isinstance(cfg, dict):
         return {}
     return cfg.get("metadata") or cfg.get("Metadata") or {}
 
 
 def get_sampling_rate(metadata):
-    """Reads sampling rate from metadata (new or old key)."""
     if not isinstance(metadata, dict):
         return None
     return (
@@ -135,7 +132,6 @@ def get_sampling_rate(metadata):
 
 
 def get_window_duration(metadata):
-    """Reads window duration from metadata (new or old key)."""
     if not isinstance(metadata, dict):
         return None
     return (
@@ -146,7 +142,6 @@ def get_window_duration(metadata):
 
 
 def get_hyperparameters_from_config(cfg):
-    """Extracts hyperparameters block (new pipeline only)."""
     if not isinstance(cfg, dict):
         return {}
     return cfg.get("hyperparameters") or {}
@@ -161,51 +156,99 @@ def get_win_index(name):
     return 999
 
 
-# --------------------------------------------------
-# SELECT FEATURE FOLDER
-# --------------------------------------------------
-def select_features_folder():
+# ==========================================================
+# 🆕 BATCH / SINGLE MODE SELECTOR
+# ==========================================================
+def prompt_processing_mode():
+    """Console prompt to choose BATCH vs SINGLE mode."""
+    print("\n" + "=" * 70)
+    print("  SELECT AVERAGE FEATURE EXTRACTION MODE")
+    print("=" * 70)
+    print(f"  1) BATCH  — Process ALL *_Features folders inside:")
+    print(f"              {INPUT_ROOT_PATH}")
+    print(f"  2) SINGLE — Pop up dialog to choose ONE *_Features folder")
+    print("=" * 70)
+    while True:
+        choice = input("  Enter choice [1 or 2]: ").strip()
+        if choice in ("1", "2"):
+            return int(choice)
+        print("  ❌ Invalid choice. Please enter 1 or 2.")
+
+
+def collect_features_folders(mode):
+    """Returns a list of *_Features folders to process."""
     if not os.path.exists(INPUT_ROOT_PATH):
-        raise SystemExit("❌ Invalid input root path")
+        raise SystemExit(f"❌ Invalid input root path: {INPUT_ROOT_PATH}")
 
-    root = tk.Tk()
-    root.withdraw()
-    root.attributes("-topmost", True)
+    folders = []
 
-    selected = filedialog.askdirectory(
-        initialdir=INPUT_ROOT_PATH,
-        title="Select the Features folder"
-    )
+    if mode == 1:
+        # BATCH — find all *_Features subfolders inside INPUT_ROOT_PATH
+        all_dirs = [
+            os.path.join(INPUT_ROOT_PATH, d)
+            for d in os.listdir(INPUT_ROOT_PATH)
+            if os.path.isdir(os.path.join(INPUT_ROOT_PATH, d))
+        ]
+        feature_dirs = sorted(
+            [d for d in all_dirs if os.path.basename(d).endswith("_Features")],
+            key=lambda p: os.path.basename(p).lower()
+        )
+        if not feature_dirs:
+            raise SystemExit(f"❌ No *_Features subject folders found inside: {INPUT_ROOT_PATH}")
+        folders = feature_dirs
+        print(f"\n📦 BATCH MODE — found {len(folders)} subject folder(s) to process:")
+        for f in folders:
+            print(f"   • {os.path.basename(f)}")
+    else:
+        # SINGLE — popup dialog (preserved original behavior)
+        selected = None
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.attributes("-topmost", True)
+            root.update_idletasks()
+            root.update()
+            selected = filedialog.askdirectory(
+                parent=root,
+                initialdir=INPUT_ROOT_PATH,
+                title="Select the Features folder"
+            )
+            root.update()
+            root.destroy()
+        except Exception as tk_err:
+            print(f"\n⚠️  GUI dialog failed: {tk_err}")
+            print("    Falling back to manual path entry.")
+            selected = None
 
-    root.destroy()
+        if not selected:
+            print(f"\n📁 Default base path: {INPUT_ROOT_PATH}")
+            typed = input("    Type folder path (or press Enter to cancel): ").strip().strip('"').strip("'")
+            if typed:
+                selected = typed
+            else:
+                raise SystemExit("❌ No folder selected. Stopping.")
 
-    if not selected:
-        raise SystemExit("❌ No folder selected")
+        if not os.path.exists(selected) or not os.path.isdir(selected):
+            raise SystemExit(f"❌ Selected folder does not exist: {selected}")
 
-    return selected
+        folders = [selected]
+        print(f"\n📁 SINGLE MODE — selected: {selected}")
+
+    return folders
 
 
-# --------------------------------------------------
-# MAIN PROCESS
-# --------------------------------------------------
-def main():
-    print("\n" + "=" * 60)
-    print("📊 AVERAGING FEATURE VALUES FROM WINDOW FOLDERS")
-    print("=" * 60)
-
-    if not os.path.exists(INPUT_ROOT_PATH):
-        raise SystemExit("❌ Invalid input root path")
-
-    os.makedirs(OUTPUT_ROOT, exist_ok=True)
+# ==========================================================
+# 🆕 PROCESS A SINGLE *_Features FOLDER (was main() body before)
+# ==========================================================
+def process_single_features_folder(input_features_folder):
+    """
+    Processes ONE *_Features folder and produces averaged outputs.
+    Returns a summary dict with status: "SUCCESS" | "EMPTY" | "FAILED"
+    """
+    print(f"📂 Processing:\n{input_features_folder}")
 
     # --------------------------------------------------
-    # SELECT INPUT FOLDER
-    # --------------------------------------------------
-    input_features_folder = select_features_folder()
-    print(f"📂 Selected:\n{input_features_folder}")
-
-    # --------------------------------------------------
-    # OUTPUT PATH
+    # OUTPUT PATH (preserved naming)
     # --------------------------------------------------
     input_folder_name = os.path.basename(input_features_folder)
 
@@ -224,9 +267,8 @@ def main():
 
     # --------------------------------------------------
     # CAPTURE PRE-EXISTING FILES (BEFORE wiping folder)
-    # This lets us report what existed before this run.
     # --------------------------------------------------
-    pre_existing_snapshot = []   # all files that existed BEFORE this run started
+    pre_existing_snapshot = []
     if os.path.exists(output_folder_path):
         for root_dir, _, files in os.walk(output_folder_path):
             for fname in files:
@@ -270,7 +312,7 @@ def main():
     print(f"\n✅ Found {len(subfolders)} window folders")
 
     # --------------------------------------------------
-    # LOAD FEATURES
+    # LOAD FEATURES (calculations preserved)
     # --------------------------------------------------
     feature_rows = []
     config_files = []
@@ -309,7 +351,18 @@ def main():
             print(f"⚠️ No config JSON found in: {folder}")
 
     if len(feature_rows) == 0:
-        raise SystemExit("❌ No valid feature rows found")
+        print("❌ No valid feature rows found in this subject folder — skipping.")
+        return {
+            "status": "EMPTY",
+            "subject": base_name,
+            "input_folder": input_features_folder,
+            "output_folder": output_folder_path,
+            "windows_used": 0,
+            "plots_generated": 0,
+            "files_replaced": 0,
+            "folder_was_replaced": folder_was_replaced,
+            "pre_existing_count": len(pre_existing_snapshot),
+        }
 
     df_all = pd.DataFrame(feature_rows)
 
@@ -317,12 +370,12 @@ def main():
         df_all[col] = pd.to_numeric(df_all[col], errors="coerce")
 
     # --------------------------------------------------
-    # COMPUTE AVERAGE
+    # COMPUTE AVERAGE (preserved)
     # --------------------------------------------------
     df_avg_flat = pd.DataFrame([df_all.mean(numeric_only=True)])
 
     # --------------------------------------------------
-    # CREATE RED / IR TABLE (PRESERVED ROBUST VERSION)
+    # CREATE RED / IR TABLE (preserved)
     # --------------------------------------------------
     features = []
     red_vals = []
@@ -330,11 +383,9 @@ def main():
 
     for col in df_avg_flat.columns:
 
-        # Skip ensemble ratio (handled separately)
         if col.strip().lower() == "ensemble ratio":
             continue
 
-        # Process only Red features explicitly
         if col.startswith("Red_"):
             feature = col.replace("Red_", "")
             red_val = df_avg_flat[col].values[0]
@@ -357,7 +408,7 @@ def main():
     })
 
     # --------------------------------------------------
-    # EXTRACT ENSEMBLE RATIO
+    # EXTRACT ENSEMBLE RATIO (preserved)
     # --------------------------------------------------
     ratio_cols = [c for c in df_avg_flat.columns if c.strip().lower() == "ensemble ratio"]
 
@@ -381,7 +432,7 @@ def main():
     print(df_ratio.to_string(index=False))
 
     # --------------------------------------------------
-    # SAFE CONFIG VALIDATION (UPDATED FOR NEW PIPELINE)
+    # SAFE CONFIG VALIDATION (preserved)
     # --------------------------------------------------
     configs = []
     valid_config_paths = []
@@ -417,7 +468,6 @@ def main():
             if window_duration is None:
                 print("⚠️ Warning: Reference config missing window duration")
 
-            # Compare against other configs
             for i, c in enumerate(configs[1:], start=1):
                 label = f"config {i}"
 
@@ -430,7 +480,6 @@ def main():
                 c_metadata = get_metadata_from_config(c)
                 c_hyperparameters = get_hyperparameters_from_config(c)
 
-                # Hyperparameters check (only if both have them)
                 if ref_hyperparameters and c_hyperparameters:
                     if c_hyperparameters != ref_hyperparameters:
                         msg = f"⚠️ Hyperparameters mismatch in {label}"
@@ -466,7 +515,7 @@ def main():
             validation_status = "Unknown config format"
 
     # --------------------------------------------------
-    # CREATE AVERAGED CONFIG JSON
+    # CREATE AVERAGED CONFIG JSON (preserved)
     # --------------------------------------------------
     average_config = {
         "metadata": {
@@ -492,14 +541,12 @@ def main():
     plot_dir = os.path.join(output_folder_path, "Feature_Plots")
     config_path = os.path.join(output_folder_path, f"{base_name}_AveFeature_Config.json")
 
-    # Predict all plot file paths
     plot_paths = {}
     for feat in df_all.columns:
         safe = "".join(c if c.isalnum() else "_" for c in feat)
         plot_file_path = os.path.join(plot_dir, f"{safe}.png")
         plot_paths[feat] = plot_file_path
 
-    # Build complete pre-check list
     pre_check_files = [
         ("Averaged Features CSV", output_csv_path),
         ("Averaged Config JSON", config_path),
@@ -509,7 +556,6 @@ def main():
 
     # --------------------------------------------------
     # PRE-CHECK: which planned files existed BEFORE this run
-    # (uses the snapshot we took before wiping folder)
     # --------------------------------------------------
     pre_existing_paths = {
         os.path.normpath(entry["path"]): entry
@@ -520,7 +566,6 @@ def main():
     for label, fp in pre_check_files:
         normalized_fp = os.path.normpath(fp)
         if folder_was_replaced:
-            # Use snapshot to detect pre-existence
             if normalized_fp in pre_existing_paths:
                 snap_info = pre_existing_paths[normalized_fp]
                 existing_before.append({
@@ -529,7 +574,6 @@ def main():
                     "old_size_kb": snap_info["old_size_kb"],
                 })
         else:
-            # Folder wasn't wiped — check live disk
             info = check_existing_file(fp)
             if info["exists"]:
                 existing_before.append({
@@ -539,7 +583,7 @@ def main():
                 })
 
     # --------------------------------------------------
-    # GENERATE PLOTS (saved silently, not displayed)
+    # GENERATE PLOTS (preserved)
     # --------------------------------------------------
     os.makedirs(plot_dir, exist_ok=True)
 
@@ -572,7 +616,7 @@ def main():
     print(f"✅ All {len(plot_paths)} feature plots saved.")
 
     # --------------------------------------------------
-    # SAVE CSV + CONFIG (auto-save)
+    # SAVE CSV + CONFIG
     # --------------------------------------------------
     df_avg_flat.to_csv(output_csv_path, index=False)
     print(f"\n💾 Averaged CSV saved: {output_csv_path}")
@@ -585,7 +629,6 @@ def main():
 
     # --------------------------------------------------
     # POST-CHECK: compare pre-existing files with new sizes
-    # (works whether folder was wiped or not)
     # --------------------------------------------------
     replaced_files_info = []
     for entry in existing_before:
@@ -598,15 +641,15 @@ def main():
         })
 
     # --------------------------------------------------
-    # FINAL SUMMARY
+    # PER-SUBJECT SUMMARY
     # --------------------------------------------------
     total_planned = len(pre_check_files)
     total_replaced = len(replaced_files_info)
     total_fresh = total_planned - total_replaced
 
-    print("\n" + "=" * 60)
-    print("♻️ FILE REPLACEMENT SUMMARY")
-    print("=" * 60)
+    print("\n" + "─" * 60)
+    print("♻️ FILE REPLACEMENT SUMMARY (this subject)")
+    print("─" * 60)
 
     if folder_was_replaced:
         print(f"♻️  WHOLE FOLDER WAS WIPED & RECREATED")
@@ -622,12 +665,126 @@ def main():
     print(f"♻️  Files replaced:          {total_replaced}")
     print(f"🆕 Files newly created:     {total_fresh}")
 
-    print("\n" + "=" * 60)
+    print("\n" + "─" * 60)
+    print(f"✅ Subject done — {len(win_labels)} windows averaged")
+    print("─" * 60)
+
+    return {
+        "status": "SUCCESS",
+        "subject": base_name,
+        "input_folder": input_features_folder,
+        "output_folder": output_folder_path,
+        "windows_used": len(win_labels),
+        "plots_generated": len(plot_paths),
+        "files_written": total_planned,
+        "files_replaced": total_replaced,
+        "files_fresh": total_fresh,
+        "folder_was_replaced": folder_was_replaced,
+        "pre_existing_count": len(pre_existing_snapshot),
+        "validation_warnings": config_validation_notes,
+    }
+
+
+# ==========================================================
+# 🆕 MAIN — BATCH-AWARE
+# ==========================================================
+def main():
+    print("\n" + "=" * 70)
+    print("📊 AVERAGING FEATURE VALUES (BATCH-AWARE)")
+    print("=" * 70)
+
+    if not os.path.exists(INPUT_ROOT_PATH):
+        raise SystemExit(f"❌ Invalid input root path: {INPUT_ROOT_PATH}")
+
+    os.makedirs(OUTPUT_ROOT, exist_ok=True)
+
+    mode = prompt_processing_mode()
+    features_folders = collect_features_folders(mode)
+
+    all_reports = []
+
+    for idx, folder in enumerate(features_folders, start=1):
+        print("\n" + "=" * 70)
+        print(f"📦 [{idx}/{len(features_folders)}] SUBJECT FOLDER")
+        print("=" * 70)
+
+        try:
+            report = process_single_features_folder(folder)
+            all_reports.append(report)
+        except SystemExit as e:
+            # Local SystemExit from process function — record & continue with batch
+            print(f"⚠️  Stopped processing this subject: {e}")
+            all_reports.append({
+                "status": "FAILED",
+                "subject": os.path.basename(folder),
+                "input_folder": folder,
+                "output_folder": None,
+                "error": str(e),
+            })
+        except Exception as e:
+            print(f"❌ Unexpected error for {os.path.basename(folder)}: {e}")
+            traceback.print_exc()
+            all_reports.append({
+                "status": "FAILED",
+                "subject": os.path.basename(folder),
+                "input_folder": folder,
+                "output_folder": None,
+                "error": str(e),
+            })
+
+    # ==================================================
+    # 🆕 GRAND TOTAL SUMMARY (across all subjects)
+    # ==================================================
+    print("\n" + "=" * 70)
+    print("🎯 GRAND TOTAL SUMMARY")
+    print("=" * 70)
+
+    n_success = sum(1 for r in all_reports if r.get("status") == "SUCCESS")
+    n_empty = sum(1 for r in all_reports if r.get("status") == "EMPTY")
+    n_failed = sum(1 for r in all_reports if r.get("status") == "FAILED")
+
+    total_windows = sum(r.get("windows_used", 0) for r in all_reports if r.get("status") == "SUCCESS")
+    total_plots = sum(r.get("plots_generated", 0) for r in all_reports if r.get("status") == "SUCCESS")
+    total_files_written = sum(r.get("files_written", 0) for r in all_reports if r.get("status") == "SUCCESS")
+    total_files_replaced = sum(r.get("files_replaced", 0) for r in all_reports if r.get("status") == "SUCCESS")
+    total_files_fresh = sum(r.get("files_fresh", 0) for r in all_reports if r.get("status") == "SUCCESS")
+    total_folders_wiped = sum(1 for r in all_reports if r.get("folder_was_replaced"))
+    total_pre_existing = sum(r.get("pre_existing_count", 0) for r in all_reports)
+
+    print(f"  Subjects processed       : {len(all_reports)}")
+    print(f"  ✅ Successful            : {n_success}")
+    print(f"  ⚠️  Empty (no features)  : {n_empty}")
+    print(f"  ❌ Failed                : {n_failed}")
+    print()
+    print(f"  📊 Total windows averaged    : {total_windows}")
+    print(f"  🖼️  Total plots generated    : {total_plots}")
+    print(f"  💾 Total files written       : {total_files_written}")
+    print(f"  ♻️  Total files replaced     : {total_files_replaced}")
+    print(f"  🆕 Total files newly created : {total_files_fresh}")
+    print(f"  🗑️  Folders fully wiped      : {total_folders_wiped}")
+    print(f"  🗑️  Pre-existing files removed: {total_pre_existing}")
+    print(f"  📂 Output root               : {OUTPUT_ROOT}")
+
+    # Per-subject breakdown
+    print("\n" + "─" * 70)
+    print("📋 PER-SUBJECT BREAKDOWN")
+    print("─" * 70)
+    for r in all_reports:
+        status = r.get("status", "?")
+        subj = r.get("subject", "?")
+        if status == "SUCCESS":
+            print(f"  ✅ {subj}  →  windows: {r['windows_used']}, "
+                  f"plots: {r['plots_generated']}, replaced: {r['files_replaced']}")
+            if r.get("validation_warnings"):
+                print(f"     ⚠️  {len(r['validation_warnings'])} config warning(s)")
+        elif status == "EMPTY":
+            print(f"  ⚠️  {subj}  →  no valid feature CSVs found (likely all rejected)")
+        elif status == "FAILED":
+            print(f"  ❌ {subj}  →  ERROR: {r.get('error', 'Unknown')}")
+
+    print("\n" + "=" * 70)
     print("🎉 AVERAGING COMPLETE")
-    print("=" * 60)
-    print(f"✅ Processed {len(win_labels)} windows")
-    print(f"✅ Generated {len(plot_paths)} feature plots")
-    print(f"📁 Output: {output_folder_path}")
+    print("=" * 70)
 
 
 if __name__ == "__main__":

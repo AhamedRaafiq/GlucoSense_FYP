@@ -1,12 +1,12 @@
 {
     "metadata": {
-        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win1.csv",
+        "source_file": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\03_Windowed\\Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win1.csv",
         "filename": "Ali(22-enc-12)v1_Win1.csv",
         "sampling_rate_fs": 400.0,
         "total_samples": 6000,
         "duration_sec": 15.0,
         "nyquist_rate": 200.0,
-        "date_processed": "2026-06-11 03:28:37",
+        "date_processed": "2026-06-14 22:44:39",
         "status": "SUCCESS"
     },
     "hyperparameters": {
@@ -36,7 +36,7 @@
         "peak_prom_factor": 0.2,
         "valley_min_distance_sec": 0.35,
         "valley_prom_factor": 0.1,
-        "min_foot_to_peak_sec": 0.12,
+        "min_foot_to_peak_sec": 0.08,
         "max_foot_to_peak_sec": 0.4,
         "max_valley_to_foot_sec": 0.2,
         "max_foot_rel_height": 0.2,
@@ -44,7 +44,7 @@
         "edge_exclusion_sec": 0.1,
         "min_beat_duration_sec": 0.35,
         "max_beat_duration_sec": 1.5,
-        "main_peak_search_window_sec": 0.2,
+        "main_peak_search_window_sec": 0.3,
         "main_peak_min_delay_sec": 0.02,
         "start_incomplete_margin_sec": 0.1,
         "end_incomplete_margin_sec": 0.01,
@@ -234,19 +234,19 @@
         "RED": {
             "HR_Global": 64.21691045308597,
             "Width_Avg": 0.5860227272727272,
-            "Area_Avg": 111.87302440502127,
-            "Amp_Avg": 0.8012150409775001,
-            "Skew_Avg": -0.2742514327919863,
-            "Kurt_Avg": -1.25696431582339,
+            "Area_Avg": 111.89970007799627,
+            "Amp_Avg": 0.8009210736402832,
+            "Skew_Avg": -0.28674947234053166,
+            "Kurt_Avg": -1.2561759383250533,
             "PI_Global": 2.2807850898360864
         }
     },
     "ensemble_RED": {
         "title": "RED Channel",
         "target_len": 220,
-        "beats_used": 14,
+        "beats_used": 15,
         "rejected_candidates": 0,
-        "rejected_pulses": 1,
+        "rejected_pulses": 0,
         "segmented_pulses_total": 15,
         "avg_duration": 0.955,
         "fs_eff": 230.36649214659687,
@@ -514,6 +514,10 @@
                 3828
             ],
             [
+                3828,
+                4201
+            ],
+            [
                 4201,
                 4573
             ],
@@ -662,6 +666,19 @@
                 "status": "accepted"
             },
             {
+                "pulse_num": 11,
+                "foot": 3828,
+                "peak": 3913,
+                "next_foot": 4201,
+                "mid_idx": 4014,
+                "beat_duration": 0.9325,
+                "foot_to_peak_sec": 0.2125,
+                "amplitude": 0.8006361354586536,
+                "vpg_at_foot": 0.11461762465759553,
+                "sdppg_at_foot": 105.03196672098403,
+                "status": "accepted"
+            },
+            {
                 "pulse_num": 12,
                 "foot": 4201,
                 "peak": 4267,
@@ -800,8 +817,8 @@
                 "foot": 3828,
                 "next_foot": 4201,
                 "mid_idx": 4014,
-                "status": "rejected",
-                "reason_text": "No valid main peak after foot."
+                "status": "accepted",
+                "reason_text": ""
             },
             {
                 "pulse_num": 12,
@@ -837,21 +854,13 @@
             }
         ],
         "rejected_candidates_info": [],
-        "rejected_pulses_info": [
-            {
-                "pulse_num": 11,
-                "reason_key": "no_main_peak_after_foot",
-                "reason_text": "No valid main peak after foot.",
-                "foot": 3828,
-                "next_foot": 4201
-            }
-        ],
+        "rejected_pulses_info": [],
         "fiducials": {
             "a": 5,
             "b": 20,
             "c": 46,
             "d": 55,
-            "e": 76
+            "e": 75
         },
         "plot_paths": {
             "ensemble_plot": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\04_Filtered\\Ali(22-enc-12)v1_Filtered\\Ali(22-enc-12)v1_Additional\\Plots\\10_Ensemble\\Ali(22-enc-12)v1_Win1_RED_10_Ensemble.png",

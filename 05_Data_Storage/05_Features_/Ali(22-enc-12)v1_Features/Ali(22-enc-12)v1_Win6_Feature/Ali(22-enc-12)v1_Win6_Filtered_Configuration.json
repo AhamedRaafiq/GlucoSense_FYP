@@ -1,12 +1,13 @@
 {
     "metadata": {
-        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win6.csv",
+        "source_file": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\03_Windowed\\Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win6.csv",
         "filename": "Ali(22-enc-12)v1_Win6.csv",
         "sampling_rate_fs": 400.0,
         "total_samples": 6000,
         "duration_sec": 15.0,
         "nyquist_rate": 200.0,
-        "date_processed": "2026-06-09 14:23:47"
+        "date_processed": "2026-06-14 22:47:17",
+        "status": "SUCCESS"
     },
     "hyperparameters": {
         "use_full_file": true,
@@ -29,11 +30,13 @@
         "norm_selection": 1,
         "norm_type": "MinMax",
         "ensemble_target_len": 220,
+        "min_valid_beats_ir": 8,
+        "min_valid_beats_red": 8,
         "peak_min_distance_sec": 0.4,
         "peak_prom_factor": 0.2,
         "valley_min_distance_sec": 0.35,
         "valley_prom_factor": 0.1,
-        "min_foot_to_peak_sec": 0.12,
+        "min_foot_to_peak_sec": 0.08,
         "max_foot_to_peak_sec": 0.4,
         "max_valley_to_foot_sec": 0.2,
         "max_foot_rel_height": 0.2,
