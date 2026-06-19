@@ -1,14 +1,12 @@
 # ==========================================
-# STEP 8 (Sub-task 3 & 4): TRAIN/TEST SPLIT + ROBUST SCALING
+# STEP 8 (Sub-task 3 & 4): STRATIFIED TRAIN/TEST SPLIT + ROBUST SCALING
 # Updated:
-# - Popup message reflects new naming (Master dataset 24F cleaned)
-# - Output folder naming: Master dataset 24F split scaled YYYY-MM-DD HH-MM-SS
-# - Timestamp format: YYYY-MM-DD HH-MM-SS (pipeline-consistent)
-# - Validation that selected folder is from Step 8 (Sub-task 1&2)
-# - Auto-detection of latest cleaning-step output folder
-# - Concise pipeline traceability chain in JSON log (no bloat)
-# - Variable rename: prev_step_json → cleaning_step_json_data
-# - All Train/Test split + RobustScaler calculations preserved exactly
+# - STRATIFIED train/test split across glucose ranges (clinical bins)
+# - Per-bin test count via TEST_SAMPLES_PER_BIN hyperparameter
+# - Manual test sample selection via MANUAL_TEST_SAMPLE_ROW_NUMBERS (1-based)
+# - Preserves: output folder names, CSV file names, JSON log structure
+# - Preserves: all RobustScaler calculations and verification logic
+# - Preserves: verbose terminal output for debugging
 # ==========================================
 
 import os
@@ -21,7 +19,6 @@ from tkinter import filedialog, messagebox
 
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import RobustScaler
 
 
@@ -31,12 +28,58 @@ from sklearn.preprocessing import RobustScaler
 INPUT_ROOT  = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\09_Cleaned_dataset_without_(NaN_&_outliers)")
 OUTPUT_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\10_Robust_Scaled_and_Train_Test_Splitted_Data_Set")
 
-# Train/Test split EXACT COUNTS (change as needed)
-# These two numbers MUST add up exactly to your total number of samples
-AMOUNT_OF_TRAIN_SAMPLES = 3   # ← PASTE EXACT TRAIN COUNT HERE
-AMOUNT_OF_TEST_SAMPLES  = 1    # ← PASTE EXACT TEST COUNT HERE
 
-RANDOM_STATE = 42              # Fixed seed for reproducibility
+# --------------------------------------------------
+# TRAIN/TEST SPLIT CONFIGURATION
+# --------------------------------------------------
+AMOUNT_OF_TRAIN_SAMPLES = 43
+# Total number of samples to put into the TRAIN set.
+# Must add up with AMOUNT_OF_TEST_SAMPLES to equal total dataset rows.
+
+AMOUNT_OF_TEST_SAMPLES  = 8
+# Total number of samples to put into the TEST set.
+# Must equal the sum of TEST_SAMPLES_PER_BIN values below.
+
+RANDOM_STATE = 42
+# Fixed seed for reproducibility. Same seed → same split every run.
+# Any integer works; 42 is conventional in ML.
+
+
+# --------------------------------------------------
+# STRATIFIED SPLIT — GLUCOSE BIN DEFINITIONS
+# --------------------------------------------------
+GLUCOSE_BINS = [0, 70, 100, 125, 180, 999]
+# Glucose range edges (mg/dL) in ascending order. Defines clinical categories.
+# Default = standard clinical thresholds. Edit ranges as needed.
+
+GLUCOSE_BIN_LABELS = [
+    "Hypoglycemic",   # < 70 mg/dL
+    "Normal",         # 70-100 mg/dL
+    "Pre-diabetic",   # 100-125 mg/dL
+    "Diabetic",       # 125-180 mg/dL
+    "Hyperglycemic",  # > 180 mg/dL
+]
+# Human-readable names for each bin (must be one less than GLUCOSE_BINS length).
+# Used for terminal output and JSON log labeling.
+
+TEST_SAMPLES_PER_BIN = {
+    "Hypoglycemic":   0,
+    "Normal":         3,
+    "Pre-diabetic":   3,
+    "Diabetic":       2,
+    "Hyperglycemic":  0,
+}
+# How many test samples to pull from each clinical bin.
+# Sum MUST equal AMOUNT_OF_TEST_SAMPLES. Adjust to control test distribution.
+
+
+# --------------------------------------------------
+# MANUAL TEST SAMPLE SELECTION (optional)
+# --------------------------------------------------
+MANUAL_TEST_SAMPLE_ROW_NUMBERS = []
+# List of 1-based row numbers (as you see in Excel/CSV) to FORCE into TEST set.
+# Example: [12, 35, 50] = put rows 12, 35, 50 from CSV into test set.
+# Leave empty [] for fully automatic stratified split.
 
 
 # --------------------------------------------------
@@ -139,13 +182,10 @@ def print_prev_step_folder_detection_report(detection_result):
 
 
 # --------------------------------------------------
-# FOLDER SELECTOR POPUP (updated message)
+# FOLDER SELECTOR POPUP (short message — as requested)
 # --------------------------------------------------
 def popup_folder_selector(initial_dir):
-    """
-    Opens a folder dialog for user to select the Step 8 (Sub-task 1&2) output folder.
-    Returns: Path to selected folder.
-    """
+    """Opens a folder dialog. Short message version."""
     root = tk.Tk()
     root.withdraw()
     root.attributes("-topmost", True)
@@ -153,29 +193,15 @@ def popup_folder_selector(initial_dir):
     messagebox.showinfo(
         title="Step 8 (Sub-task 3&4) — Train/Test Split + Scaling",
         message=(
-            "Select the Step 8 (Sub-task 1&2) OUTPUT FOLDER to process.\n\n"
-            "──────────────────────────────────────────\n"
-            "EXPECTED FOLDER NAME PATTERN:\n"
-            "   Master dataset 24F cleaned <timestamp>\n\n"
-            "EXPECTED CONTENTS:\n"
-            "   Master dataset 24F cleaned <timestamp>/\n"
-            "       ├── Master dataset 24F cleaned <timestamp>.csv\n"
-            "       └── Master dataset 24F cleaned <timestamp>.json\n\n"
-            "──────────────────────────────────────────\n"
-            "The script will automatically:\n"
-            "  1. Find the CSV and JSON files inside\n"
-            "  2. Validate this is a Step 8 (Sub-task 1&2) output\n"
-            "  3. Perform Train/Test split (exact counts)\n"
-            "  4. Apply RobustScaler (fit on train only)\n\n"
-            "Check the terminal for which folder was\n"
-            "detected as the latest one.\n\n"
+            "Select the Step 8 (Sub-task 1&2) OUTPUT FOLDER.\n\n"
+            "Expected: Master dataset 24F cleaned <timestamp>\n\n"
             "Click OK to open the folder browser."
         ),
     )
 
     selected_folder = filedialog.askdirectory(
         initialdir=str(initial_dir),
-        title="Select Step 8 (Sub-task 1&2) Output FOLDER (Master dataset 24F cleaned ...)",
+        title="Select Step 8 (Sub-task 1&2) Output FOLDER",
     )
 
     root.destroy()
@@ -187,7 +213,7 @@ def popup_folder_selector(initial_dir):
 
 
 # --------------------------------------------------
-# FILE FINDERS (unchanged)
+# FILE FINDERS (preserved exactly)
 # --------------------------------------------------
 def find_csv_and_json_in_folder(folder_path):
     """Automatically find the CSV and JSON files inside the selected folder."""
@@ -213,7 +239,7 @@ def find_csv_and_json_in_folder(folder_path):
 
 
 # --------------------------------------------------
-# VALIDATION: IS THIS THE STEP 8 (Sub-task 1&2) OUTPUT?
+# VALIDATION: IS THIS THE STEP 8 (Sub-task 1&2) OUTPUT? (preserved verbosity)
 # --------------------------------------------------
 def validate_is_prev_step_output(folder_path, df, json_data):
     """
@@ -283,7 +309,7 @@ def validate_is_prev_step_output(folder_path, df, json_data):
 
 
 # --------------------------------------------------
-# CONCISE PIPELINE CHAIN BUILDER (short, readable)
+# CONCISE PIPELINE CHAIN BUILDER (preserved exactly)
 # --------------------------------------------------
 def build_pipeline_chain_summary(cleaning_step_json_data, prev_csv_path, prev_json_path):
     """
@@ -360,7 +386,7 @@ def build_pipeline_chain_summary(cleaning_step_json_data, prev_csv_path, prev_js
 
 
 # --------------------------------------------------
-# FILE LOADERS (unchanged)
+# FILE LOADERS (preserved exactly)
 # --------------------------------------------------
 def load_csv(file_path):
     """Load a CSV file and return DataFrame."""
@@ -403,8 +429,7 @@ def check_existing_file(file_path):
 
 
 # --------------------------------------------------
-# SUB-TASK 3: SEPARATE X AND y + TRAIN/TEST SPLIT
-# ⚠️ ALL CALCULATIONS PRESERVED EXACTLY — NO CHANGES
+# SUB-TASK 3a: SEPARATE X AND y (preserved verbose listing)
 # --------------------------------------------------
 def separate_x_y(df):
     """
@@ -443,56 +468,267 @@ def separate_x_y(df):
     return X, y, feature_columns
 
 
-def perform_train_test_split(X, y):
-    """
-    Split X and y into train and test sets using EXACT COUNTS.
-    Uses AMOUNT_OF_TRAIN_SAMPLES and AMOUNT_OF_TEST_SAMPLES from configuration.
+# --------------------------------------------------
+# 🆕 HYPERPARAMETER VALIDATION (pre-flight checks)
+# --------------------------------------------------
+def validate_hyperparameter_config(total_samples, y):
+    """Pre-flight validation of hyperparameters with verbose output."""
+    print(f"\n{'─' * 60}")
+    print(f"🔍 HYPERPARAMETER VALIDATION")
+    print(f"{'─' * 60}")
+    errors = []
+    warnings = []
 
-    Returns: (X_train, X_test, y_train, y_test, split_info)
+    # Check 1: AMOUNT totals match dataset
+    print(f"\n   🔍 Check 1: Train + Test counts match total dataset")
+    if AMOUNT_OF_TRAIN_SAMPLES + AMOUNT_OF_TEST_SAMPLES != total_samples:
+        msg = (
+            f"❌ AMOUNT_OF_TRAIN_SAMPLES ({AMOUNT_OF_TRAIN_SAMPLES}) + "
+            f"AMOUNT_OF_TEST_SAMPLES ({AMOUNT_OF_TEST_SAMPLES}) = "
+            f"{AMOUNT_OF_TRAIN_SAMPLES + AMOUNT_OF_TEST_SAMPLES}, "
+            f"but dataset has {total_samples} rows."
+        )
+        errors.append(msg)
+        print(f"      ❌ FAILED: {msg}")
+    else:
+        print(f"      ✅ {AMOUNT_OF_TRAIN_SAMPLES} + {AMOUNT_OF_TEST_SAMPLES} = {total_samples} (dataset rows)")
+
+    # Check 2: bin labels length matches bins - 1
+    print(f"\n   🔍 Check 2: GLUCOSE_BIN_LABELS length matches GLUCOSE_BINS")
+    if len(GLUCOSE_BIN_LABELS) != len(GLUCOSE_BINS) - 1:
+        msg = (
+            f"❌ GLUCOSE_BIN_LABELS has {len(GLUCOSE_BIN_LABELS)} entries, "
+            f"but GLUCOSE_BINS defines {len(GLUCOSE_BINS) - 1} bins."
+        )
+        errors.append(msg)
+        print(f"      ❌ FAILED: {msg}")
+    else:
+        print(f"      ✅ {len(GLUCOSE_BIN_LABELS)} labels for {len(GLUCOSE_BINS) - 1} bins")
+
+    # Check 3: TEST_SAMPLES_PER_BIN keys match GLUCOSE_BIN_LABELS
+    print(f"\n   🔍 Check 3: TEST_SAMPLES_PER_BIN keys match GLUCOSE_BIN_LABELS")
+    missing_keys = set(GLUCOSE_BIN_LABELS) - set(TEST_SAMPLES_PER_BIN.keys())
+    extra_keys   = set(TEST_SAMPLES_PER_BIN.keys()) - set(GLUCOSE_BIN_LABELS)
+    if missing_keys:
+        msg = f"❌ TEST_SAMPLES_PER_BIN missing keys: {missing_keys}"
+        errors.append(msg)
+        print(f"      ❌ {msg}")
+    if extra_keys:
+        msg = f"❌ TEST_SAMPLES_PER_BIN has unexpected keys: {extra_keys}"
+        errors.append(msg)
+        print(f"      ❌ {msg}")
+    if not missing_keys and not extra_keys:
+        print(f"      ✅ All bin keys match exactly")
+
+    # Check 4: TEST_SAMPLES_PER_BIN sum equals AMOUNT_OF_TEST_SAMPLES
+    print(f"\n   🔍 Check 4: TEST_SAMPLES_PER_BIN sum equals AMOUNT_OF_TEST_SAMPLES")
+    bin_sum = sum(TEST_SAMPLES_PER_BIN.get(lbl, 0) for lbl in GLUCOSE_BIN_LABELS)
+    if bin_sum != AMOUNT_OF_TEST_SAMPLES:
+        msg = (
+            f"❌ TEST_SAMPLES_PER_BIN sum = {bin_sum}, "
+            f"but AMOUNT_OF_TEST_SAMPLES = {AMOUNT_OF_TEST_SAMPLES}."
+        )
+        errors.append(msg)
+        print(f"      ❌ FAILED: {msg}")
+    else:
+        print(f"      ✅ Per-bin sum ({bin_sum}) = AMOUNT_OF_TEST_SAMPLES ({AMOUNT_OF_TEST_SAMPLES})")
+
+    # Check 5: manual row numbers validation
+    print(f"\n   🔍 Check 5: MANUAL_TEST_SAMPLE_ROW_NUMBERS validation")
+    if MANUAL_TEST_SAMPLE_ROW_NUMBERS:
+        print(f"      Manual selections provided: {MANUAL_TEST_SAMPLE_ROW_NUMBERS}")
+        for rn in MANUAL_TEST_SAMPLE_ROW_NUMBERS:
+            if not isinstance(rn, int):
+                msg = f"❌ MANUAL_TEST_SAMPLE_ROW_NUMBERS contains non-integer: {rn}"
+                errors.append(msg)
+                print(f"      ❌ {msg}")
+            elif rn < 1 or rn > total_samples:
+                msg = (
+                    f"❌ Row number {rn} out of range. "
+                    f"Valid range: 1 to {total_samples} (1-based)."
+                )
+                errors.append(msg)
+                print(f"      ❌ {msg}")
+        if len(MANUAL_TEST_SAMPLE_ROW_NUMBERS) != len(set(MANUAL_TEST_SAMPLE_ROW_NUMBERS)):
+            msg = f"❌ MANUAL_TEST_SAMPLE_ROW_NUMBERS contains duplicates."
+            errors.append(msg)
+            print(f"      ❌ {msg}")
+        if len(MANUAL_TEST_SAMPLE_ROW_NUMBERS) > AMOUNT_OF_TEST_SAMPLES:
+            msg = (
+                f"❌ Too many manual picks: {len(MANUAL_TEST_SAMPLE_ROW_NUMBERS)} > "
+                f"AMOUNT_OF_TEST_SAMPLES ({AMOUNT_OF_TEST_SAMPLES})."
+            )
+            errors.append(msg)
+            print(f"      ❌ {msg}")
+        if not errors:
+            print(f"      ✅ All {len(MANUAL_TEST_SAMPLE_ROW_NUMBERS)} manual row numbers are valid")
+    else:
+        print(f"      ✅ No manual selections (fully automatic stratified split)")
+
+    # Check 6: bin availability check
+    print(f"\n   🔍 Check 6: Each bin has enough samples for its quota")
+    bin_indices = pd.cut(y, bins=GLUCOSE_BINS, labels=GLUCOSE_BIN_LABELS,
+                          include_lowest=True, right=False)
+    bin_counts = bin_indices.value_counts().reindex(GLUCOSE_BIN_LABELS, fill_value=0)
+
+    print(f"\n   📊 Dataset distribution by clinical bin:")
+    print(f"   {'Bin':<18} {'Range (mg/dL)':<18} {'Available':>10} {'Needed':>10} {'Status':>16}")
+    print(f"   {'─' * 18} {'─' * 18} {'─' * 10} {'─' * 10} {'─' * 16}")
+    for i, label in enumerate(GLUCOSE_BIN_LABELS):
+        lo, hi = GLUCOSE_BINS[i], GLUCOSE_BINS[i + 1]
+        avail = int(bin_counts[label])
+        need  = TEST_SAMPLES_PER_BIN.get(label, 0)
+        if avail < need:
+            status = "❌ INSUFFICIENT"
+            errors.append(
+                f"Bin '{label}' has only {avail} samples but TEST_SAMPLES_PER_BIN needs {need}."
+            )
+        elif avail == 0 and need == 0:
+            status = "○ skip"
+        else:
+            status = "✅ ok"
+        print(f"   {label:<18} {f'[{lo}, {hi})':<18} {avail:>10} {need:>10} {status:>16}")
+
+    # Print warnings & errors
+    if warnings:
+        print(f"\n   ⚠️ Warnings:")
+        for w in warnings: print(f"      {w}")
+    if errors:
+        print(f"\n   ❌ Configuration errors detected:")
+        for e in errors: print(f"      {e}")
+        raise SystemExit("\n❌ Fix the above configuration errors and re-run.")
+
+    print(f"\n   ✅ ALL HYPERPARAMETER CHECKS PASSED")
+    return bin_indices, bin_counts
+
+
+# --------------------------------------------------
+# SUB-TASK 3b: STRATIFIED TRAIN/TEST SPLIT WITH MANUAL SELECTION
+# --------------------------------------------------
+def perform_stratified_train_test_split(X, y, bin_indices, bin_counts):
+    """
+    Stratified split using per-bin test counts + optional manual selection.
+    
+    Logic:
+    1. If MANUAL_TEST_SAMPLE_ROW_NUMBERS provided → those rows go to test first
+    2. For each bin, calculate remaining test slots after manual picks
+    3. Randomly sample remaining slots from each bin (with RANDOM_STATE)
+    4. All other rows → train
     """
     print(f"\n{'─' * 60}")
-    print(f"🔧 SUB-TASK 3b: TRAIN/TEST SPLIT (Exact Counts)")
+    print(f"🔧 SUB-TASK 3b: STRATIFIED TRAIN/TEST SPLIT")
     print(f"{'─' * 60}")
 
     total_samples = len(X)
 
-    # ── Validate exact counts ──
-    specified_total = AMOUNT_OF_TRAIN_SAMPLES + AMOUNT_OF_TEST_SAMPLES
-    if specified_total != total_samples:
-        raise ValueError(
-            f"❌ Configuration error:\n"
-            f"      You specified Train = {AMOUNT_OF_TRAIN_SAMPLES}, Test = {AMOUNT_OF_TEST_SAMPLES}\n"
-            f"      Sum = {specified_total}, but your dataset has {total_samples} samples.\n"
-            f"      Please adjust AMOUNT_OF_TRAIN_SAMPLES and AMOUNT_OF_TEST_SAMPLES\n"
-            f"      so they add up exactly to {total_samples}."
+    print(f"\n   📊 Configuration:")
+    print(f"      Total samples            : {total_samples}")
+    print(f"      Train samples (target)   : {AMOUNT_OF_TRAIN_SAMPLES}")
+    print(f"      Test samples (target)    : {AMOUNT_OF_TEST_SAMPLES}")
+    print(f"      Random state             : {RANDOM_STATE}")
+    print(f"      Manual selections        : {len(MANUAL_TEST_SAMPLE_ROW_NUMBERS)} row(s)")
+    print(f"      Stratification bins      : {len(GLUCOSE_BIN_LABELS)}")
+
+    # Convert 1-based row numbers to 0-based pandas indices
+    manual_indices = []
+    manual_log = []
+    if MANUAL_TEST_SAMPLE_ROW_NUMBERS:
+        print(f"\n   🎯 Processing manual test selections:")
+        print(f"   {'Row #':<8} {'Pandas Idx':<12} {'Glucose':<12} {'Bin':<18}")
+        print(f"   {'─' * 8} {'─' * 12} {'─' * 12} {'─' * 18}")
+        for rn in MANUAL_TEST_SAMPLE_ROW_NUMBERS:
+            idx = rn - 1  # convert 1-based → 0-based
+            manual_indices.append(idx)
+            gl_val = float(y.iloc[idx])
+            bin_lbl = str(bin_indices.iloc[idx])
+            print(f"   {rn:<8} {idx:<12} {gl_val:<12.1f} {bin_lbl:<18}")
+            manual_log.append({
+                "row_number_1based": int(rn),
+                "pandas_index_0based": int(idx),
+                "glucose": gl_val,
+                "bin": bin_lbl,
+            })
+
+    # Build remaining quota per bin after subtracting manual picks
+    remaining_quota = dict(TEST_SAMPLES_PER_BIN)
+    manual_bin_overage = {}
+    for idx in manual_indices:
+        bin_lbl = str(bin_indices.iloc[idx])
+        if bin_lbl in remaining_quota:
+            remaining_quota[bin_lbl] -= 1
+            if remaining_quota[bin_lbl] < 0:
+                manual_bin_overage[bin_lbl] = manual_bin_overage.get(bin_lbl, 0) + 1
+                remaining_quota[bin_lbl] = 0  # Don't allow negative
+
+    if manual_bin_overage:
+        print(f"\n   ⚠️ Manual picks exceed bin quota for:")
+        for b, n in manual_bin_overage.items():
+            print(f"      Bin '{b}': +{n} extra (manual picks override quota)")
+        print(f"      Note: Other bins will be auto-adjusted to maintain total count.")
+
+    # Pre-flight: ensure remaining quota can be satisfied
+    print(f"\n   📊 Remaining test quota per bin (after manual picks):")
+    print(f"   {'Bin':<18} {'Quota Remaining':>16} {'Pool Available':>16}")
+    print(f"   {'─' * 18} {'─' * 16} {'─' * 16}")
+    for label in GLUCOSE_BIN_LABELS:
+        q = remaining_quota[label]
+        # Count available rows in this bin (excluding manual picks)
+        available_in_bin = int(
+            (bin_indices == label).sum() - 
+            sum(1 for idx in manual_indices if str(bin_indices.iloc[idx]) == label)
+        )
+        if q > available_in_bin:
+            raise SystemExit(
+                f"\n❌ Bin '{label}' needs {q} more test samples (after manual picks), "
+                f"but only {available_in_bin} samples remain available."
+            )
+        print(f"   {label:<18} {q:>16} {available_in_bin:>16}")
+
+    # Random selection for each bin (excluding manual picks)
+    rng = np.random.RandomState(RANDOM_STATE)
+    auto_picked_indices = []
+
+    print(f"\n   🎲 Auto-picking samples from each bin (random_state={RANDOM_STATE}):")
+    for label in GLUCOSE_BIN_LABELS:
+        quota = remaining_quota[label]
+        if quota <= 0:
+            continue
+        # Get all indices in this bin that are NOT manually picked
+        bin_mask = (bin_indices == label)
+        candidates_pool = [
+            idx for idx in bin_indices.index[bin_mask].tolist()
+            if idx not in manual_indices
+        ]
+        # Random pick
+        if quota > len(candidates_pool):
+            raise SystemExit(f"❌ Insufficient samples in bin '{label}' for auto-pick.")
+        picked = rng.choice(candidates_pool, size=quota, replace=False).tolist()
+        auto_picked_indices.extend(picked)
+        print(f"\n      🎯 Bin '{label}': picked {quota} from {len(candidates_pool)} available")
+        for p in picked:
+            print(f"         Row #{p+1} (idx {p}) → glucose={float(y.iloc[p]):.1f} mg/dL")
+
+    # Combine manual + auto picks → test set
+    test_indices = list(set(manual_indices + auto_picked_indices))
+    train_indices = [i for i in range(total_samples) if i not in test_indices]
+
+    # Final count check
+    if len(test_indices) != AMOUNT_OF_TEST_SAMPLES:
+        raise SystemExit(
+            f"❌ Internal error: test indices count {len(test_indices)} != "
+            f"AMOUNT_OF_TEST_SAMPLES {AMOUNT_OF_TEST_SAMPLES}"
+        )
+    if len(train_indices) != AMOUNT_OF_TRAIN_SAMPLES:
+        raise SystemExit(
+            f"❌ Internal error: train indices count {len(train_indices)} != "
+            f"AMOUNT_OF_TRAIN_SAMPLES {AMOUNT_OF_TRAIN_SAMPLES}"
         )
 
-    print(f"   📊 Configuration:")
-    print(f"      Total samples:   {total_samples}")
-    print(f"      Train samples:   {AMOUNT_OF_TRAIN_SAMPLES}")
-    print(f"      Test samples:    {AMOUNT_OF_TEST_SAMPLES}")
-    print(f"      Random state:    {RANDOM_STATE}")
-
-    # ── Perform split using exact test count ──
-    X_train_raw, X_test_raw, y_train_raw, y_test_raw = train_test_split(
-        X, y,
-        test_size=AMOUNT_OF_TEST_SAMPLES,
-        random_state=RANDOM_STATE,
-    )
-
-    # Capture original indices before resetting
-    train_indices = X_train_raw.index.tolist()
-    test_indices  = X_test_raw.index.tolist()
-
-    # Reset indices for clean output
-    X_train = X_train_raw.reset_index(drop=True)
-    X_test  = X_test_raw.reset_index(drop=True)
-    y_train = y_train_raw.reset_index(drop=True)
-    y_test  = y_test_raw.reset_index(drop=True)
-
-    # Verify exact counts
-    assert len(X_train) == AMOUNT_OF_TRAIN_SAMPLES, "Train count mismatch after split"
-    assert len(X_test)  == AMOUNT_OF_TEST_SAMPLES,  "Test count mismatch after split"
+    # Build final dataframes
+    X_train = X.iloc[train_indices].reset_index(drop=True)
+    X_test  = X.iloc[test_indices].reset_index(drop=True)
+    y_train = y.iloc[train_indices].reset_index(drop=True)
+    y_test  = y.iloc[test_indices].reset_index(drop=True)
 
     print(f"\n   ✅ Split completed:")
     print(f"      X_train: {X_train.shape[0]} rows × {X_train.shape[1]} columns")
@@ -506,16 +742,33 @@ def perform_train_test_split(X, y):
     print(f"\n   🔍 Row count verification: {X_train.shape[0]} + {X_test.shape[0]} = {total_after} "
           f"(original: {total_samples}) {'✅' if rows_match else '❌'}")
 
-    # Display glucose distribution in train and test
+    # Verify bin distribution
+    print(f"\n   📊 Final bin distribution after split:")
+    print(f"   {'Bin':<18} {'Train':>8} {'Test':>8} {'Total':>8} {'Test %':>8}")
+    print(f"   {'─' * 18} {'─' * 8} {'─' * 8} {'─' * 8} {'─' * 8}")
+    test_bin_indices  = bin_indices.iloc[test_indices].reset_index(drop=True)
+    train_bin_indices = bin_indices.iloc[train_indices].reset_index(drop=True)
+    train_bin_counts = {}
+    test_bin_counts_final = {}
+    for label in GLUCOSE_BIN_LABELS:
+        t_count = int((train_bin_indices == label).sum())
+        ts_count = int((test_bin_indices == label).sum())
+        total = t_count + ts_count
+        test_pct = (ts_count / total * 100) if total > 0 else 0
+        train_bin_counts[label] = t_count
+        test_bin_counts_final[label] = ts_count
+        print(f"   {label:<18} {t_count:>8} {ts_count:>8} {total:>8} {test_pct:>7.1f}%")
+
+    # Display glucose distribution
     print(f"\n   📊 Glucose distribution:")
     print(f"      Train — min: {y_train.min():.1f}, max: {y_train.max():.1f}, "
-          f"mean: {y_train.mean():.1f}, std: {y_train.std():.1f}")
+          f"mean: {y_train.mean():.1f}, std: {y_train.std():.1f}, median: {y_train.median():.1f}")
     print(f"      Test  — min: {y_test.min():.1f}, max: {y_test.max():.1f}, "
-          f"mean: {y_test.mean():.1f}, std: {y_test.std():.1f}")
+          f"mean: {y_test.mean():.1f}, std: {y_test.std():.1f}, median: {y_test.median():.1f}")
 
     # Build split info for logging
     split_info = {
-        "split_method": "exact_count",
+        "split_method": "stratified_with_manual_selection",
         "total_samples": int(total_samples),
         "train_samples_specified": AMOUNT_OF_TRAIN_SAMPLES,
         "test_samples_specified": AMOUNT_OF_TEST_SAMPLES,
@@ -525,6 +778,25 @@ def perform_train_test_split(X, y):
         "random_state_note": "Fixed seed ensures the same rows are selected every time the code runs.",
         "train_original_indices": train_indices,
         "test_original_indices": test_indices,
+        "stratification_info": {
+            "stratified_split_enabled": True,
+            "glucose_bins": GLUCOSE_BINS,
+            "glucose_bin_labels": GLUCOSE_BIN_LABELS,
+            "test_samples_per_bin_config": TEST_SAMPLES_PER_BIN,
+            "train_distribution_per_bin": train_bin_counts,
+            "test_distribution_per_bin": test_bin_counts_final,
+            "dataset_distribution_per_bin": {
+                lbl: int(bin_counts[lbl]) for lbl in GLUCOSE_BIN_LABELS
+            },
+        },
+        "manual_selection_info": {
+            "manual_selection_used": len(MANUAL_TEST_SAMPLE_ROW_NUMBERS) > 0,
+            "manual_row_numbers_1based": list(MANUAL_TEST_SAMPLE_ROW_NUMBERS),
+            "manual_picks_detail": manual_log,
+            "manual_bin_overage": manual_bin_overage if manual_bin_overage else None,
+            "auto_filled_count": len(auto_picked_indices),
+            "auto_filled_pandas_indices": auto_picked_indices,
+        },
         "glucose_distribution": {
             "train": {
                 "min":    float(y_train.min()),
@@ -549,8 +821,7 @@ def perform_train_test_split(X, y):
 
 
 # --------------------------------------------------
-# SUB-TASK 4: ROBUST SCALING
-# ⚠️ ALL CALCULATIONS PRESERVED EXACTLY — NO CHANGES
+# SUB-TASK 4: ROBUST SCALING (preserved verbose output exactly)
 # --------------------------------------------------
 def perform_robust_scaling(X_train, X_test, feature_columns):
     """
@@ -649,7 +920,7 @@ def perform_robust_scaling(X_train, X_test, feature_columns):
 
 
 # --------------------------------------------------
-# VERIFICATION (unchanged)
+# VERIFICATION (preserved verbose output exactly)
 # --------------------------------------------------
 def verify_outputs(X_train_scaled, X_test_scaled, y_train, y_test,
                    original_df, feature_columns):
@@ -742,7 +1013,7 @@ def verify_outputs(X_train_scaled, X_test_scaled, y_train, y_test,
 
 
 # --------------------------------------------------
-# JSON LOG BUILDER (updated — concise pipeline chain)
+# JSON LOG BUILDER (preserved structure, adds new sections)
 # --------------------------------------------------
 def build_split_scale_json_log(
     input_csv_path,
@@ -767,14 +1038,14 @@ def build_split_scale_json_log(
 
     full_log = {
         "pipeline_info": {
-            "pipeline_name":          "Train/Test Split + RobustScaler Normalization",
+            "pipeline_name":          "Stratified Train/Test Split + RobustScaler Normalization",
             "pipeline_step":          "STEP 8 (Sub-task 3 & 4)",
             "execution_timestamp":    timestamp_str,
             "execution_date_readable": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "previous_step":          "STEP 8 (Sub-task 1 & 2) — NaN Handling + Outlier Clipping",
         },
 
-        # NEW: Concise pipeline chain (Step 6 → 7 → 8(1&2) → 8(3&4))
+        # Concise pipeline chain (Step 6 → 7 → 8(1&2) → 8(3&4))
         "pipeline_chain_summary": pipeline_chain_summary,
 
         "file_paths": {
@@ -797,9 +1068,10 @@ def build_split_scale_json_log(
 
         "sub_task_3_train_test_split": {
             "description": (
-                f"Dataset was split into exact counts: "
-                f"{AMOUNT_OF_TRAIN_SAMPLES} training samples and "
-                f"{AMOUNT_OF_TEST_SAMPLES} testing samples using sklearn train_test_split. "
+                f"Dataset was split using STRATIFIED sampling across clinical glucose bins. "
+                f"Total: {AMOUNT_OF_TRAIN_SAMPLES} train + {AMOUNT_OF_TEST_SAMPLES} test samples. "
+                f"Each bin contributes a specified number of test samples via TEST_SAMPLES_PER_BIN. "
+                f"Optional manual selection via MANUAL_TEST_SAMPLE_ROW_NUMBERS forces specific rows into test. "
                 f"Random state {RANDOM_STATE} ensures reproducibility. "
                 f"Split was performed BEFORE scaling to prevent data leakage."
             ),
@@ -850,9 +1122,21 @@ def build_split_scale_json_log(
                 "The test set was only transformed using the already-fitted scaler. "
                 "This prevents information from the test set leaking into the training process."
             ),
+            "stratified_split_benefit": (
+                "Test set contains samples from all clinical glucose ranges (per TEST_SAMPLES_PER_BIN), "
+                "ensuring realistic performance evaluation across the full physiological spectrum. "
+                "This prevents the model from being evaluated only on 'easy' ranges, "
+                "which would give misleadingly optimistic test metrics."
+            ),
+            "manual_selection_capability": (
+                "MANUAL_TEST_SAMPLE_ROW_NUMBERS allows forcing specific rows into the test set. "
+                "Useful for ensuring critical edge cases are tested. "
+                "Remaining test slots are auto-filled from underrepresented bins."
+            ),
             "reproducibility": (
-                f"Random state {RANDOM_STATE} was used for the train/test split. "
-                f"Using the same random state will produce the exact same split every time."
+                f"Random state {RANDOM_STATE} was used for random selection within bins. "
+                f"Using the same random state + same MANUAL_TEST_SAMPLE_ROW_NUMBERS "
+                f"will produce the exact same split every time."
             ),
             "target_not_scaled": (
                 "Glucose level (target variable) was intentionally NOT scaled. "
@@ -871,7 +1155,7 @@ def build_split_scale_json_log(
 
 
 # --------------------------------------------------
-# SAVE OUTPUTS (updated naming)
+# SAVE OUTPUTS (preserved exactly)
 # --------------------------------------------------
 def save_all_outputs(
     X_train_scaled, X_test_scaled, y_train, y_test,
@@ -997,11 +1281,16 @@ def save_all_outputs(
 # --------------------------------------------------
 def main():
     print("\n" + "=" * 70)
-    print("📏 STEP 8 (Sub-task 3 & 4): TRAIN/TEST SPLIT + ROBUST SCALING")
-    print("   Sub-task 3: Separate X/y + Train/Test Split (Exact Counts)")
+    print("📏 STEP 8 (Sub-task 3 & 4): STRATIFIED SPLIT + ROBUST SCALING")
+    print("   Sub-task 3: Separate X/y + Stratified Train/Test Split")
     print("   Sub-task 4: RobustScaler (fit on train, transform both)")
     print(f"   Configuration: {AMOUNT_OF_TRAIN_SAMPLES} Train / {AMOUNT_OF_TEST_SAMPLES} Test")
-    print(f"   Random State: {RANDOM_STATE}")
+    print(f"   Random State : {RANDOM_STATE}")
+    print(f"   Stratification: {len(GLUCOSE_BIN_LABELS)} clinical glucose bins")
+    if MANUAL_TEST_SAMPLE_ROW_NUMBERS:
+        print(f"   Manual picks  : {MANUAL_TEST_SAMPLE_ROW_NUMBERS} (1-based row numbers)")
+    else:
+        print(f"   Manual picks  : (none — fully automatic stratified split)")
     print("=" * 70)
 
     # Validate paths
@@ -1109,21 +1398,26 @@ def main():
     # ── Step 7: SUB-TASK 3a — Separate X and y ──
     X, y, feature_columns = separate_x_y(original_df)
 
-    # ── Step 8: SUB-TASK 3b — Train/Test Split ──
-    X_train, X_test, y_train, y_test, split_info = perform_train_test_split(X, y)
+    # ── Step 8: 🆕 Pre-flight hyperparameter validation + bin assignment ──
+    bin_indices, bin_counts = validate_hyperparameter_config(len(X), y)
 
-    # ── Step 9: SUB-TASK 4 — Robust Scaling ──
+    # ── Step 9: SUB-TASK 3b — Stratified Train/Test Split with Manual Selection ──
+    X_train, X_test, y_train, y_test, split_info = perform_stratified_train_test_split(
+        X, y, bin_indices, bin_counts
+    )
+
+    # ── Step 10: SUB-TASK 4 — Robust Scaling ──
     X_train_scaled, X_test_scaled, scaler_params = perform_robust_scaling(
         X_train, X_test, feature_columns
     )
 
-    # ── Step 10: Verify all outputs ──
+    # ── Step 11: Verify all outputs ──
     verification = verify_outputs(
         X_train_scaled, X_test_scaled, y_train, y_test,
         original_df, feature_columns
     )
 
-    # ── Step 11: Build JSON log (initial — will update file paths after saving) ──
+    # ── Step 12: Build JSON log (initial — will update file paths after saving) ──
     print(f"\n{'─' * 60}")
     print(f"📝 BUILDING COMPREHENSIVE JSON LOG")
     print(f"{'─' * 60}")
@@ -1149,7 +1443,7 @@ def main():
     )
     print(f"   ✅ JSON log structure built with {len(temp_json_log)} top-level sections.")
 
-    # ── Step 12: Save all outputs ──
+    # ── Step 13: Save all outputs ──
     print(f"\n{'─' * 60}")
     print(f"💾 SAVING ALL OUTPUTS")
     print(f"{'─' * 60}")
@@ -1174,7 +1468,7 @@ def main():
 
     # ── Final Summary ──
     print(f"\n{'=' * 70}")
-    print(f"📌 TRAIN/TEST SPLIT & SCALING PIPELINE — FINAL SUMMARY")
+    print(f"📌 STRATIFIED SPLIT & SCALING PIPELINE — FINAL SUMMARY")
     print(f"{'=' * 70}")
     print(f"")
     print(f"   📥 Input folder : {input_folder.name}")
@@ -1182,10 +1476,17 @@ def main():
     print(f"      JSON         : {input_json_path.name}")
     print(f"      Shape        : {original_df.shape[0]} rows × {original_df.shape[1]} columns")
     print(f"")
-    print(f"   📊 Sub-task 3 — Train/Test Split (Exact Counts):")
+    print(f"   📊 Sub-task 3 — Stratified Train/Test Split:")
     print(f"      Train samples  : {AMOUNT_OF_TRAIN_SAMPLES}")
     print(f"      Test samples   : {AMOUNT_OF_TEST_SAMPLES}")
     print(f"      Random state   : {RANDOM_STATE}")
+    print(f"      Manual picks   : {len(MANUAL_TEST_SAMPLE_ROW_NUMBERS)} row(s)")
+    print(f"")
+    print(f"      Bin Distribution (test set):")
+    test_dist = split_info["stratification_info"]["test_distribution_per_bin"]
+    for label in GLUCOSE_BIN_LABELS:
+        print(f"         {label:<18} : {test_dist.get(label, 0)} sample(s)")
+    print(f"")
     print(f"      Train glucose  : {y_train.min():.1f} - {y_train.max():.1f} mg/dL (mean: {y_train.mean():.1f})")
     print(f"      Test glucose   : {y_test.min():.1f} - {y_test.max():.1f} mg/dL (mean: {y_test.mean():.1f})")
     print(f"")
@@ -1214,8 +1515,9 @@ def main():
     print(f"      → Use X_train_scaled.csv + y_train.csv for TRAINING")
     print(f"      → Use X_test_scaled.csv  + y_test.csv  for TESTING")
     print(f"      → Scaler parameters saved in JSON for future predictions")
+    print(f"      → Test set now contains samples from ALL clinical glucose ranges")
     print(f"")
-    print(f"✅ Train/Test split & scaling pipeline completed successfully!")
+    print(f"✅ Stratified split & scaling pipeline completed successfully!")
     print(f"   → Output is READY for XGBoost model training")
     print(f"{'=' * 70}\n")
 

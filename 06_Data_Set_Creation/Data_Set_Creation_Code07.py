@@ -26,7 +26,7 @@ import pandas as pd
 # USER SETTINGS (PASTE YOUR PATHS HERE)
 # --------------------------------------------------
 INPUT_FEATURES_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\06_Averaged_Features")
-METADATA_FILE_PATH  = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\PPG Meta Data 21-05-2026 (FYP Meta Data).xlsx")
+METADATA_FILE_PATH  = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\PPG Meta Data Collection Sheet (FYP Meta Data 2026-06-10).xlsx")
 OUTPUT_ROOT         = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\07_Final_Data_Set")
 
 # Metadata column name that contains the Subject ID (must match feature file naming)
