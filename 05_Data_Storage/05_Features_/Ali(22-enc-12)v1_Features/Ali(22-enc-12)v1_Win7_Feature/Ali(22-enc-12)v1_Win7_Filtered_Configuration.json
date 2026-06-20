@@ -1,12 +1,12 @@
 {
     "metadata": {
-        "source_file": "C:\\Users\\DELL\\Documents\\GitHub\\fyp\\05_Data_Storage\\03_Windowed\\Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win7.csv",
+        "source_file": "C:/Users/DELL/Documents/GitHub/fyp/05_Data_Storage/03_Windowed/Ali(22-enc-12)v1\\Ali(22-enc-12)v1_Win7.csv",
         "filename": "Ali(22-enc-12)v1_Win7.csv",
         "sampling_rate_fs": 400.0,
         "total_samples": 6000,
         "duration_sec": 15.0,
         "nyquist_rate": 200.0,
-        "date_processed": "2026-06-14 22:47:30",
+        "date_processed": "2026-06-20 03:16:36",
         "status": "SUCCESS"
     },
     "hyperparameters": {

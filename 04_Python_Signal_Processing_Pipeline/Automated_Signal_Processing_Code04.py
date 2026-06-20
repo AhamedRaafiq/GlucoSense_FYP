@@ -14,6 +14,7 @@ import tkinter as tk
 from tkinter import filedialog
 import sys
 from datetime import datetime
+from pathlib import Path
 
 # ==========================================
 # 🔧 STEP 1: MASTER HYPERPARAMETERS
@@ -67,7 +68,7 @@ PEAK_PROM_FACTOR = 0.20               # Peak prominence factor relative to STD
 VALLEY_MIN_DISTANCE_SEC = 0.35        # Min time between valleys (sec)
 VALLEY_PROM_FACTOR = 0.10             # Valley prominence factor
 MIN_FOOT_TO_PEAK_SEC = 0.08           # Min valid foot-to-peak duration
-MAX_FOOT_TO_PEAK_SEC = 0.4            # Max valid foot-to-peak duration
+MAX_FOOT_TO_PEAK_SEC = 0.5            # Max valid foot-to-peak duration
 MAX_VALLEY_TO_FOOT_SEC = 0.20         # Max distance valley to refined foot
 MAX_FOOT_REL_HEIGHT = 0.20            # Max relative height of foot within pulse
 MAX_ABS_VPG_AT_FOOT = 0.5             # Max VPG value allowed at foot (near zero-cross)
@@ -187,23 +188,131 @@ def ensure_clean_output(root_path):
 # ==========================================
 
 def prompt_processing_mode():
-    """Prompts user to choose between Batch (all subfolders) or Single (one folder)."""
+    """Prompts user to choose between Batch (all), Single (one), or Multi (some)."""
     print("\n" + "=" * 70)
     print("  SELECT PROCESSING MODE")
     print("=" * 70)
     print(f"  1) BATCH  — Process ALL subfolders inside:")
     print(f"              {INPUT_ROOT_PATH}")
     print(f"  2) SINGLE — Pop up dialog to choose ONE folder")
+    print(f"  3) MULTI  — Pop up dialog to choose MULTIPLE folders one by one")  # 🆕
     print("=" * 70)
     while True:
-        choice = input("  Enter choice [1 or 2]: ").strip()
-        if choice in ("1", "2"):
+        choice = input("  Enter choice [1, 2, or 3]: ").strip()  # 🆕
+        if choice in ("1", "2", "3"):  # 🆕
             return int(choice)
-        print("  ❌ Invalid choice. Please enter 1 or 2.")
+        print("  ❌ Invalid choice. Please enter 1, 2, or 3.")  # 🆕
+
+
+def multi_folder_selector():
+    """
+    Sequential popup loop for selecting MULTIPLE folders.
+    User picks one folder per popup, then is asked if they want to add more.
+    
+    Returns:
+        list of Path objects (selected folders).
+    
+    Behavior:
+        - Each picker opens at INPUT_ROOT_PATH (shows all folders inside)
+        - After each selection, asks "Add another folder?"
+        - User cancels picker → ends the loop (current selections kept)
+        - Empty final selection → auto-cancel (per user decision Q4)
+        - Warns about folders with no CSV files (per user decision Q5)
+    """
+    selected_folders = []
+    selection_round = 1
+    
+    print(f"\n{'=' * 70}")
+    print(f"  📦 MULTI MODE — SELECT FOLDERS ONE BY ONE")
+    print(f"{'=' * 70}")
+    print(f"  Each popup opens at: {INPUT_ROOT_PATH}")
+    print(f"  Cancel any popup to finish selecting.")
+    print(f"{'=' * 70}\n")
+    
+    while True:
+        # ── Show a popup for ONE folder selection ──
+        root = None
+        try:
+            root = tk.Tk()
+            root.withdraw()
+            root.attributes("-topmost", True)
+            root.update_idletasks()
+            root.update()
+            
+            picker_title = f"MULTI MODE — Select folder #{selection_round} (Cancel = Done)"
+            selected = filedialog.askdirectory(
+                parent=root,
+                initialdir=INPUT_ROOT_PATH,
+                title=picker_title
+            )
+            root.update()
+            root.destroy()
+        except Exception as tk_err:
+            print(f"\n⚠️  GUI dialog failed: {tk_err}")
+            if root is not None:
+                try:
+                    root.destroy()
+                except Exception:
+                    pass
+            selected = None
+        
+        # ── Cancel or empty → exit loop ──
+        if not selected:
+            print(f"  🔚 Selection ended by user.")
+            break
+        
+        folder_path = Path(selected)
+        if not folder_path.exists() or not folder_path.is_dir():
+            print(f"  ❌ Invalid path skipped: {selected}")
+            continue
+        
+        # ── Duplicate check ──
+        if folder_path in selected_folders:
+            print(f"  ⚠️  Already selected — skipping duplicate: {folder_path.name}")
+            continue
+        
+        # ── Warn if folder has no CSV files ──
+        csv_count = len(list(folder_path.glob("*.csv")))
+        if csv_count == 0:
+            warn_msg = f"  ⚠️  WARNING: '{folder_path.name}' has 0 CSV files."
+            print(warn_msg)
+            keep = input(f"     Add it anyway? [y/N]: ").strip().lower()
+            if keep != "y":
+                print(f"     ⏭️  Skipped.")
+                continue
+        else:
+            print(f"  ✅ Added [{selection_round}]: {folder_path.name}  ({csv_count} CSV files)")
+        
+        selected_folders.append(folder_path)
+        selection_round += 1
+        
+        # ── Ask if user wants to add more ──
+        print(f"\n  Currently selected: {len(selected_folders)} folder(s)")
+        add_more = input(f"  Add another folder? [Y/n]: ").strip().lower()
+        if add_more in ("n", "no"):
+            print(f"  ✅ Finished selecting folders.")
+            break
+    
+    # ── Final summary ──
+    print(f"\n{'─' * 70}")
+    if not selected_folders:
+        print(f"  ❌ No folders selected. Auto-cancelling script.")
+        print(f"{'─' * 70}")
+        raise SystemExit("❌ MULTI MODE: No folders selected. Execution terminated.")
+    
+    print(f"  ✅ FINAL SELECTION — {len(selected_folders)} folder(s):")
+    for i, f in enumerate(selected_folders, start=1):
+        print(f"      {i}. {f.name}")
+    print(f"{'─' * 70}\n")
+    
+    return selected_folders
+
 
 def collect_folders_to_process(mode):
     """Returns a list of folders to process based on mode."""
     folders = []
+    
+    # ── MODE 1: BATCH ──
     if mode == 1:
         if not os.path.isdir(INPUT_ROOT_PATH):
             raise FileNotFoundError(f"❌ Batch root not found: {INPUT_ROOT_PATH}")
@@ -218,9 +327,10 @@ def collect_folders_to_process(mode):
         print(f"\n📦 BATCH MODE — found {len(folders)} subfolder(s) to process:")
         for f in folders:
             print(f"   • {os.path.basename(f)}")
-    else:
+    
+    # ── MODE 2: SINGLE ──
+    elif mode == 2:
         selected = None
-        # Try Tk dialog with safe init/teardown
         try:
             root = tk.Tk()
             root.withdraw()
@@ -239,7 +349,6 @@ def collect_folders_to_process(mode):
             print("    Falling back to manual path entry.")
             selected = None
         
-        # Fallback: manual entry
         if not selected:
             print(f"\n📁 Default base path: {INPUT_ROOT_PATH}")
             typed = input("    Type folder path (or press Enter to use default): ").strip().strip('"').strip("'")
@@ -253,6 +362,14 @@ def collect_folders_to_process(mode):
         
         folders = [selected]
         print(f"\n📁 SINGLE MODE — selected: {selected}")
+    
+    # 🆕 MODE 3: MULTI ──
+    elif mode == 3:
+        selected_path_list = multi_folder_selector()
+        # Convert Path objects to strings to match BATCH/SINGLE format
+        folders = [str(p) for p in selected_path_list]
+        print(f"\n📦 MULTI MODE — {len(folders)} folder(s) ready for processing.")
+    
     return folders
 
 MODE = prompt_processing_mode()
@@ -2717,7 +2834,8 @@ def print_rejected_beats_detail(result):
 # MAIN LOOP (handles batch & single)
 # -------------------------------------------------
 print_section("🚀 STARTING AUTOMATED PIPELINE", char="=")
-print(f"  Mode             : {'BATCH' if MODE == 1 else 'SINGLE'}")
+mode_label = {1: "BATCH", 2: "SINGLE", 3: "MULTI"}.get(MODE, "UNKNOWN")  # 🆕
+print(f"  Mode             : {mode_label}")  # 🆕
 print(f"  Folders to run   : {len(folders_to_process)}")
 print(f"  Output folder    : {SAVE_ROOT_FIXED}")
 print(f"  Sampling rate    : {FS} Hz")
@@ -2794,7 +2912,7 @@ print_error_summary(all_results_global)
 # -------------------------------------------------
 combined_report_root = {
     "processing_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    "mode": "BATCH" if MODE == 1 else "SINGLE",
+    "mode": {1: "BATCH", 2: "SINGLE", 3: "MULTI"}.get(MODE, "UNKNOWN"),  # 🆕
     "folders_processed": [str(f) for f in folders_to_process],
     "output_root": SAVE_ROOT_FIXED,
     "min_valid_beats_ir": MIN_VALID_BEATS_IR,
