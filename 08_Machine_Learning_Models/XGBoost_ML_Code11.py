@@ -178,11 +178,11 @@ LEARNING_CURVE_POINTS = 10
 # 🎚️ FEATURE REDUCTION (3 methods — pick one via FEATURE_REDUCTION_METHOD)
 # ════════════════════════════════════════════════════════════════════
 
-USE_FEATURE_REDUCTION = False
+USE_FEATURE_REDUCTION = True
 # Master toggle. When False, all features are used (default behavior).
 # When True, applies the method specified in FEATURE_REDUCTION_METHOD.
 
-FEATURE_REDUCTION_METHOD = "top_n"
+FEATURE_REDUCTION_METHOD = "manual_selection"
 # Options:
 #   "top_n"            → Train twice. Keep top N features by importance.
 #   "min_importance"   → Train twice. Keep features above threshold.
@@ -204,26 +204,26 @@ MANUAL_FEATURE_SELECTION = {
     # Used only when FEATURE_REDUCTION_METHOD = "manual_selection".
     # Order = X_train_scaled.csv column order (hardcoded).
     "IR_Skewness":                  1,
-    "IR_Kurtosis":                  1,
-    "IR_Shannon Entropy":           1,
+    "IR_Kurtosis":                  0,
+    "IR_Shannon Entropy":           0,
     "IR_Spectral Entropy":          1,
     "IR_pulse width":               1,
     "IR_PPI":                       1,
-    "IR_systolic amplitude":        1,
-    "IR_BPM":                       1,
+    "IR_systolic amplitude":        0,
+    "IR_BPM":                       0,
     "IR_HRV":                       1,
     "IR_TEO Mean":                  1,
-    "IR_TEO std dev":               1,
+    "IR_TEO std dev":               0,
     "IR_1st_Derivative_Mean":       1,
     "IR_2nd_Derivative_Mean":       1,
     "IR_2nd_Derivative_Skewness":   1,
-    "IR_Harmonic ratio":            1,
-    "IR_Rise time":                 1,
+    "IR_Harmonic ratio":            0,
+    "IR_Rise time":                 0,
     "IR_Decay time":                1,
     "IR_Dicrotic notch":            1,
     "Ensemble ratio":               1,
-    "Ratio_TEO_Mean":               1,
-    "Ratio_systolic_amplitude":     1,
+    "Ratio_TEO_Mean":               0,
+    "Ratio_systolic_amplitude":     0,
     "Diff_Spectral_Entropy":        1,
     "Diff_2nd_Derivative_Mean":     1,
     "Diff_Dicrotic_notch":          1,
