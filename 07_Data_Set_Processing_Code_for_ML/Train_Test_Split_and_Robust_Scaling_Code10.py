@@ -32,11 +32,11 @@ OUTPUT_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\10_Robus
 # --------------------------------------------------
 # TRAIN/TEST SPLIT CONFIGURATION
 # --------------------------------------------------
-AMOUNT_OF_TRAIN_SAMPLES = 43
+AMOUNT_OF_TRAIN_SAMPLES = 63
 # Total number of samples to put into the TRAIN set.
 # Must add up with AMOUNT_OF_TEST_SAMPLES to equal total dataset rows.
 
-AMOUNT_OF_TEST_SAMPLES  = 8
+AMOUNT_OF_TEST_SAMPLES  = 12
 # Total number of samples to put into the TEST set.
 # Must equal the sum of TEST_SAMPLES_PER_BIN values below.
 
@@ -64,9 +64,9 @@ GLUCOSE_BIN_LABELS = [
 
 TEST_SAMPLES_PER_BIN = {
     "Hypoglycemic":   0,
-    "Normal":         3,
-    "Pre-diabetic":   3,
-    "Diabetic":       2,
+    "Normal":         7,
+    "Pre-diabetic":   4,
+    "Diabetic":       1,
     "Hyperglycemic":  0,
 }
 # How many test samples to pull from each clinical bin.

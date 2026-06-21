@@ -55,7 +55,7 @@ OUTPUT_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\08_Results_and_Visualiza
 # 🎛️ XGBOOST HYPERPARAMETERS  (⚠️ TUNE THESE FOR MODEL PERFORMANCE)
 # ════════════════════════════════════════════════════════════════════
 
-N_ESTIMATORS = 50
+N_ESTIMATORS = 75
 # Number of boosting trees built sequentially. More trees = more complex model.
 # Range: 50-500. Start with 100 for small datasets; reduce if overfitting.
 
@@ -63,7 +63,7 @@ MAX_DEPTH = 2
 # Maximum depth of each tree. Deeper trees capture more patterns but risk overfitting.
 # Range: 2-6. Use 2-3 for small datasets, 4-6 for larger ones.
 
-LEARNING_RATE = 0.05
+LEARNING_RATE = 0.03
 # Step size for each tree's contribution. Lower = slower but more robust learning.
 # Range: 0.01-0.3. Lower values usually need more n_estimators to compensate.
 
@@ -75,19 +75,19 @@ COLSAMPLE_BYTREE = 0.7
 # Fraction of features randomly sampled for each tree. Forces feature diversity.
 # Range: 0.6-1.0. Lower values force trees to find different patterns.
 
-REG_ALPHA = 0.1
+REG_ALPHA = 0.5
 # L1 regularization. Pushes unimportant feature weights toward zero (feature selection).
 # Range: 0-10. Higher values create sparser models with fewer active features.
 
-REG_LAMBDA = 3
+REG_LAMBDA = 5
 # L2 regularization. Smooths feature weights to prevent any single feature dominating.
 # Range: 0-10. Higher values create more stable, generalizable models.
 
-MIN_CHILD_WEIGHT = 3
+MIN_CHILD_WEIGHT = 5
 # Minimum sample weight required in a child node. Higher = more conservative splits.
 # Range: 1-10. For small datasets keep low (1-3); for noisy data use higher (5-10).
 
-GAMMA = 0.1
+GAMMA = 0.3
 # Minimum loss reduction required to make a split. Acts as a pruning threshold.
 # Range: 0-5. Higher values create simpler trees by skipping marginal splits.
 
@@ -175,6 +175,94 @@ LEARNING_CURVE_POINTS = 10
 
 
 # ════════════════════════════════════════════════════════════════════
+# 🎚️ FEATURE REDUCTION (3 methods — pick one via FEATURE_REDUCTION_METHOD)
+# ════════════════════════════════════════════════════════════════════
+
+USE_FEATURE_REDUCTION = False
+# Master toggle. When False, all features are used (default behavior).
+# When True, applies the method specified in FEATURE_REDUCTION_METHOD.
+
+FEATURE_REDUCTION_METHOD = "top_n"
+# Options:
+#   "top_n"            → Train twice. Keep top N features by importance.
+#   "min_importance"   → Train twice. Keep features above threshold.
+#   "manual_selection" → Train once. Use MANUAL_FEATURE_SELECTION dict.
+
+# ── Method 1 (top_n) settings ──
+TOP_N_FEATURES_TO_KEEP = 14
+# Number of top features to keep. Only used when METHOD = "top_n".
+# Typical: 10-20. Lower = simpler model, higher = more info.
+
+# ── Method 2 (min_importance) settings ──
+MIN_IMPORTANCE_THRESHOLD = 0.03
+# Drop features below this importance fraction (0.03 = 3%).
+# Only used when METHOD = "min_importance". Typical: 0.02-0.05.
+
+# ── Method 3 (manual_selection) settings ──
+MANUAL_FEATURE_SELECTION = {
+    # Set 1 to keep, 0 to drop. All 24 features MUST be listed.
+    # Used only when FEATURE_REDUCTION_METHOD = "manual_selection".
+    # Order = X_train_scaled.csv column order (hardcoded).
+    "IR_Skewness":                  1,
+    "IR_Kurtosis":                  1,
+    "IR_Shannon Entropy":           1,
+    "IR_Spectral Entropy":          1,
+    "IR_pulse width":               1,
+    "IR_PPI":                       1,
+    "IR_systolic amplitude":        1,
+    "IR_BPM":                       1,
+    "IR_HRV":                       1,
+    "IR_TEO Mean":                  1,
+    "IR_TEO std dev":               1,
+    "IR_1st_Derivative_Mean":       1,
+    "IR_2nd_Derivative_Mean":       1,
+    "IR_2nd_Derivative_Skewness":   1,
+    "IR_Harmonic ratio":            1,
+    "IR_Rise time":                 1,
+    "IR_Decay time":                1,
+    "IR_Dicrotic notch":            1,
+    "Ensemble ratio":               1,
+    "Ratio_TEO_Mean":               1,
+    "Ratio_systolic_amplitude":     1,
+    "Diff_Spectral_Entropy":        1,
+    "Diff_2nd_Derivative_Mean":     1,
+    "Diff_Dicrotic_notch":          1,
+}
+
+# ════════════════════════════════════════════════════════════════════
+# 🔒 HARDCODED FEATURE ORDER (for tuning_history.csv consistency)
+# ════════════════════════════════════════════════════════════════════
+HARDCODED_FEATURE_ORDER = [
+    "IR_Skewness",
+    "IR_Kurtosis",
+    "IR_Shannon Entropy",
+    "IR_Spectral Entropy",
+    "IR_pulse width",
+    "IR_PPI",
+    "IR_systolic amplitude",
+    "IR_BPM",
+    "IR_HRV",
+    "IR_TEO Mean",
+    "IR_TEO std dev",
+    "IR_1st_Derivative_Mean",
+    "IR_2nd_Derivative_Mean",
+    "IR_2nd_Derivative_Skewness",
+    "IR_Harmonic ratio",
+    "IR_Rise time",
+    "IR_Decay time",
+    "IR_Dicrotic notch",
+    "Ensemble ratio",
+    "Ratio_TEO_Mean",
+    "Ratio_systolic_amplitude",
+    "Diff_Spectral_Entropy",
+    "Diff_2nd_Derivative_Mean",
+    "Diff_Dicrotic_notch",
+]
+# Fixed feature order used for tuning_history.csv columns (prefix: feat_).
+# Update this list if you change the feature set in Step 7.
+
+
+# ════════════════════════════════════════════════════════════════════
 # ⚙️ FIXED CONFIGURATION
 # ════════════════════════════════════════════════════════════════════
 
@@ -184,6 +272,195 @@ PREV_STEP_JSON_PIPELINE_STEP_ID = "STEP 8 (Sub-task 3 & 4)"
 
 # Tuning history CSV — single file across all runs
 TUNING_HISTORY_CSV = OUTPUT_ROOT / "tuning_history.csv"
+
+# ════════════════════════════════════════════════════════════════════
+# 🆕 FEATURE REDUCTION HELPERS
+# ════════════════════════════════════════════════════════════════════
+
+def validate_feature_reduction_config(feature_columns):
+    """Validates feature reduction hyperparameters before training."""
+    if not USE_FEATURE_REDUCTION:
+        return  # Nothing to validate
+
+    valid_methods = ["top_n", "min_importance", "manual_selection"]
+    if FEATURE_REDUCTION_METHOD not in valid_methods:
+        raise ValueError(
+            f"❌ Invalid FEATURE_REDUCTION_METHOD '{FEATURE_REDUCTION_METHOD}'. "
+            f"Must be one of: {valid_methods}"
+        )
+
+    if FEATURE_REDUCTION_METHOD == "top_n":
+        if not isinstance(TOP_N_FEATURES_TO_KEEP, int) or TOP_N_FEATURES_TO_KEEP < 1:
+            raise ValueError(f"❌ TOP_N_FEATURES_TO_KEEP must be int >= 1.")
+        if TOP_N_FEATURES_TO_KEEP > len(feature_columns):
+            raise ValueError(
+                f"❌ TOP_N_FEATURES_TO_KEEP ({TOP_N_FEATURES_TO_KEEP}) > "
+                f"available features ({len(feature_columns)})."
+            )
+
+    elif FEATURE_REDUCTION_METHOD == "min_importance":
+        if not (0 < MIN_IMPORTANCE_THRESHOLD < 1):
+            raise ValueError(
+                f"❌ MIN_IMPORTANCE_THRESHOLD must be between 0 and 1, "
+                f"got {MIN_IMPORTANCE_THRESHOLD}."
+            )
+
+    elif FEATURE_REDUCTION_METHOD == "manual_selection":
+        # Check all CSV features are in manual dict
+        missing = [f for f in feature_columns if f not in MANUAL_FEATURE_SELECTION]
+        if missing:
+            raise ValueError(
+                f"❌ MANUAL_FEATURE_SELECTION missing features: {missing}"
+            )
+        # Check values are 0 or 1
+        invalid = {k: v for k, v in MANUAL_FEATURE_SELECTION.items() if v not in (0, 1)}
+        if invalid:
+            raise ValueError(
+                f"❌ MANUAL_FEATURE_SELECTION values must be 0 or 1. "
+                f"Invalid: {invalid}"
+            )
+        # Check at least 1 feature kept
+        kept_count = sum(1 for f in feature_columns if MANUAL_FEATURE_SELECTION.get(f, 0) == 1)
+        if kept_count == 0:
+            raise ValueError(
+                f"❌ MANUAL_FEATURE_SELECTION: all features dropped. "
+                f"At least 1 feature must be kept."
+            )
+        # Warn about extra keys
+        extra = [k for k in MANUAL_FEATURE_SELECTION if k not in feature_columns]
+        if extra:
+            print(f"   ⚠️ MANUAL_FEATURE_SELECTION has unknown features (ignored): {extra}")
+
+
+def select_features_by_method(X_train, X_test, y_train, feature_columns, hyperparams):
+    """
+    Applies feature reduction based on FEATURE_REDUCTION_METHOD.
+
+    Returns:
+        (X_train_reduced, X_test_reduced, kept_features, dropped_features,
+         round1_importance_df_or_None)
+    """
+    if not USE_FEATURE_REDUCTION:
+        return X_train, X_test, feature_columns, [], None
+
+    print(f"\n{'─' * 60}")
+    print(f"🎚️ FEATURE REDUCTION ACTIVE")
+    print(f"{'─' * 60}")
+    print(f"   Method        : {FEATURE_REDUCTION_METHOD}")
+
+    # ── Method 3: Manual selection (single round) ──
+    if FEATURE_REDUCTION_METHOD == "manual_selection":
+        print(f"   Method type   : Manual (single training round)")
+        kept = [f for f in feature_columns if MANUAL_FEATURE_SELECTION.get(f, 0) == 1]
+        dropped = [f for f in feature_columns if MANUAL_FEATURE_SELECTION.get(f, 0) == 0]
+
+        print(f"\n   🔍 MANUAL FEATURE SELECTION:")
+        print(f"   ✅ KEPT ({len(kept)}):")
+        for f in kept:
+            print(f"      • {f}")
+        if dropped:
+            print(f"   ❌ DROPPED ({len(dropped)}):")
+            for f in dropped:
+                print(f"      • {f}")
+
+        X_train_red = X_train[kept].copy()
+        X_test_red = X_test[kept].copy()
+        return X_train_red, X_test_red, kept, dropped, None
+
+    # ── Methods 1 & 2: Data-driven (two rounds) ──
+    print(f"   Method type   : Data-driven (requires 2 training rounds)")
+
+    # ── ROUND 1: Train on ALL features (silent — no output saved) ──
+    print(f"\n   ───── ROUND 1: Training on ALL {len(feature_columns)} features (for importance) ─────")
+    round1_model = build_xgboost_model(hyperparams)
+
+    if USE_SAMPLE_WEIGHTS:
+        sw = np.where(y_train >= HIGH_GLUCOSE_THRESHOLD, HIGH_GLUCOSE_WEIGHT, 1.0)
+        round1_model.fit(X_train, y_train, sample_weight=sw)
+    else:
+        round1_model.fit(X_train, y_train)
+
+    round1_importance = round1_model.feature_importances_
+    round1_df = pd.DataFrame({
+        "Feature": feature_columns,
+        "Importance": round1_importance,
+        "Percentage": (round1_importance / round1_importance.sum() * 100).round(4),
+    }).sort_values("Importance", ascending=False).reset_index(drop=True)
+    print(f"   ✅ Round 1 done. Top 5: " + ", ".join(round1_df.head(5)["Feature"].tolist()))
+
+    # ── Select features based on method ──
+    if FEATURE_REDUCTION_METHOD == "top_n":
+        keep_n = TOP_N_FEATURES_TO_KEEP
+        kept = round1_df.head(keep_n)["Feature"].tolist()
+        print(f"\n   🔍 SELECTION (top_n): keeping top {keep_n} features")
+
+    else:  # min_importance
+        thresh = MIN_IMPORTANCE_THRESHOLD
+        importance_sum = round1_importance.sum()
+        round1_df["frac"] = round1_df["Importance"] / importance_sum
+        keep_mask = round1_df["frac"] >= thresh
+        kept = round1_df[keep_mask]["Feature"].tolist()
+        if not kept:
+            raise ValueError(
+                f"❌ No features pass threshold {thresh}. Lower MIN_IMPORTANCE_THRESHOLD."
+            )
+        print(f"\n   🔍 SELECTION (min_importance): keeping features with importance fraction >= {thresh}")
+
+    dropped = [f for f in feature_columns if f not in kept]
+
+    cumul_pct = round1_df[round1_df["Feature"].isin(kept)]["Percentage"].sum()
+    print(f"\n   ✅ KEPT ({len(kept)}) — cumulative importance: {cumul_pct:.2f}%")
+    for f in kept:
+        pct = float(round1_df[round1_df["Feature"] == f]["Percentage"].iloc[0])
+        print(f"      • {f}  ({pct:.2f}%)")
+    print(f"\n   ❌ DROPPED ({len(dropped)}):")
+    for f in dropped:
+        pct = float(round1_df[round1_df["Feature"] == f]["Percentage"].iloc[0])
+        print(f"      • {f}  ({pct:.2f}%)")
+
+    X_train_red = X_train[kept].copy()
+    X_test_red = X_test[kept].copy()
+    return X_train_red, X_test_red, kept, dropped, round1_df
+
+
+def save_feature_selection_template(kept_features, dropped_features, all_features,
+                                     round1_importance_df, save_path):
+    """Saves a copy-paste-ready MANUAL_FEATURE_SELECTION template file."""
+    lines = [
+        "# ============================================================",
+        "# FEATURE SELECTION TEMPLATE",
+        f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"# Method used: {FEATURE_REDUCTION_METHOD if USE_FEATURE_REDUCTION else 'no_reduction'}",
+        f"# Total kept: {len(kept_features)} / {len(all_features)}",
+        "#",
+        "# Copy this dict into MANUAL_FEATURE_SELECTION in your code",
+        "# to reproduce this exact feature set in future runs.",
+        "# ============================================================",
+        "",
+        "MANUAL_FEATURE_SELECTION = {",
+    ]
+
+    for feat in all_features:
+        keep_flag = 1 if feat in kept_features else 0
+        # Try to attach importance comment if available
+        comment = ""
+        if round1_importance_df is not None:
+            match = round1_importance_df[round1_importance_df["Feature"] == feat]
+            if not match.empty:
+                pct = float(match["Percentage"].iloc[0])
+                status = "kept" if keep_flag == 1 else "dropped"
+                comment = f"  # {status} (importance: {pct:.2f}%)"
+            else:
+                comment = ""
+
+        lines.append(f'    "{feat}":' + " " * max(1, 35 - len(feat)) + f"{keep_flag},{comment}")
+
+    lines.append("}")
+    lines.append("")
+
+    with open(save_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print(f"   📋 Feature selection template saved: {save_path.name}")
 
 
 # ════════════════════════════════════════════════════════════════════
@@ -940,15 +1217,14 @@ def generate_all_plots(y_train, y_pred_train, y_test, y_pred_test,
 
 def append_tuning_history(timestamp_str, hyperparams, train_metrics, test_metrics,
                           cv_results, overfitting_analysis, importance_df,
-                          clarke_info=None, run_label="single"):
-    """Appends a row to OUTPUT_ROOT/tuning_history.csv tracking all runs."""
+                          clarke_info=None, run_label="single",
+                          feature_reduction_info=None):
+    """
+    Appends a row to OUTPUT_ROOT/tuning_history.csv tracking all runs.
+    Now includes per-feature importance columns (prefix: feat_).
+    Features the model wasn't trained on get value 0.
+    """
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
-
-    # Top 10 features
-    top10 = importance_df.head(10)
-    top_features_str = "; ".join([
-        f"{row['Feature']}({row['Percentage']:.1f}%)" for _, row in top10.iterrows()
-    ])
 
     row = {
         "timestamp": timestamp_str,
@@ -968,6 +1244,13 @@ def append_tuning_history(timestamp_str, hyperparams, train_metrics, test_metric
         "use_sample_weights": USE_SAMPLE_WEIGHTS,
         "high_glucose_threshold": HIGH_GLUCOSE_THRESHOLD if USE_SAMPLE_WEIGHTS else None,
         "high_glucose_weight": HIGH_GLUCOSE_WEIGHT if USE_SAMPLE_WEIGHTS else None,
+        # 🆕 Feature reduction info
+        "feature_reduction_enabled": USE_FEATURE_REDUCTION,
+        "feature_reduction_method": (FEATURE_REDUCTION_METHOD if USE_FEATURE_REDUCTION else None),
+        "n_features_used": (len(feature_reduction_info["kept"]) if feature_reduction_info
+                            else len(importance_df)),
+        "n_features_dropped": (len(feature_reduction_info["dropped"]) if feature_reduction_info
+                                else 0),
         # Train metrics
         "train_mae": train_metrics["MAE_mg_dL"],
         "train_rmse": train_metrics["RMSE_mg_dL"],
@@ -991,11 +1274,19 @@ def append_tuning_history(timestamp_str, hyperparams, train_metrics, test_metric
         "diagnosis": overfitting_analysis["diagnosis"],
         # Clinical
         "clarke_zone_a_pct": clarke_info["zone_a_percent"] if clarke_info else None,
-        # Top features
-        "top_10_features": top_features_str,
         # User notes (manually editable later)
         "notes": "",
     }
+
+    # 🆕 Add per-feature importance columns (prefixed feat_)
+    # Uses HARDCODED_FEATURE_ORDER for consistency across runs.
+    # Features not used in current training get 0.
+    # 🆕 Use Percentage (not raw Importance) for cross-run comparability
+    importance_lookup = dict(zip(importance_df["Feature"], importance_df["Percentage"]))
+    for feat in HARDCODED_FEATURE_ORDER:
+        col_name = f"feat_{feat}"
+        # If feature was used → its percentage importance; else → 0
+        row[col_name] = round(float(importance_lookup.get(feat, 0.0)), 4)
 
     df_row = pd.DataFrame([row])
 
@@ -1310,6 +1601,24 @@ def main():
     else:
         hyperparams = base_hyperparams
 
+    # 🆕 PHASE 2.5: FEATURE REDUCTION (if enabled)
+    validate_feature_reduction_config(feature_columns)
+    X_train, X_test, kept_features, dropped_features, round1_importance_df = \
+        select_features_by_method(X_train, X_test, y_train, feature_columns, hyperparams)
+    # Update feature_columns to reflect the reduced set used for training
+    feature_columns = kept_features
+
+    feature_reduction_info = None
+    if USE_FEATURE_REDUCTION:
+        feature_reduction_info = {
+            "enabled": True,
+            "method": FEATURE_REDUCTION_METHOD,
+            "kept": kept_features,
+            "dropped": dropped_features,
+            "round1_importance": (round1_importance_df.to_dict(orient="records")
+                                   if round1_importance_df is not None else None),
+        }
+
     # PHASE 3
     model, training_time = train_xgboost_model(X_train, y_train, hyperparams)
 
@@ -1416,8 +1725,22 @@ def main():
     clarke_info = plot_info.get("clarke_zone_a") if plot_info else None
     append_tuning_history(
         timestamp_str, hyperparams, train_metrics, test_metrics,
-        cv_results, overfitting_analysis, importance_df, clarke_info, run_label
+        cv_results, overfitting_analysis, importance_df, clarke_info, run_label,
+        feature_reduction_info=feature_reduction_info,  # 🆕
     )
+
+    # 🆕 PHASE 10b — Save feature selection template (in model/ folder)
+    try:
+        template_path = Path(output_file_paths["model_json"]).parent / "feature_selection_template.txt"
+        save_feature_selection_template(
+            kept_features=kept_features,
+            dropped_features=dropped_features,
+            all_features=HARDCODED_FEATURE_ORDER,
+            round1_importance_df=round1_importance_df,
+            save_path=template_path,
+        )
+    except Exception as e:
+        print(f"   ⚠️ Could not save feature selection template: {e}")
 
     # ── Final Summary ──
     print(f"\n{'=' * 70}\n📌 XGBOOST PIPELINE — FINAL SUMMARY\n{'=' * 70}")
@@ -1427,6 +1750,9 @@ def main():
     for k, v in hyperparams.items(): print(f"      {k.lower():<20} = {v}")
     if USE_SAMPLE_WEIGHTS:
         print(f"      sample_weighting    = ON (threshold={HIGH_GLUCOSE_THRESHOLD}, weight={HIGH_GLUCOSE_WEIGHT})")
+    if USE_FEATURE_REDUCTION:  # 🆕
+        print(f"      feature_reduction   = ON ({FEATURE_REDUCTION_METHOD}, "
+              f"{len(kept_features)}/{len(HARDCODED_FEATURE_ORDER)} features)")
     print(f"\n   📊 Performance:")
     print(f"      {'':>20} {'TRAIN':>12} {'TEST':>12} {'CV':>15}")
     print(f"      {'MAE (mg/dL)':>20} {train_metrics['MAE_mg_dL']:>12.4f} {test_metrics['MAE_mg_dL']:>12.4f} "
