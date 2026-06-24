@@ -528,121 +528,121 @@ The output CSV retains the same 25 columns. Outlier values in features 1 through
 
 ---
 
-### Output JSON Log Schema
+## Physiological Theories & Wavelength Physics
 
-The generated JSON log provides complete documentation of the cleaning process:
+Non-invasive optical glucose estimation relies on the propagation, scattering, and absorption of light through vascularized tissues. The optical probe utilizes two specific wavelengths: Red (~660 nm) and Near-Infrared (~880–940 nm). The interaction of these wavelengths with blood solutes and tissue structures changes under varying glycaemic states:
 
-```json
-{
-    "pipeline_info": {
-        "pipeline_name": "Data Cleaning: NaN Handling + Outlier Clipping",
-        "pipeline_step": "STEP 8 (Sub-task 1 & 2)",
-        "execution_timestamp": "2026-06-21 14-50-22",
-        "execution_date_readable": "2026-06-21 14:50:22",
-        "previous_step": "STEP 7 (Feature Engineering)"
-    },
-    "step7_pipeline_reference": {
-        "status": "found",
-        "step7_log_file": "C:\\...\\Master_Dataset_With_24F_2026-06-21_14-40-15.json",
-        "pipeline_provenance": {
-            "step7_execution_date": "2026-06-21 14:40:18",
-            "step7_input_master_csv": "C:\\...\\06_Averaged_Features_MASTER_Dataset.csv"
-        }
-    },
-    "dataset_shape_summary": {
-        "input_rows": 75,
-        "input_columns": 25,
-        "output_rows": 74,
-        "output_columns": 25,
-        "rows_dropped": 1,
-        "columns_unchanged": true,
-        "feature_count": 24,
-        "target_column": "Glucose level (mg/dl)"
-    },
-    "sub_task_1_nan_handling": {
-        "nan_analysis": {
-            "total_nan_count": 3,
-            "columns_with_nan": [
-                {
-                    "column": "IR_HRV",
-                    "nan_count": 2,
-                    "nan_row_indices": [12, 45],
-                    "is_target": false
-                },
-                {
-                    "column": "Glucose level (mg/dl)",
-                    "nan_count": 1,
-                    "nan_row_indices": [3],
-                    "is_target": true
-                }
-            ]
-        },
-        "nan_handling": {
-            "rows_dropped_due_to_target_nan": [
-                {
-                    "row_index": 3,
-                    "reason": "Target column (Glucose level) is NaN..."
-                }
-            ],
-            "feature_imputations": [
-                {
-                    "column": "IR_HRV",
-                    "nan_count": 2,
-                    "median_value_used": 32.41,
-                    "nan_row_indices": [12, 45]
-                }
-            ]
-        }
-    },
-    "sub_task_2_outlier_handling": {
-        "outlier_analysis": {
-            "total_outliers_detected": 3,
-            "columns_with_outliers": [
-                {
-                    "column": "Diff_Spectral_Entropy",
-                    "q1": -0.045,
-                    "q3": 0.082,
-                    "iqr": 0.127,
-                    "lower_bound": -0.2355,
-                    "upper_bound": 0.2725,
-                    "total_outliers": 1,
-                    "outliers_above": [
-                        {
-                            "row_index": 8,
-                            "original_value": 0.342
-                        }
-                    ]
-                }
-            ]
-        },
-        "clipping_log": {
-            "total_values_clipped": 3,
-            "clipped_features": [
-                {
-                    "column": "Diff_Spectral_Entropy",
-                    "clipped_values": [
-                        {
-                            "row_index": 8,
-                            "original_value": 0.342,
-                            "clipped_to": 0.2725,
-                            "direction": "above_upper_bound"
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-    "verification_results": {
-        "all_passed": true,
-        "checks": [
-            { "check": "column_count", "passed": true },
-            { "check": "no_nan", "passed": true }
-        ]
-    }
-}
+```
+                  RED WAVELENGTH (~660 nm)       INFRARED WAVELENGTH (~880-940 nm)
+                 [Dominates Hb vs HbO2 contrast]   [Sensitive to Water & Glucose]
+                                │                                │
+                                ▼                                ▼
+               ┌──────────────────────────────────────────────────┐
+               │                Vascularized Tissue               │
+               │   - Hemoglobin Glycation (HbA1c conformational)  │
+               │   - Hyperosmolarity (plasma volume & viscosity)  │
+               │   - Sympathoadrenal Response (vasoregulation)    │
+               └──────────────────────────────────────────────────┘
 ```
 
+### Wavelength-Specific Absorption Characteristics
+1. **Red Wavelength (~660 nm)**: At this wavelength, reduced hemoglobin (Hb) has an absorption coefficient nearly ten times higher than oxyhemoglobin ($\text{HbO}_2$). Consequently, the Red signal is highly sensitive to changes in tissue blood perfusion, oxygen saturation ($SpO_2$), and venous pulsations.
+2. **Infrared Wavelength (~880–940 nm)**: At this band, the absorption coefficients of Hb and $\text{HbO}_2$ intersect and reverse (with $\text{HbO}_2$ absorbing slightly more). Crucially, the absorption of water increases in this region, and glucose molecules exhibit weak but distinct vibrational overtone absorption bands.
+
+The normalization of these signals is captured in the **Ratio-of-Ratios (RoR)** feature:
+
+$$\text{RoR} = \frac{(\text{AC}_{\text{Red}} / \text{DC}_{\text{Red}})}{(\text{AC}_{\text{IR}} / \text{DC}_{\text{IR}})}$$
+
+This ratio and its derivative wave morphological features (such as skewness, rise times, and Teager energy profiles) are modulated by blood glucose concentration through three primary physiological pathways:
+
+#### 1. Hemoglobin Glycation (HbA1c Conformational Shifts)
+Under persistent hyperglycemia, excess glucose molecules bind non-enzymatically to hemoglobin inside red blood cells, producing glycated hemoglobin ($\text{HbA1c}$). This glycation process modifies the spatial conformation of the hemoglobin molecule and changes the charge distribution across the cell membrane. These structural changes alter the molecular absorption cross-sections at both 660 nm and 940 nm, causing a shift in the baseline optical density and pulse amplitudes of the PPG signals.
+
+#### 2. Osmotic Pressure and Blood Viscosity Alterations
+Glucose acts as an osmotic agent in the bloodstream. Elevated blood glucose concentrations (hyperglycemia) draw water from the intracellular and interstitial compartments into the blood vessels to maintain osmotic pressure. This hyperosmolarity leads to:
+- A dilution of blood cells (reducing hematocrit).
+- An increase in total blood plasma volume.
+- Alterations in whole-blood viscosity.
+
+These fluid shifts modify the scattering properties of the blood cells. The resulting changes in photon path length alter the DC offset of both channels. Additionally, the increased blood viscosity dampens the pressure wave, affecting dynamic features like rise times, decay times, and volatility metrics calculated via the Teager Energy Operator ($\Psi$).
+
+#### 3. Sympathoadrenal Cardiovascular Responses
+Rapid changes in blood glucose levels (especially hypoglycemic events) trigger autonomic responses. The body activates the sympathoadrenal system, releasing epinephrine and norepinephrine. This response causes:
+- Peripheral vasoconstriction (decreasing capillaries' blood flow and dampening PPG AC amplitudes).
+- Tachycardia (elevating heart rate and altering heart rate variability metrics like `IR_HRV`, `IR_BPM`, and `IR_PPI`).
+- Vasomotor tone shifts (altering arterial stiffness and shortening the Pulse Transit Time).
+
+Without proper data cleaning (NaN imputation and outlier clipping), these physiological signals can be obscured by sensor noise or motion artifacts.
+
 ---
+
+## Machine Learning Mechanics & Optimization
+
+Tree-based algorithms like XGBoost build models by recursively partitioning the feature space to minimize an objective function. Uncleaned data anomalies (missing values and outliers) affect this optimization process in several ways:
+
+### 1. Default Routing and Split Distortion
+When a feature column contains `NaN` values, algorithms like XGBoost allocate missing samples to a default branch (left or right child node) at each split. While this default routing allows the model to handle missing data, if the missingness is caused by non-random sensor dropouts, it can distort the split statistics. 
+
+Furthermore, extreme outliers can skew the split point search. Since decision trees search for split points by sorting feature values and evaluating the reduction in variance, a single extreme outlier can pull the optimal split threshold away from the dense, informative region of the feature distribution, creating shallow, overfitted leaf nodes.
+
+### 2. Second-Order Taylor Expansion & Gradient Dynamics
+XGBoost optimizes a regularized objective function at step $t$:
+
+$$\mathcal{L}^{(t)} = \sum_{i=1}^{n} l\left(y_i, \hat{y}_i^{(t-1)} + f_t(x_i)\right) + \Omega(f_t)$$
+
+Using a second-order Taylor expansion, this objective is approximated as:
+
+$$\mathcal{L}^{(t)} \approx \sum_{i=1}^{n} \left[ l(y_i, \hat{y}_i^{(t-1)}) + g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i) \right] + \Omega(f_t)$$
+
+Where:
+- $g_i$ is the first-order gradient (Jacobian): $g_i = \frac{\partial l(y_i, \hat{y}_i^{(t-1)})}{\partial \hat{y}_i^{(t-1)}}$
+- $h_i$ is the second-order gradient (Hessian): $h_i = \frac{\partial^2 l(y_i, \hat{y}_i^{(t-1)})}{\partial (\hat{y}_i^{(t-1)})^2}$
+
+Under Mean Squared Error (MSE) loss for regression, these simplify to:
+
+$$g_i = -2\left(y_i - \hat{y}_i^{(t-1)}\right) \quad \text{and} \quad h_i = 2$$
+
+If the target variable $y_i$ (Glucose level) contains an outlier or a corrupt value, the gradient $g_i$ will be artificially large. Since the split gain calculation relies on the squared sum of gradients:
+
+$$\text{Gain} = \frac{1}{2} \left[ \frac{\left(\sum_{i \in I_L} g_i\right)^2}{\sum_{i \in I_L} h_i + \lambda} + \frac{\left(\sum_{i \in I_R} g_i\right)^2}{\sum_{i \in I_R} h_i + \lambda} - \frac{\left(\sum_{i \in I} g_i\right)^2}{\sum_{i \in I} h_i + \lambda} \right] - \gamma$$
+
+a single large target outlier will dominate the split gain, forcing the algorithm to select splits that partition the outlier rather than learning the general physiological relationships of the cohort. This is why target `NaN` values must be dropped and target outliers are kept unmodified only if they represent true clinical hyperglycemic or hypoglycemic states.
+
+### 3. Outlier Compression in Feature Scaling
+When features are scaled (e.g., using MinMax or Z-score normalization) downstream, extreme outliers skew the scaling parameters. For instance, in MinMax normalization:
+
+$$x_{\text{scaled}} = \frac{x - x_{\text{min}}}{x_{\text{max}} - x_{\text{min}}}$$
+
+a single large outlier increases $x_{\text{max}}$, compressing all normal, valid physiological feature values into a narrow range (e.g., between $0.0$ and $0.05$). This compression reduces the numerical resolution of the feature, making it difficult for the model to differentiate between normal subjects. Clipping feature outliers to $1.5 \times \text{IQR}$ bounds preserves the resolution and variance of the features for normal inliers.
+
+---
+
+## Percentile Interpolation in Quartile Calculations
+
+To identify outlier boundaries, the script calculates the first quartile ($Q_1$) and third quartile ($Q_3$) of each feature column. In clinical datasets with a small number of samples (such as $N=75$), the index positions corresponding to the 25th and 75th percentiles are often fractional numbers.
+
+Rather than rounding to the nearest index, which can introduce step-change artifacts in small datasets, the script uses linear interpolation:
+
+For a sorted feature vector $Y = [y_1, y_2, \dots, y_n]$ where $y_1 \le y_2 \le \dots \le y_n$, let the virtual index position for percentile $p \in [0, 1]$ be:
+
+$$k = (n - 1) \times p$$
+
+This index position is split into its integer part $i = \lfloor k \rfloor$ and its fractional part $f = k - i$. The percentile value $Q(p)$ is then calculated by interpolating between the values at indices $i+1$ and $i+2$:
+
+$$Q(p) = (1 - f) \times y_{i+1} + f \times y_{i+2}$$
+
+For the first quartile ($p = 0.25$):
+
+$$Q_1 = Q(0.25)$$
+
+For the third quartile ($p = 0.75$):
+
+$$Q_3 = Q(0.75)$$
+
+This interpolation method provides stable quartile estimates that reflect the underlying continuous physiological distribution, ensuring consistent outlier boundaries across datasets.
+
+---
+
 
 ## Detailed Mathematical Formulation
 
