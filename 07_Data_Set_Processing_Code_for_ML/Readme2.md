@@ -15,7 +15,7 @@ This tool represents **Step 8 (Sub-task 1 & 2)** of the PPG-based glucose estima
 - **Calculations**: Double-pass statistics (pre-cleaning analysis and post-cleaning verification)
 - **Outlier Threshold**: $1.5 \times \text{IQR}$ (Standard Tukey boxplot boundary)
 - **Target Variable Protection**: Clinical glucose values are strictly excluded from outlier modification
-- **Traceability**: Embeds the full JSON log history from Step 7 ([Code 08](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Data_set_with_24_Features_creation_08.py)) and Step 6 ([Code 07](file:///C:/Users/DELL/Documents/GitHub/fyp/06_Data_Set_Creation/Data_Set_Creation_Code07.py)) inside a unified Step 8 log file
+- **Traceability**: Embeds the full JSON log history from Step 7 (Code 08) and Step 6 (Code 07) inside a unified Step 8 log file
 - **Typical Runtime**: < 2 seconds on standard hardware
 
 ---
@@ -25,21 +25,19 @@ This tool represents **Step 8 (Sub-task 1 & 2)** of the PPG-based glucose estima
 1. [TL;DR](#tldr)
 2. [Quick Start](#quick-start)
 3. [Background & Motivation](#background--motivation)
-4. [Physiological Theories & Wavelength Physics](#physiological-theories--wavelength-physics)
-5. [Machine Learning Mechanics & Outlier Distortion](#machine-learning-mechanics--outlier-distortion)
-6. [The Two Sub-Tasks](#the-two-sub-tasks)
-7. [Mermaid Data Flow Diagram](#mermaid-data-flow-diagram)
-8. [Features & Capabilities](#features--capabilities)
-9. [Installation & Prerequisites](#installation--prerequisites)
-10. [Input Data Format](#input-data-format)
-11. [Output Structure](#output-structure)
-12. [Detailed Mathematical Formulation](#detailed-mathematical-formulation)
-13. [Configuration Reference](#configuration-reference)
-14. [Code Architecture & Function Directory](#code-architecture--function-directory)
-15. [Verification & Data Auditing](#verification--data-auditing)
-16. [Troubleshooting & FAQ](#troubleshooting--faq)
-17. [Next Step in Pipeline](#next-step-in-pipeline)
-18. [References](#references)
+4. [The Two Sub-Tasks](#the-two-sub-tasks)
+5. [Mermaid Data Flow Diagram](#mermaid-data-flow-diagram)
+6. [Features & Capabilities](#features--capabilities)
+7. [Installation & Prerequisites](#installation--prerequisites)
+8. [Input Data Format](#input-data-format)
+9. [Output Structure](#output-structure)
+10. [Detailed Mathematical Formulation](#detailed-mathematical-formulation)
+11. [Configuration Reference](#configuration-reference)
+12. [Code Architecture & Function Directory](#code-architecture--function-directory)
+13. [Verification & Data Auditing](#verification--data-auditing)
+14. [Troubleshooting & FAQ](#troubleshooting--faq)
+15. [Next Step in Pipeline](#next-step-in-pipeline)
+16. [References](#references)
 
 ---
 
@@ -54,11 +52,11 @@ This tool represents **Step 8 (Sub-task 1 & 2)** of the PPG-based glucose estima
    # Linux / macOS
    source .venv/bin/activate
    ```
-2. **Install Dependencies**: Ensure dependencies are installed (numpy, pandas, openpyxl).
+2. **Install Dependencies**: Ensure dependencies are installed (numpy, pandas, openpyxl, and tkinter).
    ```bash
    pip install pandas numpy openpyxl
    ```
-3. **Configure Paths**: Open [Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py) in your editor and update the user settings block at the top:
+3. **Configure Paths**: Open `Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py` in your editor and update the user settings block at the top:
    ```python
    # Set this to the parent directory where Step 7 output folders are saved
    INPUT_ROOT  = Path(r"C:\Users\YourName\Documents\fyp\05_Data_Storage\08_Data_set_with_24_features")
@@ -164,6 +162,7 @@ Upon launching the tool, the following interactive flow will execute:
 ────────────────────────────────────────────────────────────
 🔧 SUB-TASK 1: NaN HANDLING
 ────────────────────────────────────────────────────────────
+
    🗑️ DROPPING 1 row(s) with NaN target (glucose):
       Row 3: glucose = NaN → DROPPED
       ✅ Dropped 1 row(s). New shape: 74 rows × 25 columns
@@ -185,6 +184,7 @@ Upon launching the tool, the following interactive flow will execute:
       Q1=-0.045000  Q3=0.082000  IQR=0.127000
       Bounds: [-0.235500, 0.272500]
       Above (1): rows [8] → values [0.342000]
+   ...
 
    📊 Total outliers detected: 3
    📊 Columns with outliers: 2
@@ -194,6 +194,7 @@ Upon launching the tool, the following interactive flow will execute:
 ✂️ SUB-TASK 2: OUTLIER CLIPPING
 ────────────────────────────────────────────────────────────
    ✂️ Diff_Spectral_Entropy [row 8]: 0.342000 → 0.272500 (clipped DOWN to upper bound)
+   ...
    📊 Total values clipped: 3
 
    🔍 Post-clipping outlier verification:
@@ -223,11 +224,13 @@ Upon launching the tool, the following interactive flow will execute:
 ────────────────────────────────────────────────────────────
 📊 BEFORE vs AFTER COMPARISON
 ────────────────────────────────────────────────────────────
+
    Column                                Before Min    After Min   Before Max    After Max
    ───────────────────────────────────────────────────────────────────────────────────────
    IR_Skewness                            -0.114500    -0.114500     1.792500     1.792500
    IR_HRV                                 15.420000    15.420000    62.450000     62.450000
    Diff_Spectral_Entropy                  -0.214000    -0.214000     0.342000     0.272500 ←
+   ...
 
 ────────────────────────────────────────────────────────────
 📝 BUILDING COMPREHENSIVE JSON LOG
@@ -243,25 +246,55 @@ Upon launching the tool, the following interactive flow will execute:
    📊 Size: 64.12 KB
 
 🆕 All output files are newly created.
+
 📁 Output folder: C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\09_Cleaned_dataset_without_(NaN_&_outliers)\Master dataset 24F cleaned 2026-06-21 14-50-22
 
 ======================================================================
 📌 DATA CLEANING PIPELINE — FINAL SUMMARY
 ======================================================================
+
    📥 Input folder : Master_Dataset_With_24F_2026-06-21_14-40-15
+      CSV          : Master_Dataset_With_24F_2026-06-21_14-40-15.csv
+      JSON         : Master_Dataset_With_24F_2026-06-21_14-40-15.json
       Shape        : 75 rows × 25 columns
+
    📤 Output folder: Master dataset 24F cleaned 2026-06-21 14-50-22
+      CSV          : Master dataset 24F cleaned 2026-06-21 14-50-22.csv
+      JSON         : Master dataset 24F cleaned 2026-06-21 14-50-22.json
       Shape        : 74 rows × 25 columns
+
    🧹 Sub-task 1 — NaN Handling:
       Total NaN found           : 3
       Rows dropped (target NaN) : 1
       Values imputed (median)   : 2
+      Imputation method         : Median
+
    ✂️  Sub-task 2 — Outlier Clipping:
+      IQR multiplier            : 1.5
       Total outliers detected   : 3
       Total values clipped      : 3
+      Target column touched     : No
+
    ✅ Verification : ALL PASSED
+
+   📁 Output folder : C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\09_Cleaned_dataset_without_(NaN_&_outliers)\Master dataset 24F cleaned 2026-06-21 14-50-22
+   📄 Dataset CSV   : Master dataset 24F cleaned 2026-06-21 14-50-22.csv
+   📄 JSON Log      : Master dataset 24F cleaned 2026-06-21 14-50-22.json
+
+✅ Data cleaning pipeline completed successfully!
+   → Output is ready for Step 8 Sub-task 3 & 4
+     (Train/Test Split + RobustScaler Normalization)
 ======================================================================
 ```
+
+### Common First-Time Issues
+
+| Problem | Symptom / Error | Cause | Quick Fix |
+|---|---|---|---|
+| **No Step 7 folders found** | Report prints: "No 'Master_Dataset_With_24F' folders found" | `INPUT_ROOT` is set incorrectly or Code 08 was not run | Double-check that `INPUT_ROOT` matches the path where Code 08 saves its output. |
+| **Empty file browser** | Execution stops or file picker does not load files | Folder structure is empty or permissions block tkinter | Verify that Python has desktop permissions and can open GUI popups on Windows. |
+| **Column count mismatch** | Abort message: "Column count mismatch... Expected 25" | The selected CSV has a different column structure (e.g., raw Master with 32 columns) | Ensure you selected the output folder from Code 08 (`Master_Dataset_With_24F`), not Step 7 (`MasterDataset_..._Features`). |
+| **Target column missing** | Abort message: "Target column... not found" | Column name was changed in Excel sheet or Step 7 config | Check that `TARGET_COLUMN` is set to `"Glucose level (mg/dl)"` in the script configuration. |
 
 ---
 
@@ -287,23 +320,23 @@ If these anomalies are passed directly to model training without systematic prep
 This script addresses missing values and outliers using an **asymmetric strategy**—meaning it treats the predictor variables (features) differently from the target variable (labels).
 
 ```
-                             ┌───────────────────────────┐
-                             │      INPUT DATASET        │
-                             └─────────────┬─────────────┘
-                                           │
-                     ┌─────────────────────┴─────────────────────┐
-                     ▼                                           ▼
-        ┌─────────────────────────┐                 ┌─────────────────────────┐
-        │     FEATURE COLUMNS     │                 │   TARGET LABELS (Glu)   │
-        └────────────┬────────────┘                 └────────────┬────────────┘
-                     │                                           │
-          ┌──────────┴──────────┐                     ┌──────────┴──────────┐
-          ▼                     ▼                     ▼                     ▼
-     [NaN Values]         [Outlier Values]       [NaN Values]         [Outlier Values]
-          │                     │                     │                     │
-          ▼                     ▼                     ▼                     ▼
-   Impute w/ Median       Clip w/ IQR Bounds       Drop Row          Do Not Touch
-  (Non-skewed center)    (Limit extreme range) (Cannot predict)    (Preserve clinical)
+                            ┌───────────────────────────┐
+                            │      INPUT DATASET        │
+                            └─────────────┬─────────────┘
+                                          │
+                    ┌─────────────────────┴─────────────────────┐
+                    ▼                                           ▼
+       ┌─────────────────────────┐                 ┌─────────────────────────┐
+       │     FEATURE COLUMNS     │                 │   TARGET LABELS (Glu)   │
+       └────────────┬────────────┘                 └────────────┬────────────┘
+                    │                                           │
+         ┌──────────┴──────────┐                     ┌──────────┴──────────┐
+         ▼                     ▼                     ▼                     ▼
+    [NaN Values]         [Outlier Values]       [NaN Values]         [Outlier Values]
+         │                     │                     │                     │
+         ▼                     ▼                     ▼                     ▼
+  Impute w/ Median       Clip w/ IQR Bounds       Drop Row          Do Not Touch
+ (Non-skewed center)    (Limit extreme range) (Cannot predict)    (Preserve clinical)
 ```
 
 #### 1. Why Impute Features but Drop Target NaNs?
@@ -317,128 +350,21 @@ PPG morphological features (such as Shannon entropy, Teager Energy metrics, and 
 - **Feature Clipping**: Feature outliers can distort downstream scaling and model fitting. However, deleting rows with outliers would critically reduce our sample size. By **clipping** (capping the value at the upper or lower statistical boundary), we eliminate the disruptive effect of extreme values while preserving the rest of the subject's feature information.
 - **Target Preservation**: The glucose values are real clinical readings from blood meters. An extremely high glucose value (e.g., 260 mg/dL) or low value (e.g., 65 mg/dL) represents a real physiological state (hyperglycemia or hypoglycemia) that the model must learn to predict. Modifying or clipping the target glucose values would corrupt the clinical ground truth.
 
-#### 4. Clinical Target Integrity
-In clinical diagnostics, a model's performance on edge cases is often more important than its performance on typical cases. For example, failing to detect a glucose level of 250 mg/dL (hyperglycemia) or 50 mg/dL (hypoglycemia) carries a much higher clinical cost than misestimating a value of 95 mg/dL as 100 mg/dL. 
-If we were to clip or normalize the target glucose values to fit within a standard range, we would:
-- Underestimate the severity of patient health conditions in output predictions.
-- Reduce the gradient signals for extreme values during training, causing the model's loss function to treat extreme errors with the same weight as normal errors.
-- Lose physical interpretability, as model predictions would no longer correspond directly to mg/dL units without complex inverse transformations that can introduce numerical scaling errors.
-
-For these reasons, the target glucose levels are kept in their raw clinical measurement unit, mg/dL. This ensures that the loss calculations during gradient boosting directly represent the absolute error in clinical measurements, keeping the clinical context intact.
-
----
-
-## Physiological Theories & Wavelength Physics
-
-The 24 photoplethysmography (PPG) features extracted in this project represent cardiovascular dynamics that are altered by blood glucose concentrations. The relationship between light transmission and glucose levels is governed by three primary physiological mechanisms:
-
-```
-                  RED LIGHT (~660 nm)             INFRARED LIGHT (~940 nm)
-              [High Deoxyhemoglobin Absorption]   [High Water & Glucose Absorption]
-                              │                                   │
-                              ▼                                   ▼
-             ┌─────────────────────────────────────────────────────────────┐
-             │                     Microvascular Tissue                    │
-             │   - Erythrocyte Glycation Shifts (HbA1c Properties)         │
-             │   - Plasma Hyperosmolality & Viscosity Shifts               │
-             │   - Sympathoadrenal Epinephrine Vasoconstriction Dynamics   │
-             └─────────────────────────────────────────────────────────────┘
-```
-
-### 1. Wavelength-Specific Optical Absorption Properties
-The tissue sensor transmits light through vascular beds at two key bands:
-- **Red Wavelength (~660 nm)**: Strongly absorbed by deoxyhemoglobin (Hb) compared to oxyhemoglobin ($\text{HbO}_2$). Red light is highly sensitive to changes in tissue oxygen saturation ($SpO_2$) and venous blood volume fluctuations.
-- **Infrared Wavelength (~940 nm)**: More absorbed by oxyhemoglobin ($\text{HbO}_2$) and water. Glucose molecules exhibit absorption bands in this near-infrared range, which affects light transmission.
-
-During hyper- or hypoglycemia, the transmission ratio of these two wavelengths changes, altering features such as `Ratio_systolic_amplitude` and the Ratio-of-Ratios (RoR).
-
-### 2. Erythrocyte Glycation (HbA1c Optical Shifts)
-Under chronic hyperglycemia, glucose molecules bind non-enzymatically to hemoglobin inside red blood cells, forming Glycated Hemoglobin ($\text{HbA1c}$). Glycation changes the physical structure and refractive index of the cell, altering its light scattering properties. This causes a shift in the baseline optical absorption of both Red and Infrared light.
-
-### 3. Osmotic Viscosity Alterations
-Glucose is osmotically active. Elevated blood glucose draws water from the interstitial tissue into the capillaries. This hemodilution:
-- Temporarily alters hematocrit.
-- Changes whole-blood viscosity.
-- Modifies blood flow velocity and vascular resistance.
-
-These changes alter waveform parameters such as the Teager Energy Operator (`IR_TEO Mean`), the rising slope (`IR_Rise time`), and the decay rate (`IR_Decay time`).
-
-### 4. Autonomic Heart Rate Variability Responses
-In hypoglycemic states (blood glucose below 70 mg/dL), the body releases epinephrine and norepinephrine. This sympathoadrenal response triggers:
-- Peripheral vasoconstriction (reducing PPG amplitude).
-- Tachycardia (increasing heart rate, lowering `IR_PPI`).
-- Altered heart rate variability (`IR_HRV`).
-
-### 5. Detailed Physiological Mapping of the 24 PPG Features
-The 24 features can be grouped into clinical-physical domains that reflect these underlying blood chemistry changes:
-- **Morphological Waveform Shape (`IR_pulse width`, `IR_Rise time`, `IR_Decay time`, `IR_systolic amplitude`, `IR_Dicrotic notch`)**: Rise time and decay time correspond to the acceleration and deceleration phases of arterial blood volume. Vasoconstriction caused by hypoglycemic sympathetic response narrows these pulses and increases systolic amplitude resistance, while hyperosmolality in hyperglycemia slows the decay time due to increased viscosity.
-- **Statistical Moments (`IR_Skewness`, `IR_Kurtosis`)**: Skewness captures the asymmetry of the pulse wave, while Kurtosis captures the peakedness. Changes in vascular compliance due to hemoglobin glycation alter the waveform reflection patterns, shifting these shape-moment values.
-- **Information and Spectral Entropies (`IR_Shannon Entropy`, `IR_Spectral Entropy`)**: Measures of complexity and disorder in the signal. When glucose shifts fluid balance, the high-frequency components of the PPG signal are damped, reducing Spectral Entropy.
-- **Heart Rate & Autonomic Metrics (`IR_BPM`, `IR_PPI`, `IR_HRV`)**: Direct indicators of sympathoadrenal activation. Epinephrine release in hypoglycemia leads to tachycardia (low PPI, high BPM) and decreases HRV.
-- **Energy and Derivative Metrics (`IR_TEO Mean`, `IR_TEO std dev`, `IR_1st_Derivative_Mean`, `IR_2nd_Derivative_Mean`, `IR_2nd_Derivative_Skewness`)**: The Teager Energy Operator captures energy transitions. Blood viscosity changes alter the energy footprint. The first and second derivatives represent velocity and acceleration of blood flow. Wall stiffness changes due to HbA1c alter the timing and amplitude of derivative peaks (like the dicrotic notch).
-- **Engineered Ratios (`Ratio_systolic_amplitude`, `Ratio_TEO_Mean`, `Diff_2nd_Derivative_Mean`, `Diff_Spectral_Entropy`, `Diff_Dicrotic_notch`, `Ensemble ratio`)**: Compare the Red wavelength (highly oxy/deoxyhemoglobin sensitive) against the Infrared wavelength (water/glucose sensitive). Since glucose concentration alters the optical path length of Infrared light differently than Red light, these ratio and difference features are direct indicators of glucose-induced absorption changes.
-
----
-
-## Machine Learning Mechanics & Outlier Distortion
-
-### Split Search Thresholds in Tree-Based Classifiers
-Algorithms like XGBoost partition the feature space by searching for binary split points that minimize a loss function. The algorithm evaluates split points for a feature $x_j$ by sorting the values and computing the gain for different thresholds $T$:
-
-$$\text{Gain} = \frac{1}{2} \left[ \frac{\left(\sum_{i \in I_L} g_i\right)^2}{\sum_{i \in I_L} h_i + \lambda} + \frac{\left(\sum_{i \in I_R} g_i\right)^2}{\sum_{i \in I_R} h_i + \lambda} - \frac{\left(\sum_{i \in I} g_i\right)^2}{\sum_{i \in I} h_i + \lambda} \right] - \gamma$$
-
-Where:
-- $g_i$ and $h_i$ are the first and second-order gradients of the loss function.
-- $I_L$ and $I_R$ are the sample sets assigned to the left and right child nodes.
-- $\lambda$ and $\gamma$ are regularization parameters.
-
-### NaN Routing Bias
-When features contain missing values, XGBoost assigns them to a default branch at each node split during training:
-
-$$\text{Default Choice} = \text{argmin}_{d \in \{L, R\}} \mathcal{L}(I_d \cup I_{\text{missing}})$$
-
-In small clinical datasets (e.g., $N=75$), missing values are often caused by sensor dropouts rather than physiological conditions. If missing values are not imputed, the algorithm may assign them to default branches based on random noise, reducing model generalizability.
-
-### Loss Function Skewness
-For Mean Squared Error loss, the gradients are calculated as:
-
-$$g_i = \hat{y}_i - y_i \quad \text{and} \quad h_i = 1$$
-
-If the target variable `y` (glucose level) is missing, we cannot calculate these gradients. If features contain extreme outliers, they can skew the split selection process, causing the model to split on noise. By clipping feature outliers to $1.5 \times \text{IQR}$, we stabilize the gradient calculations.
-
-### Scaling Compression Effects
-When features are standardized using standard normalization:
-
-$$x_{\text{scaled}} = \frac{x - x_{\text{min}}}{x_{\text{max}} - x_{\text{min}}}$$
-
-A single extreme outlier shifts $x_{\text{max}}$ dramatically. This compresses all normal, physiologically valid feature values into a narrow range (e.g., between $0.0$ and $0.05$), reducing the feature's variance. Clipping feature outliers before scaling preserves the resolution of the normal feature values.
-
----
-
-## The Two Sub-Tasks
-
-### Sub-task 1: Asymmetric NaN Handling
-1. **Target Analysis**: The target column `Glucose level (mg/dl)` is checked for missing values. Rows with missing targets are dropped from the dataset.
-2. **Feature Imputation**: Feature columns are scanned. Any missing value is replaced with the median value of that column, computed from the non-missing rows.
-
-### Sub-task 2: Outlier Clipping (IQR Method)
-1. **Quartile Computation**: The 25th ($Q_1$) and 75th ($Q_3$) percentiles are calculated for each feature column using linear interpolation.
-2. **Bound Setting**: The outlier boundaries are established:
-   $$\text{Lower Bound} = Q_1 - 1.5 \times \text{IQR}$$
-   $$\text{Upper Bound} = Q_3 + 1.5 \times \text{IQR}$$
-3. **Clipping**: Values exceeding these bounds are capped at the boundary. The target column `Glucose level (mg/dl)` is bypassed.
-
 ---
 
 ## Mermaid Data Flow Diagram
 
+The following Mermaid diagram traces the data flow through the cleaning pipeline, showing how Step 7 output files are transformed into clean Step 8 files, while preserving the full JSON logging history:
+
 ```mermaid
 flowchart TD
+    %% Define Styles
     classDef fileStyle fill:#f9f,stroke:#333,stroke-width:2px;
     classDef procStyle fill:#bbf,stroke:#333,stroke-width:2px;
     classDef errorStyle fill:#fbb,stroke:#333,stroke-width:2px;
     classDef successStyle fill:#bfb,stroke:#333,stroke-width:2px;
 
+    %% Elements
     A[Step 7 Output Folder] --> B(Auto-Detect CSV & JSON)
     B --> C[Master_Dataset_With_24F_*.csv]:::fileStyle
     B --> D[Master_Dataset_With_24F_*.json]:::fileStyle
@@ -478,326 +404,516 @@ flowchart TD
 
 ## Features & Capabilities
 
-- **Sequential Processing**: Imputes NaN values before outlier clipping, preventing missing values from distorting quartile calculations.
-- **Asymmetric Target Protection**: Bypasses target glucose values during clipping, preserving raw clinical measurements.
-- **Pipeline Traceability**: Embeds metadata from Step 6 and Step 7 into the output JSON log for reproducibility.
-- **Double-Pass Audit**: Validates the dataset structure and values before exporting.
-- **Interactive GUI**: Uses Tkinter to prompt users to select target directories, defaulting to configured roots.
+### Core Preprocessing
+- **Sequential Cleaning Flow**: Executes NaN correction followed by outlier adjustments on the newly clean data to prevent outliers from contaminating median calculations.
+- **Tukey Outlier Clipping**: Employs the standard statistical $1.5 \times \text{IQR}$ range to detect outliers. Rather than deleting records, it clips the outliers to the upper and lower boundaries:
+  $$\text{Lower Bound} = Q_1 - 1.5 \times \text{IQR}$$
+  $$\text{Upper Bound} = Q_3 + 1.5 \times \text{IQR}$$
+- **Clinical Target Exclusion**: Strictly screens target variables from outlier capping. The model remains trained on raw, unmodified biological ranges.
+
+### Verification & Validation Checks
+- **Structure Validation**: Confirms the input folder is a verified Step 7 output, asserting the presence of the required 25 columns and matching target attributes.
+- **Post-Preprocessing Audit**: Re-calculates NaN occurrences and outlier bounds after clipping, verifying that no NaNs remain.
+- **Float Comparison Integrity**: Executes a cell-by-cell validation using a tight numerical tolerance ($10^{-9}$) to ensure that non-outlier feature values are preserved without corruption.
+
+### Traceability & Audit Trails
+- **Continuous Logging Chain**: Embeds Step 7's metadata and the original Step 6 parameters into the new Step 8 JSON log, preserving a complete audit trail.
+- **File Audit Reports**: Computes pre-existing and post-existing file sizes during re-runs to keep a record of changes.
+- **Chronological File Management**: Automatically creates unique, timestamped directories for each execution, preventing accidental data loss.
 
 ---
 
 ## Installation & Prerequisites
 
-This pipeline requires standard Python data science libraries:
+### System Requirements
+
+- **Operating System**: Windows 10/11, macOS, or Linux.
+- **Python Version**: Python 3.8 to 3.12.
+- **Libraries**: Built using standard Scientific Python packages (NumPy, Pandas) and standard libraries (Tkinter, Pathlib, Json).
+
+### Python Packages
+
+Ensure your environment includes the following packages:
+
+| Package | Version | Purpose |
+|---|---|---|
+| `pandas` | $\ge 1.3.0$ | Dataframe representation, CSV parsing, and Excel support. |
+| `numpy` | $\ge 1.20.0$ | Vectorized math, NaN masking, and percentile calculations. |
+| `openpyxl` | $\ge 3.0.0$ | Engine used by Pandas to read Step 7 Excel sheets. |
+| `tkinter` | Standard Library | Displays native directory dialogues for folder selection. |
+
+### Environment Setup
+
+Create and configure your virtual environment:
 
 ```bash
-pip install pandas numpy openpyxl
-```
+# Navigate to project root
+cd C:\Users\DELL\Documents\GitHub\fyp
 
-### Requirements
-- **Python Version**: Python 3.8 to 3.12.
-- **Libraries**: `pandas`, `numpy`, `openpyxl`, and `tkinter` (standard library).
+# Create environment
+python -m venv .venv
+
+# Activate environment (Windows)
+.venv\Scripts\activate
+
+# Install dependencies
+pip install numpy pandas openpyxl
+```
 
 ---
 
 ## Input Data Format
 
-The script expects the output folder from Step 7 (`Master_Dataset_With_24F_<timestamp>`), containing:
-1. A CSV file with exactly 25 columns.
-2. A JSON log file with run metadata.
+The script processes the output folder generated by Step 7 (Code 08). The input folder must contain exactly one CSV file and one JSON configuration file.
 
-### Feature Reference Table
-The 25 columns in the input CSV file are:
+### Folder Tree Structure
 
-| Index | Column Name | Type | Description |
-| :--- | :--- | :---: | :--- |
-| 1 | `IR_Skewness` | Float | Skewness of the Infrared signal |
-| 2 | `IR_Kurtosis` | Float | Kurtosis of the Infrared signal |
-| 3 | `IR_Shannon Entropy` | Float | Shannon entropy of the Infrared signal |
-| 4 | `IR_Spectral Entropy` | Float | Spectral entropy of the Infrared signal |
-| 5 | `IR_pulse width` | Float | Temporal width of the IR pulse wave |
-| 6 | `IR_PPI` | Float | Peak-to-peak pulse interval |
-| 7 | `IR_systolic amplitude` | Float | Amplitude of the systolic peak |
-| 8 | `IR_BPM` | Float | Heart rate in beats per minute |
-| 9 | `IR_HRV` | Float | Heart rate variability metric |
-| 10 | `IR_TEO Mean` | Float | Mean of the Teager Energy Operator |
-| 11 | `IR_TEO std dev` | Float | Standard deviation of the Teager Energy Operator |
-| 12 | `IR_1st_Derivative_Mean` | Float | Mean of the first derivative |
-| 13 | `IR_2nd_Derivative_Mean` | Float | Mean of the second derivative |
-| 14 | `IR_2nd_Derivative_Skewness` | Float | Skewness of the second derivative |
-| 15 | `IR_Harmonic ratio` | Float | Ratio of harmonic frequencies |
-| 16 | `IR_Rise time` | Float | Systolic rise time |
-| 17 | `IR_Decay time` | Float | Diastolic decay time |
-| 18 | `IR_Dicrotic notch` | Float | Position/amplitude of the dicrotic notch |
-| 19 | `Ratio_systolic_amplitude` | Float | Red to IR systolic amplitude ratio |
-| 20 | `Ratio_TEO_Mean` | Float | Red to IR TEO mean ratio |
-| 21 | `Diff_2nd_Derivative_Mean`| Float | Red to IR 2nd derivative mean difference |
-| 22 | `Diff_Spectral_Entropy` | Float | Red to IR spectral entropy difference |
-| 23 | `Diff_Dicrotic_notch` | Float | Red to IR dicrotic notch difference |
-| 24 | `Ensemble ratio` | Float | Ensemble wave ratio |
-| 25 | `Glucose level (mg/dl)` | Float | Target clinical glucose level |
+```text
+C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\08_Data_set_with_24_features\
+└── Master_Dataset_With_24F_2026-06-21_14-40-15\
+    ├── Master_Dataset_With_24F_2026-06-21_14-40-15.csv
+    └── Master_Dataset_With_24F_2026-06-21_14-40-15.json
+```
+
+### Expected Input CSV Columns
+
+The CSV file must contain exactly 25 columns (24 features + 1 target glucose column):
+
+```text
+1.  IR_Skewness
+2.  IR_Kurtosis
+3.  IR_Shannon Entropy
+4.  IR_Spectral Entropy
+5.  IR_pulse width
+6.  IR_PPI
+7.  IR_systolic amplitude
+8.  IR_BPM
+9.  IR_HRV
+10. IR_TEO Mean
+11. IR_TEO std dev
+12. IR_1st_Derivative_Mean
+13. IR_2nd_Derivative_Mean
+14. IR_2nd_Derivative_Skewness
+15. IR_Harmonic ratio
+16. IR_Rise time
+17. IR_Decay time
+18. IR_Dicrotic notch
+19. Ratio_systolic_amplitude
+20. Ratio_TEO_Mean
+21. Diff_2nd_Derivative_Mean
+22. Diff_Spectral_Entropy
+23. Diff_Dicrotic_notch
+24. Ensemble ratio
+25. Glucose level (mg/dl)  ← Target Variable
+```
 
 ---
 
 ## Output Structure
 
-The output folder is named `Master dataset 24F cleaned <timestamp>` and contains:
-1. `Master dataset 24F cleaned <timestamp>.csv`: Cleaned feature matrix.
-2. `Master dataset 24F cleaned <timestamp>.json`: JSON log file containing run parameters.
+The script outputs a timestamped directory containing the cleaned CSV file and a comprehensive JSON log.
 
-### Output JSON Log Keys
-The output JSON log file contains the following key sections:
+### Output Folder Tree
 
-| Log Section | Data Type | Description |
-| :--- | :---: | :--- |
-| `pipeline_info` | Dictionary | Execution time, timestamp, and script version details. |
-| `step7_pipeline_reference`| Dictionary | Cross-references to the input Step 7 files and parameters. |
-| `step7_folder_detection` | Dictionary | Details of detected Step 7 output folders in the input directory. |
-| `file_paths` | Dictionary | Absolute file paths for all input and output files. |
-| `dataset_shape_summary` | Dictionary | Row and column counts before and after cleaning. |
-| `sub_task_1_nan_handling` | Dictionary | Log of dropped rows and imputed feature columns. |
-| `sub_task_2_outlier_handling`| Dictionary | IQR parameters and details of clipped feature values. |
-| `feature_statistics` | Dictionary | Mean, standard deviation, min, max, and median values before and after cleaning. |
-| `verification_results` | Dictionary | Check list pass/fail flags for integrity audits. |
+```text
+C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\09_Cleaned_dataset_without_(NaN_&_outliers)\
+└── Master dataset 24F cleaned 2026-06-21 14-50-22\
+    ├── Master dataset 24F cleaned 2026-06-21 14-50-22.csv
+    └── Master dataset 24F cleaned 2026-06-21 14-50-22.json
+```
+
+### Cleaned CSV Format
+
+The output CSV retains the same 25 columns. Outlier values in features 1 through 24 are clipped to their respective bounds, and rows containing a `NaN` target are dropped.
 
 ---
 
+## Physiological Theories & Wavelength Physics
+
+Non-invasive optical glucose estimation relies on the propagation, scattering, and absorption of light through vascularized tissues. The optical probe utilizes two specific wavelengths: Red (~660 nm) and Near-Infrared (~880–940 nm). The interaction of these wavelengths with blood solutes and tissue structures changes under varying glycaemic states:
+
+```
+                  RED WAVELENGTH (~660 nm)       INFRARED WAVELENGTH (~880-940 nm)
+                 [Dominates Hb vs HbO2 contrast]   [Sensitive to Water & Glucose]
+                                │                                │
+                                ▼                                ▼
+               ┌──────────────────────────────────────────────────┐
+               │                Vascularized Tissue               │
+               │   - Hemoglobin Glycation (HbA1c conformational)  │
+               │   - Hyperosmolarity (plasma volume & viscosity)  │
+               │   - Sympathoadrenal Response (vasoregulation)    │
+               └──────────────────────────────────────────────────┘
+```
+
+### Wavelength-Specific Absorption Characteristics
+1. **Red Wavelength (~660 nm)**: At this wavelength, reduced hemoglobin (Hb) has an absorption coefficient nearly ten times higher than oxyhemoglobin ($\text{HbO}_2$). Consequently, the Red signal is highly sensitive to changes in tissue blood perfusion, oxygen saturation ($SpO_2$), and venous pulsations.
+2. **Infrared Wavelength (~880–940 nm)**: At this band, the absorption coefficients of Hb and $\text{HbO}_2$ intersect and reverse (with $\text{HbO}_2$ absorbing slightly more). Crucially, the absorption of water increases in this region, and glucose molecules exhibit weak but distinct vibrational overtone absorption bands.
+
+The normalization of these signals is captured in the **Ratio-of-Ratios (RoR)** feature:
+
+$$\text{RoR} = \frac{(\text{AC}_{\text{Red}} / \text{DC}_{\text{Red}})}{(\text{AC}_{\text{IR}} / \text{DC}_{\text{IR}})}$$
+
+This ratio and its derivative wave morphological features (such as skewness, rise times, and Teager energy profiles) are modulated by blood glucose concentration through three primary physiological pathways:
+
+#### 1. Hemoglobin Glycation (HbA1c Conformational Shifts)
+Under persistent hyperglycemia, excess glucose molecules bind non-enzymatically to hemoglobin inside red blood cells, producing glycated hemoglobin ($\text{HbA1c}$). This glycation process modifies the spatial conformation of the hemoglobin molecule and changes the charge distribution across the cell membrane. These structural changes alter the molecular absorption cross-sections at both 660 nm and 940 nm, causing a shift in the baseline optical density and pulse amplitudes of the PPG signals.
+
+#### 2. Osmotic Pressure and Blood Viscosity Alterations
+Glucose acts as an osmotic agent in the bloodstream. Elevated blood glucose concentrations (hyperglycemia) draw water from the intracellular and interstitial compartments into the blood vessels to maintain osmotic pressure. This hyperosmolarity leads to:
+- A dilution of blood cells (reducing hematocrit).
+- An increase in total blood plasma volume.
+- Alterations in whole-blood viscosity.
+
+These fluid shifts modify the scattering properties of the blood cells. The resulting changes in photon path length alter the DC offset of both channels. Additionally, the increased blood viscosity dampens the pressure wave, affecting dynamic features like rise times, decay times, and volatility metrics calculated via the Teager Energy Operator ($\Psi$).
+
+#### 3. Sympathoadrenal Cardiovascular Responses
+Rapid changes in blood glucose levels (especially hypoglycemic events) trigger autonomic responses. The body activates the sympathoadrenal system, releasing epinephrine and norepinephrine. This response causes:
+- Peripheral vasoconstriction (decreasing capillaries' blood flow and dampening PPG AC amplitudes).
+- Tachycardia (elevating heart rate and altering heart rate variability metrics like `IR_HRV`, `IR_BPM`, and `IR_PPI`).
+- Vasomotor tone shifts (altering arterial stiffness and shortening the Pulse Transit Time).
+
+Without proper data cleaning (NaN imputation and outlier clipping), these physiological signals can be obscured by sensor noise or motion artifacts.
+
+---
+
+## Machine Learning Mechanics & Optimization
+
+Tree-based algorithms like XGBoost build models by recursively partitioning the feature space to minimize an objective function. Uncleaned data anomalies (missing values and outliers) affect this optimization process in several ways:
+
+### 1. Default Routing and Split Distortion
+When a feature column contains `NaN` values, algorithms like XGBoost allocate missing samples to a default branch (left or right child node) at each split. While this default routing allows the model to handle missing data, if the missingness is caused by non-random sensor dropouts, it can distort the split statistics. 
+
+Furthermore, extreme outliers can skew the split point search. Since decision trees search for split points by sorting feature values and evaluating the reduction in variance, a single extreme outlier can pull the optimal split threshold away from the dense, informative region of the feature distribution, creating shallow, overfitted leaf nodes.
+
+### 2. Second-Order Taylor Expansion & Gradient Dynamics
+XGBoost optimizes a regularized objective function at step $t$:
+
+$$\mathcal{L}^{(t)} = \sum_{i=1}^{n} l\left(y_i, \hat{y}_i^{(t-1)} + f_t(x_i)\right) + \Omega(f_t)$$
+
+Using a second-order Taylor expansion, this objective is approximated as:
+
+$$\mathcal{L}^{(t)} \approx \sum_{i=1}^{n} \left[ l(y_i, \hat{y}_i^{(t-1)}) + g_i f_t(x_i) + \frac{1}{2} h_i f_t^2(x_i) \right] + \Omega(f_t)$$
+
+Where:
+- $g_i$ is the first-order gradient (Jacobian): $g_i = \frac{\partial l(y_i, \hat{y}_i^{(t-1)})}{\partial \hat{y}_i^{(t-1)}}$
+- $h_i$ is the second-order gradient (Hessian): $h_i = \frac{\partial^2 l(y_i, \hat{y}_i^{(t-1)})}{\partial (\hat{y}_i^{(t-1)})^2}$
+
+Under Mean Squared Error (MSE) loss for regression, these simplify to:
+
+$$g_i = -2\left(y_i - \hat{y}_i^{(t-1)}\right) \quad \text{and} \quad h_i = 2$$
+
+If the target variable $y_i$ (Glucose level) contains an outlier or a corrupt value, the gradient $g_i$ will be artificially large. Since the split gain calculation relies on the squared sum of gradients:
+
+$$\text{Gain} = \frac{1}{2} \left[ \frac{\left(\sum_{i \in I_L} g_i\right)^2}{\sum_{i \in I_L} h_i + \lambda} + \frac{\left(\sum_{i \in I_R} g_i\right)^2}{\sum_{i \in I_R} h_i + \lambda} - \frac{\left(\sum_{i \in I} g_i\right)^2}{\sum_{i \in I} h_i + \lambda} \right] - \gamma$$
+
+a single large target outlier will dominate the split gain, forcing the algorithm to select splits that partition the outlier rather than learning the general physiological relationships of the cohort. This is why target `NaN` values must be dropped and target outliers are kept unmodified only if they represent true clinical hyperglycemic or hypoglycemic states.
+
+### 3. Outlier Compression in Feature Scaling
+When features are scaled (e.g., using MinMax or Z-score normalization) downstream, extreme outliers skew the scaling parameters. For instance, in MinMax normalization:
+
+$$x_{\text{scaled}} = \frac{x - x_{\text{min}}}{x_{\text{max}} - x_{\text{min}}}$$
+
+a single large outlier increases $x_{\text{max}}$, compressing all normal, valid physiological feature values into a narrow range (e.g., between $0.0$ and $0.05$). This compression reduces the numerical resolution of the feature, making it difficult for the model to differentiate between normal subjects. Clipping feature outliers to $1.5 \times \text{IQR}$ bounds preserves the resolution and variance of the features for normal inliers.
+
+---
+
+## Percentile Interpolation in Quartile Calculations
+
+To identify outlier boundaries, the script calculates the first quartile ($Q_1$) and third quartile ($Q_3$) of each feature column. In clinical datasets with a small number of samples (such as $N=75$), the index positions corresponding to the 25th and 75th percentiles are often fractional numbers.
+
+Rather than rounding to the nearest index, which can introduce step-change artifacts in small datasets, the script uses linear interpolation:
+
+For a sorted feature vector $Y = [y_1, y_2, \dots, y_n]$ where $y_1 \le y_2 \le \dots \le y_n$, let the virtual index position for percentile $p \in [0, 1]$ be:
+
+$$k = (n - 1) \times p$$
+
+This index position is split into its integer part $i = \lfloor k \rfloor$ and its fractional part $f = k - i$. The percentile value $Q(p)$ is then calculated by interpolating between the values at indices $i+1$ and $i+2$:
+
+$$Q(p) = (1 - f) \times y_{i+1} + f \times y_{i+2}$$
+
+For the first quartile ($p = 0.25$):
+
+$$Q_1 = Q(0.25)$$
+
+For the third quartile ($p = 0.75$):
+
+$$Q_3 = Q(0.75)$$
+
+This interpolation method provides stable quartile estimates that reflect the underlying continuous physiological distribution, ensuring consistent outlier boundaries across datasets.
+
+---
+
+
 ## Detailed Mathematical Formulation
 
-### 1. Median Imputation
-For each feature column $c$, we identify the subset of non-missing values:
+The script implements two primary mathematical algorithms for data cleaning: **Median Imputation** and **IQR-based Clipping**.
 
+### 1. Median Imputation (Sub-task 1)
+
+For feature columns containing missing values, the replacement value is calculated as the median of the non-missing values in that column.
+
+Let $X_c = \{x_1, x_2, \dots, x_N\}$ represent the values in feature column $c$. The subset of valid, non-missing values is defined as:
 $$X'_c = \{x_i \in X_c \mid x_i \neq \text{NaN}\}$$
 
 We sort $X'_c$ in ascending order to obtain the ordered sequence:
-
-$$Y_c = \{y_1, y_2, \dots, y_M\} \quad \text{where} \quad y_1 \le y_2 \le \dots \le y_M$$
+$$Y_c = \{y_1, y_2, \dots, y_M\} \quad \text{where} \quad y_1 \le y_2 \le \dots \le y_M \quad \text{and} \quad M \le N$$
 
 The imputation value $\tilde{y}_c$ is calculated as the median of the distribution:
-
 $$\tilde{y}_c = \text{median}(Y_c) = \begin{cases} 
       y_{\frac{M+1}{2}} & \text{if } M \text{ is odd} \\
       \frac{1}{2}\left(y_{\frac{M}{2}} + y_{\frac{M}{2} + 1}\right) & \text{if } M \text{ is even}
    \end{cases}$$
 
 Any missing value in column $c$ is replaced:
-
 $$\text{For each } x_i \in X_c, \quad \text{if } x_i = \text{NaN} \implies x_i \leftarrow \tilde{y}_c$$
-
-#### Step-by-Step Imputation Example:
-Consider a feature column $X_c = \{12, \text{NaN}, 15, 18, 10, 14\}$.
-1. Extract non-NaN elements: $X'_c = \{12, 15, 18, 10, 14\}$.
-2. Sort elements ascending: $Y_c = \{10, 12, 14, 15, 18\}$.
-3. The count $M = 5$ is odd.
-4. Calculate median index: $\frac{5+1}{2} = 3$ (1-based index).
-5. Extract value at index 3: $y_3 = 14$.
-6. Impute NaN cell: $X_c \leftarrow \{12, 14, 15, 18, 10, 14\}$.
 
 ---
 
-### 2. Interquartile Range (IQR) Outlier Clipping
+### 2. Interquartile Range (IQR) Outlier Clipping (Sub-task 2)
+
+Outliers are identified and adjusted using the Interquartile Range (IQR) method.
+
 For each feature column $c$, the first quartile ($Q_1$) and third quartile ($Q_3$) are calculated from the non-missing values:
-
 $$Q_1(c) = 25\text{th percentile of } X'_c$$
-
 $$Q_3(c) = 75\text{th percentile of } X'_c$$
 
 The Interquartile Range is defined as the difference between these quartiles:
-
 $$\text{IQR}(c) = Q_3(c) - Q_1(c)$$
 
 Using a standard multiplier of $1.5$, the lower and upper bounds for outlier detection are established:
-
 $$\text{LB}(c) = Q_1(c) - 1.5 \times \text{IQR}(c)$$
-
 $$\text{UB}(c) = Q_3(c) + 1.5 \times \text{IQR}(c)$$
 
 For each value $x_i$ in feature column $c$, the clipping operation is defined as:
-
 $$x'_i = \text{clip}(x_i, \text{LB}(c), \text{UB}(c)) = \begin{cases}
       \text{LB}(c) & \text{if } x_i < \text{LB}(c) \\
       \text{UB}(c) & \text{if } x_i > \text{UB}(c) \\
       x_i & \text{if } \text{LB}(c) \le x_i \le \text{UB}(c)
    \end{cases}$$
 
-#### Step-by-Step Outlier Clipping Example:
-Using the sorted sequence from above $Y_c = \{10, 12, 14, 15, 18\}$ ($m=5$):
-1. Compute $Q_1$ (25th percentile, $p=0.25$):
-   - Position index: $k_1 = (5 - 1) \times 0.25 = 1.0$.
-   - Integer index: $i=1$, fractional part: $f=0.0$.
-   - Interpolated value: $Q_1 = (1 - 0) \times y_{1+1} + 0 \times y_{1+2} = y_2 = 12$.
-2. Compute $Q_3$ (75th percentile, $p=0.75$):
-   - Position index: $k_3 = (5 - 1) \times 0.75 = 3.0$.
-   - Integer index: $i=3$, fractional part: $f=0.0$.
-   - Interpolated value: $Q_3 = (1 - 0) \times y_{3+1} + 0 \times y_{3+2} = y_4 = 15$.
-3. Compute IQR: $\text{IQR} = 15 - 12 = 3$.
-4. Establish bounds:
-   - Lower Bound: $\text{LB} = 12 - 1.5 \times 3 = 7.5$.
-   - Upper Bound: $\text{UB} = 15 + 1.5 \times 3 = 19.5$.
-5. Suppose the original column contains outlier values $5.0$ and $25.0$:
-   - The value $5.0$ is below the lower bound ($5.0 < 7.5$) and is clipped UP to $7.5$.
-   - The value $25.0$ is above the upper bound ($25.0 > 19.5$) and is clipped DOWN to $19.5$.
-
----
-
-### 3. Percentile Linear Interpolation
-Quartiles are computed using linear interpolation. For a sorted array $Y = [y_1, y_2, \dots, y_m]$ and a target percentile $p$ (where $p=0.25$ for $Q_1$ and $p=0.75$ for $Q_3$), the index position is calculated as:
-
-$$k = (m - 1) \times p$$
-
-Let $i = \lfloor k \rfloor$ and $f = k - i$. The percentile value $Q(p)$ is computed as:
-
-$$Q(p) = (1 - f) \times y_{i+1} + f \times y_{i+2}$$
+This capping process ensures that extreme values are adjusted to the boundary limits without removing the corresponding rows from the dataset.
 
 ---
 
 ## Configuration Reference
 
-The settings defined at the top of the script are:
+The configuration parameters are defined in the user settings section at the top of the script:
 
 | Parameter | Type | Default Value | Description |
 |---|---|---|---|
-| `INPUT_ROOT` | `Path` | `Path(r"...")` | Input directory containing Step 7 folders. |
-| `OUTPUT_ROOT` | `Path` | `Path(r"...")` | Destination directory for cleaned files. |
-| `TARGET_COLUMN` | `str` | `"Glucose level (mg/dl)"` | Target column name. |
-| `IQR_MULTIPLIER` | `float` | `1.5` | Multiplier for outlier boundaries. |
-| `STEP7_FOLDER_IDENTIFIER` | `str` | `"Master_Dataset_With_24F"`| Folder name identifier. |
-| `STEP7_JSON_PIPELINE_STEP_ID` | `str` | `"STEP 7"` | Step ID verified inside input JSON logs. |
+| `INPUT_ROOT` | `Path` | `Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\08_Data_set_with_24_features")` | The directory scanned for Step 7 output folders. |
+| `OUTPUT_ROOT` | `Path` | `Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\09_Cleaned_dataset_without_(NaN_&_outliers)")` | The destination directory where cleaned outputs are saved. |
+| `TARGET_COLUMN` | `str` | `"Glucose level (mg/dl)"` | The target column name (glucose readings). Rows are dropped if this is `NaN`. |
+| `IQR_MULTIPLIER` | `float` | `1.5` | The multiplier used to calculate the lower and upper bounds for outlier clipping. |
+| `STEP7_FOLDER_IDENTIFIER` | `str` | `"Master_Dataset_With_24F"` | The directory name pattern checked during the validation scan. |
+| `STEP7_JSON_PIPELINE_STEP_ID` | `str` | `"STEP 7"` | The pipeline step identifier verified inside the Step 7 JSON file. |
 
 ---
 
 ## Code Architecture & Function Directory
 
-The script is structured as a modular single-file pipeline. Below is a detailed description of each function:
+The script is structured as a single-file pipeline with modular helper functions.
+
+### Import Inventory
+
+The script imports the following libraries:
+- `os`: Interacts with the operating system.
+- `json`: Parses and exports configuration and log files.
+- `traceback`: Extracts stack traces during execution failures.
+- `pathlib.Path`: Manages file path operations.
+- `datetime.datetime`: Generates formatted timestamps.
+- `tkinter`: Renders directory selection dialogues.
+- `numpy` (as `np`): Performs array manipulation and percentile calculations.
+- `pandas` (as `pd`): Manages tabular data operations.
+
+---
 
 ### Function Reference
 
-- **[find_latest_step7_output_folder](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L53)**
-  - *Internal Logic*: Uses `pathlib.Path.iterdir()` to iterate through the parent directory. It filters folders by checking if `STEP7_FOLDER_IDENTIFIER.lower()` is in the lowercase folder name. If found, it appends details to a candidates list and sorts the list by `p.stat().st_mtime` in descending order, putting the most recently modified folder at index 0. It then scans inside this folder using `glob("*.csv")` and `glob("*.json")` to verify that CSV and JSON log files are present.
-  - *Inputs*: `root_path` (Path)
-  - *Returns*: Dictionary containing detection results.
-- **[print_step7_folder_detection_report](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L105)**
-  - *Role*: Formats and prints a terminal report summarizing the detected Step 7 output folders.
-  - *Inputs*: `detection_result` (Dict)
-  - *Returns*: None
-- **[popup_folder_selector](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L150)**
-  - *Role*: Opens a Tkinter folder browser dialog prompting the user to select the input Step 7 directory.
-  - *Inputs*: `initial_dir` (Path)
-  - *Returns*: Path to the selected folder.
-- **[find_csv_and_json_in_folder](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L198)**
-  - *Role*: Searches the selected folder and returns the paths to the CSV and JSON files.
-  - *Inputs*: `folder_path` (Path)
-  - *Returns*: Tuple of paths (csv_path, json_path).
-- **[validate_is_step7_output](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L230)**
-  - *Internal Logic*: Runs five sequential checks. First, checks the folder name. Second, verifies that the dataframe has exactly 25 columns. Third, verifies the presence of `Glucose level (mg/dl)`. Fourth, checks if row count is 0. Fifth, validates that the JSON log's pipeline step matches "STEP 7" or similar. It aggregates all warnings in a warning list and errors in an error list.
-  - *Inputs*: `folder_path` (Path), `df` (DataFrame), `json_data` (Dict)
-  - *Returns*: Dict containing validation check results.
-- **[build_step7_reference_section](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L310)**
-  - *Role*: Extracts metadata and configurations from the Step 7 JSON to build a cross-reference section for Step 8.
-  - *Inputs*: `step7_json_data` (Dict), `step7_json_path` (Path), `step7_csv_path` (Path)
-  - *Returns*: Dict containing Step 7 provenance details.
-- **[load_csv](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L418)**
-  - *Role*: Parses a CSV file into a Pandas DataFrame and prints basic dimension details.
-  - *Inputs*: `file_path` (Path)
-  - *Returns*: pd.DataFrame
-- **[load_json](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L435)**
-  - *Role*: Parses a JSON file into a dictionary.
-  - *Inputs*: `file_path` (Path)
-  - *Returns*: Dict
-- **[check_existing_file](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L450)**
-  - *Role*: Checks if a file exists and returns its size. Used to audit file replacements.
-  - *Inputs*: `file_path` (Path)
-  - *Returns*: Dict containing size and existence status.
-- **[analyze_nan_values](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L466)**
-  - *Role*: Performs a column-by-column scan to count missing values and identify columns containing `NaN`.
-  - *Inputs*: `df` (DataFrame)
-  - *Returns*: Dict containing detailed NaN analysis.
-- **[handle_nan_values](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L528)**
-  - *Role*: Implements the asymmetric NaN handling strategy (dropping rows with target NaNs and imputing feature NaNs with column medians).
-  - *Inputs*: `df` (DataFrame), `nan_analysis` (Dict)
-  - *Returns*: Tuple of (cleaned_df, nan_handling_log).
-- **[analyze_outliers](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L639)**
-  - *Role*: Computes quartiles, IQR, and bounds for feature columns, reporting values that exceed these limits.
-  - *Inputs*: `df` (DataFrame)
-  - *Returns*: Dict containing outlier statistics.
-- **[clip_outliers](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L725)**
-  - *Role*: Clips feature values that exceed the calculated upper and lower IQR boundaries.
-  - *Inputs*: `df` (DataFrame), `outlier_analysis` (Dict)
-  - *Returns*: Tuple of (clipped_df, clipping_log).
-- **[verify_cleaned_dataset](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L840)**
-  - *Role*: Performs a final validation check on the cleaned dataset to ensure structure and target columns are correct.
-  - *Inputs*: `cleaned_df` (DataFrame), `original_df` (DataFrame)
-  - *Returns*: Dict containing verification results.
-- **[build_cleaning_json_log](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L929)**
-  - *Role*: Aggregates metadata, statistics, logs, and references into a unified Step 8 JSON dictionary.
-  - *Inputs*: Run metadata and stats.
-  - *Returns*: Dict representing the final log structure.
-- **[save_outputs](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L1085)**
-  - *Role*: Saves the cleaned CSV and JSON logs into a timestamped directory, and prints a size comparison if files were replaced.
-  - *Inputs*: Cleaned DataFrame, JSON log, output folder path, timestamp string.
-  - *Returns*: Tuple of paths (csv_path, json_path, output_dir).
-- **[main](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Cleaned_dataset_without_NaN_and_outliers_Creation_code09.py#L1153)**
-  - *Role*: Orchestrates the entire pipeline, executing folder detection, validation, NaN handling, outlier clipping, and data export.
-  - *Inputs*: None
-  - *Returns*: None
+#### 1. `find_latest_step7_output_folder(root_path)`
+- **Role**: Scans `INPUT_ROOT` for folders matching `STEP7_FOLDER_IDENTIFIER` to identify the most recently modified run.
+- **Parameters**: 
+  - `root_path` (`Path`): Path to search.
+- **Returns**: A dictionary containing detection results, metadata, and contents for each folder found.
+
+#### 2. `print_step7_folder_detection_report(detection_result)`
+- **Role**: Formats and prints a terminal report summarizing the detected Step 7 output folders.
+- **Parameters**: 
+  - `detection_result` (`dict`): The dictionary returned by `find_latest_step7_output_folder`.
+- **Returns**: `None`.
+
+#### 3. `popup_folder_selector(initial_dir)`
+- **Role**: Opens a Tkinter dialog box requesting the user to select the Step 7 output folder.
+- **Parameters**: 
+  - `initial_dir` (`Path`): The default directory opened by the folder browser.
+- **Returns**: `Path`: Path to the selected folder.
+- **Raises**: `SystemExit` if the selection is cancelled.
+
+#### 4. `find_csv_and_json_in_folder(folder_path)`
+- **Role**: Searches the selected folder and returns the paths to the CSV and JSON files.
+- **Parameters**: 
+  - `folder_path` (`Path`): Path to the selected directory.
+- **Returns**: `tuple(Path, Path)`: Paths to the discovered CSV and JSON files.
+- **Raises**: `FileNotFoundError` if either file type is missing.
+
+#### 5. `validate_is_step7_output(folder_path, df, json_data)`
+- **Role**: Assures that the selected folder is a valid Step 7 output before processing.
+- **Parameters**: 
+  - `folder_path` (`Path`): The directory path.
+  - `df` (`pd.DataFrame`): The loaded dataset.
+  - `json_data` (`dict`): The parsed JSON log.
+- **Returns**: A dictionary containing validation checks, warnings, and errors.
+
+#### 6. `build_step7_reference_section(step7_json_data, step7_json_path, step7_csv_path)`
+- **Role**: Extracts metadata and configurations from the Step 7 JSON to build a cross-reference section for Step 8.
+- **Parameters**: 
+  - `step7_json_data` (`dict`): Raw Step 7 JSON data.
+  - `step7_json_path` (`Path`): Path to the Step 7 JSON log.
+  - `step7_csv_path` (`Path`): Path to the Step 7 CSV file.
+- **Returns**: `dict`: A cross-reference dictionary containing Step 7 provenance details.
+
+#### 7. `load_csv(file_path)`
+- **Role**: Parses a CSV file into a Pandas DataFrame and prints basic dimension details.
+- **Parameters**: 
+  - `file_path` (`Path`): Path to the target CSV.
+- **Returns**: `pd.DataFrame`.
+
+#### 8. `load_json(file_path)`
+- **Role**: Parses a JSON file into a dictionary.
+- **Parameters**: 
+  - `file_path` (`Path`): Path to the target JSON.
+- **Returns**: `dict`.
+
+#### 9. `check_existing_file(file_path)`
+- **Role**: Checks if a file exists and returns its size. Used to audit file replacements.
+- **Parameters**: 
+  - `file_path` (`Path`): Path to check.
+- **Returns**: `dict` containing existence status and file size.
+
+#### 10. `analyze_nan_values(df)`
+- **Role**: Performs a column-by-column scan to count missing values and identify columns containing `NaN`.
+- **Parameters**: 
+  - `df` (`pd.DataFrame`): The input dataset.
+- **Returns**: `dict`: Detailed breakdown of missing values.
+
+#### 11. `handle_nan_values(df, nan_analysis)`
+- **Role**: Implements the asymmetric NaN handling strategy (dropping rows with target NaNs and imputing feature NaNs with column medians).
+- **Parameters**: 
+  - `df` (`pd.DataFrame`): The input dataset.
+  - `nan_analysis` (`dict`): The dictionary returned by `analyze_nan_values`.
+- **Returns**: `tuple(pd.DataFrame, dict)`: Cleaned DataFrame and handling logs.
+
+#### 12. `analyze_outliers(df)`
+- **Role**: Computes quartiles, IQR, and bounds for feature columns, reporting values that exceed these limits.
+- **Parameters**: 
+  - `df` (`pd.DataFrame`): The dataset (after NaN handling).
+- **Returns**: `dict`: Outlier statistics.
+
+#### 13. `clip_outliers(df, outlier_analysis)`
+- **Role**: Clips feature values that exceed the calculated upper and lower IQR boundaries.
+- **Parameters**: 
+  - `df` (`pd.DataFrame`): The dataset.
+  - `outlier_analysis` (`dict`): The outlier statistics.
+- **Returns**: `tuple(pd.DataFrame, dict)`: Clipped DataFrame and clipping logs.
+
+#### 14. `verify_cleaned_dataset(cleaned_df, original_df)`
+- **Role**: Performs a final validation check on the cleaned dataset to ensure structure and target columns are correct.
+- **Parameters**: 
+  - `cleaned_df` (`pd.DataFrame`): The cleaned dataset.
+  - `original_df` (`pd.DataFrame`): The raw dataset before preprocessing.
+- **Returns**: `dict`: Verification results.
+
+#### 15. `build_cleaning_json_log(...)`
+- **Role**: Aggregates metadata, statistics, logs, and references into a unified Step 8 JSON dictionary.
+- **Parameters**: Multiple metrics and logs gathered during execution.
+- **Returns**: `dict`: The unified log.
+
+#### 16. `save_outputs(cleaned_df, json_log, output_folder, timestamp_str)`
+- **Role**: Saves the cleaned CSV and JSON logs into a timestamped directory, and prints a size comparison if files were replaced.
+- **Parameters**: 
+  - `cleaned_df` (`pd.DataFrame`): Cleaned dataset.
+  - `json_log` (`dict`): Final log dict.
+  - `output_folder` (`Path`): Parent output path.
+  - `timestamp_str` (`str`): Formatting string.
+- **Returns**: `tuple(Path, Path, Path)`: Paths to saved files and folder.
+
+#### 17. `main()`
+- **Role**: Orchestrates the entire pipeline, executing folder detection, validation, NaN handling, outlier clipping, and data export.
+- **Parameters**: None.
+- **Returns**: `None`.
 
 ---
 
 ## Verification & Data Auditing
 
 The script performs several automated validation checks before exporting data:
-1. **Column Tally Check**: Confirms that the column count is exactly 25.
-2. **Missing Values Audit**: Verifies that all missing values have been resolved.
-3. **Feature Range Check**: Confirms that feature values match calculated boundaries.
-4. **Target Preservation Check**: Verifies that target glucose values were not modified.
-5. **Numeric Check**: Confirms that all feature columns are numeric.
+
+### 1. Structural Integrity Check
+Checks that the dataset shape matches expectations. The column count must remain exactly 25, and column names must match the input file exactly.
+$$\text{Columns}_{\text{cleaned}} = \text{Columns}_{\text{original}} \quad \text{and} \quad \text{Header}_{\text{cleaned}} \equiv \text{Header}_{\text{original}}$$
+
+### 2. Missing Values Audit
+Verifies that no missing values remain in either the feature columns or the target columns.
+$$\sum_{c=1}^{C} \sum_{i=1}^{R} \mathbb{I}(x_{i,c} == \text{NaN}) = 0 \quad \text{where} \quad \mathbb{I} \text{ is the indicator function}$$
+
+### 3. Feature Range Validation
+Iterates through all feature columns and compares the new min and max boundaries. If values were clipped, the new boundary must align with the calculated limits:
+$$\text{If } \min(X_c) < \text{LB}(c) \implies \min(X'_c) == \text{LB}(c)$$
+$$\text{If } \max(X_c) > \text{UB}(c) \implies \max(X'_c) == \text{UB}(c)$$
+Non-outlier values are verified using a tight tolerance ($10^{-9}$) to confirm they were not modified:
+$$|x_{i,c} - x'_{i,c}| < 10^{-9} \quad \text{for all } x_{i,c} \in [\text{LB}(c), \text{UB}(c)]$$
+
+### 4. Target Column Audit
+Confirms that target glucose values were not modified or scaled during the outlier clipping process:
+$$y'_i \equiv y_i \quad \text{for all } i \in R_{\text{cleaned}}$$
 
 ---
 
 ## Troubleshooting & FAQ
 
-### 1. Why do outliers remain after clipping?
-Clipping outlier values reduces overall variance, which shifts the calculated boundaries. If boundaries are recalculated after clipping, some adjusted values may fall outside the new limits. This is normal behavior for single-pass clipping.
+### Frequently Encountered Issues
 
-### 2. Tkinter Dialog Does Not Open
-This is common in headless Linux environments. Ensure python has access to a window manager, or modify the script to bypass the GUI and process the latest folder automatically.
+#### 1. Why do outliers sometimes remain after clipping?
+After clipping outliers, the overall shape of the feature distribution changes. When the script runs its post-clipping check, it recalculates the first quartile ($Q_1$), third quartile ($Q_3$), and IQR based on the adjusted values. Because the variance has decreased, these boundaries contract, which can occasionally label newly adjusted boundary values as outliers. This is expected behavior and a normal mathematical result of single-pass clipping. The values have been successfully capped to the original boundaries.
 
-### 3. Target Glucose Rows Dropped
-Rows with missing target values are dropped because the model cannot train without a label. These drops are logged in the JSON file.
+#### 2. What happens if Tkinter raises a "no display name" error?
+If you are running the script in a headless Linux environment, Tkinter may fail to open the folder browser. The script will catch the error and display an instructions message in the terminal. If the window fails to open, verify that you are running Python locally with window manager privileges.
 
-### 4. What happens to original features after clipping?
-Non-outlier feature values are verified using a tight numerical tolerance ($10^{-9}$) to confirm they were not modified. Only values that fall strictly outside the lower and upper bounds are adjusted.
+#### 3. Where are the dropped rows logged?
+Dropped rows (such as rows missing target glucose values) are detailed under `sub_task_1_nan_handling.nan_handling.rows_dropped_due_to_target_nan` in the output JSON log. The log records the original row index, the reason for dropping, and a copy of the features in that row prior to exclusion.
 
-### 5. How does the script handle non-numeric columns if they are introduced?
-During validation (`verify_cleaned_dataset`), the script scans the dataset using Pandas `is_numeric_dtype` helper. If any non-numeric features are found, the script flags them as failed and lists the exact offending column names in the terminal.
-
-### 6. Why is median imputation done before outlier clipping?
-If outlier clipping were done first, any missing values would be ignored during quartile calculations ($Q_1$, $Q_3$). However, if we imputed after clipping, the imputed median would be calculated from the clipped distribution rather than the original, unclipped distribution. Calculating the median on the raw, unclipped data provides a more accurate representation of the central tendency.
-
-### 7. Can this script handle datasets with other target columns?
-Yes, but you must change the `TARGET_COLUMN` variable in the script configuration block. For example, if your label column is named `"Blood_Glucose"`, set `TARGET_COLUMN = "Blood_Glucose"`. The script will automatically drop any rows where this target is NaN and apply the IQR outlier detection only to other columns.
-
-### 8. Why does the script use `np.percentile` instead of Pandas `.quantile`?
-Both methods calculate percentiles, but `np.percentile` is directly compatible with NumPy arrays and is highly optimized. It uses linear interpolation by default, matching standard statistical calculators. The resulting quartiles are mathematically equivalent to Pandas `.quantile(0.25)` and `.quantile(0.75)` using standard settings.
-
-### 9. Can we automate the folder selection instead of using the pop-up GUI?
-Yes. If you wish to run the script in a fully automated CI/CD pipeline or script environment, you can modify `main()` to bypass `popup_folder_selector` and assign `input_folder = prev_detection_result["latest_folder"]["full_path"]` directly. This will run the pipeline using the most recently modified folder in the input directory without requiring user interaction.
+#### 4. Can I use a multiplier other than 1.5 for outlier detection?
+Yes. You can adjust the outlier threshold by changing the `IQR_MULTIPLIER` parameter in the configuration settings. Using a larger multiplier (e.g., `3.0`) will target only extreme outliers, while a smaller multiplier (e.g., `1.0`) will clip values closer to the median. The default value of `1.5` is the standard statistical configuration.
 
 ---
 
 ## Next Step in Pipeline
 
-Once the dataset is cleaned, proceed to **Step 8 (Sub-task 3 & 4)**, implemented in [Train_Test_Split_and_Robust_Scaling_Code10.py](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py). This script splits the cleaned dataset into training and test partitions, and fits/transforms features using a `RobustScaler` to prevent data leakage.
+Once the dataset is cleaned, proceed to **Step 8 (Sub-task 3 & 4)**, implemented in `Train_Test_Split_and_Robust_Scaling_Code10.py`:
+
+```
+┌──────────────────────────────────────┐
+│  Step 8 (Sub-task 1 & 2): THIS SCRIPT│  ← Prepares clean, unscaled master matrix
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│  Step 8 (Sub-task 3 & 4): Code 10    │  ← Splits data and scales features
+└──────────────────┬───────────────────┘
+                   │
+                   ▼
+┌──────────────────────────────────────┐
+│  Step 9: XGBoost Model Training      │  ← Train and evaluate model
+└──────────────────────────────────────┘
+```
+
+Code 10 will import this cleaned dataset, perform a subject-stratified Train/Test split, fit a `RobustScaler` on the training partition, and scale the test partition using those parameters to prevent data leakage.
 
 ---
 
 ## References
 
 1. Tukey, J. W. (1977). *Exploratory Data Analysis*. Addison-Wesley.
-   - *Details*: Introduces the foundational concepts of exploratory data analysis, specifically the boxplot and the $1.5 \times \text{IQR}$ threshold for identifying mild outliers. We use this standard rule for clipping feature noise.
 2. Pedregosa, F., et al. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research*, 12, 2825-2830.
-   - *Details*: Scikit-learn reference paper, which details standard implementations of data preprocessing, evaluation, and imputation blocks.
 3. Elgendi, M. (2012). On the Analysis of Photoplethysmogram Signals. *Current Cardiology Reviews*, 8(1), 14-25.
-   - *Details*: A comprehensive review of PPG signal analysis. It details how motion artifacts and blood volume shifts introduce baseline wandering and amplitude spikes, which mathematically translate to the NaNs and outliers handled by our script.
 4. McKinney, W. (2010). Data Structures for Statistical Computing in Python. *Proceedings of the 9th Python in Science Conference*, 51-56.
-   - *Details*: The pandas library reference, explaining the vectorized data structures and median/percentile algorithms used for high-performance cleaning.

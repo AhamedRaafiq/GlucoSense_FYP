@@ -60,7 +60,7 @@ This tool represents **Step 8 (Sub-task 3 & 4)** of the PPG-based glucose estima
    ```bash
    pip install numpy pandas scikit-learn
    ```
-3. **Configure File Paths**: Edit the user settings at the top of the script [Train_Test_Split_and_Robust_Scaling_Code10.py](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py) to point to your cleaning-step output and your desired target directory:
+3. **Configure File Paths**: Edit the user settings at the top of the script `Train_Test_Split_and_Robust_Scaling_Code10.py` to point to your cleaning-step output and your desired target directory:
    ```python
    INPUT_ROOT  = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\09_Cleaned_dataset_without_(NaN_&_outliers)")
    OUTPUT_ROOT = Path(r"C:\Users\DELL\Documents\GitHub\fyp\05_Data_Storage\10_Robust_Scaled_and_Train_Test_Splitted_Data_Set")
@@ -759,23 +759,23 @@ The script uses a modular functional structure. The table below lists all functi
 
 | Function Name | Input Parameters | Return Value | Role & Description |
 | :--- | :--- | :---: | :--- |
-| [find_latest_prev_step_folder](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L98) | `root_path` (Path) | Dict | Scans the input root directory to find the latest subfolder containing the string "Master dataset 24F cleaned". |
-| [print_prev_step_folder_detection_report](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L146) | `detection_result` (Dict) | None | Prints a summary of the detected folders, their modification times, and file structures to the console. |
-| [popup_folder_selector](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L187) | `initial_dir` (Path) | Path | Displays a Tkinter file dialog, prompting the user to select the input folder. |
-| [find_csv_and_json_in_folder](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L218) | `folder_path` (Path) | Tuple (Path, Path) | Identifies the CSV and JSON log files within the selected directory. |
-| [validate_is_prev_step_output](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L244) | `folder_path` (Path), `df` (DataFrame), `json_data` (Dict) | Dict | Validates that the input folder matches the output of the prior cleaning stage. |
-| [build_pipeline_chain_summary](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L314) | `cleaning_step_json_data` (Dict), `prev_csv_path` (Path), `prev_json_path` (Path) | Dict | Extracts and compiles metadata from upstream pipeline stages (Steps 6, 7, and 8a). |
-| [load_csv](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L391) | `file_path` (Path) | DataFrame | Loads the CSV file into a Pandas DataFrame and checks that it is not empty. |
-| [load_json](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L406) | `file_path` (Path) | Dict | Loads and parses the JSON validation log from the input directory. |
-| [check_existing_file](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L419) | `file_path` (Path) | Dict | Checks if a file exists and returns its path and size. |
-| [separate_x_y](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L434) | `df` (DataFrame) | Tuple (DataFrame, Series, List) | Separates the 24 features from the target glucose column. |
-| [validate_hyperparameter_config](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L474) | `total_samples` (Int), `y` (Series) | Tuple (Series, Series) | Performs pre-flight checks on split quotas, bin ranges, and manual selection indexes. |
-| [perform_stratified_train_test_split](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L608) | `X` (DataFrame), `y` (Series), `bin_indices` (Series), `bin_counts` (Series) | Tuple (DataFrame, DataFrame, Series, Series, Dict) | Partitions features and targets into train and test sets using stratified sampling and manual overrides. |
-| [perform_robust_scaling](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L826) | `X_train` (DataFrame), `X_test` (DataFrame), `feature_columns` (List) | Tuple (DataFrame, DataFrame, Dict) | Fits a `RobustScaler` on the training features and transforms both training and test features. |
-| [verify_outputs](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L925) | `X_train_scaled` (DataFrame), `X_test_scaled` (DataFrame), `y_train` (Series), `y_test` (Series), `original_df` (DataFrame), `feature_columns` (List) | Dict | Runs validation checks on the split and scaled output dataframes. |
-| [build_split_scale_json_log](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L1018) | *Thirteen parameters* | Dict | Compiles split parameters, scaling statistics, and validation checks into a single JSON log structure. |
-| [save_all_outputs](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L1160) | *Eight parameters* | Tuple (Path, Dict) | Saves the training data, testing data, and JSON log files to the output directory. |
-| [main](file:///C:/Users/DELL/Documents/GitHub/fyp/07_Data_Set_Processing_Code_for_ML/Train_Test_Split_and_Robust_Scaling_Code10.py#L1282) | None | None | Orchestrates the entire pipeline execution flow. |
+| `find_latest_prev_step_folder` | `root_path` (Path) | Dict | Scans the input root directory to find the latest subfolder containing the string "Master dataset 24F cleaned". |
+| `print_prev_step_folder_detection_report` | `detection_result` (Dict) | None | Prints a summary of the detected folders, their modification times, and file structures to the console. |
+| `popup_folder_selector` | `initial_dir` (Path) | Path | Displays a Tkinter file dialog, prompting the user to select the input folder. |
+| `find_csv_and_json_in_folder` | `folder_path` (Path) | Tuple (Path, Path) | Identifies the CSV and JSON log files within the selected directory. |
+| `validate_is_prev_step_output` | `folder_path` (Path), `df` (DataFrame), `json_data` (Dict) | Dict | Validates that the input folder matches the output of the prior cleaning stage. |
+| `build_pipeline_chain_summary` | `cleaning_step_json_data` (Dict), `prev_csv_path` (Path), `prev_json_path` (Path) | Dict | Extracts and compiles metadata from upstream pipeline stages (Steps 6, 7, and 8a). |
+| `load_csv` | `file_path` (Path) | DataFrame | Loads the CSV file into a Pandas DataFrame and checks that it is not empty. |
+| `load_json` | `file_path` (Path) | Dict | Loads and parses the JSON validation log from the input directory. |
+| `check_existing_file` | `file_path` (Path) | Dict | Checks if a file exists and returns its path and size. |
+| `separate_x_y` | `df` (DataFrame) | Tuple (DataFrame, Series, List) | Separates the 24 features from the target glucose column. |
+| `validate_hyperparameter_config` | `total_samples` (Int), `y` (Series) | Tuple (Series, Series) | Performs pre-flight checks on split quotas, bin ranges, and manual selection indexes. |
+| `perform_stratified_train_test_split` | `X` (DataFrame), `y` (Series), `bin_indices` (Series), `bin_counts` (Series) | Tuple (DataFrame, DataFrame, Series, Series, Dict) | Partitions features and targets into train and test sets using stratified sampling and manual overrides. |
+| `perform_robust_scaling` | `X_train` (DataFrame), `X_test` (DataFrame), `feature_columns` (List) | Tuple (DataFrame, DataFrame, Dict) | Fits a `RobustScaler` on the training features and transforms both training and test features. |
+| `verify_outputs` | `X_train_scaled` (DataFrame), `X_test_scaled` (DataFrame), `y_train` (Series), `y_test` (Series), `original_df` (DataFrame), `feature_columns` (List) | Dict | Runs validation checks on the split and scaled output dataframes. |
+| `build_split_scale_json_log` | *Thirteen parameters* | Dict | Compiles split parameters, scaling statistics, and validation checks into a single JSON log structure. |
+| `save_all_outputs` | *Eight parameters* | Tuple (Path, Dict) | Saves the training data, testing data, and JSON log files to the output directory. |
+| `main` | None | None | Orchestrates the entire pipeline execution flow. |
 
 ---
 
@@ -815,7 +815,7 @@ Following the execution of the pipeline, **Code 10** runs six integrity checks t
 
 ## Next Step in Pipeline
 
-With the training and testing datasets split, scaled, and verified, the preprocessing stage is complete. The next step is **Step 9: XGBoost Model Training & Evaluation** (typically implemented in [XGBoost_ML_Code11.py](file:///C:/Users/DELL/Documents/GitHub/fyp/08_Machine_Learning_Models/XGBoost_ML_Code11.py)). This downstream stage:
+With the training and testing datasets split, scaled, and verified, the preprocessing stage is complete. The next step is **Step 9: XGBoost Model Training & Evaluation** (typically implemented in `XGBoost_Regressors_Model_Training_Code11.py`). This downstream stage:
 1. Loads `X_train_scaled.csv` and `y_train.csv` to train the regression trees.
 2. Evaluates model performance on `X_test_scaled.csv` and `y_test.csv` using metrics like Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and Clarke Error Grid analysis.
 3. Uses the scaling parameters stored in the JSON log to transform new PPG measurements for real-time inference.
