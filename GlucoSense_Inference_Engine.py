@@ -1601,6 +1601,147 @@ def stage8_save_outputs(raw_csv_path, win_paths, saved_windows, proc_results,
 
 
 # ==============================================================================
+#  STAGE 9 — ACTUAL GLUCOSE VALIDATION  (optional post-prediction step)
+# ==============================================================================
+
+def stage9_validate_prediction(prediction, json_path, log_path):
+    """
+    Optionally prompts the user for an actual (reference) glucose value,
+    then computes and displays error metrics. Results are appended to the
+    existing session JSON and prediction_log.csv — no earlier output is altered.
+    """
+    _banner("STAGE 9 — Actual Glucose Validation (Optional)")
+
+    print("  ─────────────────────────────────────────────────────────────")
+    print("    Do you have an actual (reference) glucose measurement?")
+    print("      [1]  Yes — enter my actual glucose value")
+    print("      [2]  No  — skip validation and exit")
+    print("  ─────────────────────────────────────────────────────────────")
+
+    while True:
+        choice = input("  Enter choice [1 or 2]: ").strip()
+        if choice in ("1", "2"):
+            break
+        print("  ❌ Invalid. Please enter 1 or 2.")
+
+    if choice == "2":
+        print("\n  ℹ️  Validation skipped. Exiting.")
+        return
+
+    # ── Collect actual glucose value ──────────────────────────────────────────
+    actual = None
+    while actual is None:
+        raw = input("\n  Enter actual glucose value (mg/dL): ").strip()
+        try:
+            v = float(raw)
+            if not np.isfinite(v) or v <= 0:
+                raise ValueError("Value must be a positive finite number.")
+            actual = v
+        except ValueError as exc:
+            print(f"  ❌ Invalid input ({exc}). Please try again.")
+
+    # ── Compute error metrics ─────────────────────────────────────────────────
+    pred        = float(prediction)
+    signed_err  = pred - actual
+    abs_err     = abs(signed_err)
+    pct_err     = (abs_err / actual) * 100.0
+    mae         = abs_err          # identical to abs_err for a single point
+    rmse        = abs_err          # identical to abs_err for a single point
+    # R² is undefined for a single observation; we report it as None
+    r2_str      = "N/A (single point)"
+
+    # ── Clarke Error Grid Zone classification ─────────────────────────────────
+    def _clarke_zone(ref, pred_val):
+        """Returns Clarke Error Grid zone (A–E) for a single (ref, pred) pair."""
+        # Zone A: within 20 % of reference OR both < 70 mg/dL
+        if abs(pred_val - ref) <= 0.20 * ref:
+            return "A"
+        if ref < 70 and pred_val < 70:
+            return "A"
+        # Zone E boundaries
+        if ref < 70 and pred_val > 180:
+            return "E"
+        if ref > 180 and pred_val < 70:
+            return "E"
+        # Zone D: dangerous failure to detect hypoglycaemia / hyperglycaemia
+        if ref < 70 and pred_val >= 70 and pred_val <= 180:
+            return "D"
+        if ref > 240 and pred_val >= 70 and pred_val <= 180:
+            return "D"
+        # Zone C: over-correcting treatment errors
+        if ref >= 70 and ref <= 180 and pred_val > 180:
+            if pred_val > ref * 1.20:
+                return "C"
+        if ref >= 70 and ref <= 180 and pred_val < 70:
+            if pred_val < ref * 0.80:
+                return "C"
+        # Everything else falls in Zone B
+        return "B"
+
+    clarke = _clarke_zone(actual, pred)
+
+    # ── Console report ────────────────────────────────────────────────────────
+    sep = "  " + "─" * 50
+    print(f"\n{sep}")
+    print(f"  📊  Error Metrics Report")
+    print(sep)
+    print(f"  Predicted Glucose   : {pred:.2f} mg/dL")
+    print(f"  Actual Glucose      : {actual:.2f} mg/dL")
+    print(sep)
+    print(f"  Signed Error        : {signed_err:+.4f} mg/dL  {'(over-prediction)' if signed_err > 0 else '(under-prediction)' if signed_err < 0 else '(exact)'}")
+    print(f"  Absolute Error      : {abs_err:.4f} mg/dL")
+    print(f"  Percentage Error    : {pct_err:.4f} %")
+    print(f"  MAE  (N=1)          : {mae:.4f} mg/dL")
+    print(f"  RMSE (N=1)          : {rmse:.4f} mg/dL")
+    print(f"  R²                  : {r2_str}")
+    print(f"  Clarke EG Zone      : {clarke}")
+    print(sep + "\n")
+
+    # ── Build validation dict ─────────────────────────────────────────────────
+    validation = {
+        "actual_glucose_mg_dL"    : round(actual,      4),
+        "predicted_glucose_mg_dL" : round(pred,        4),
+        "signed_error_mg_dL"      : round(signed_err,  4),
+        "absolute_error_mg_dL"    : round(abs_err,     4),
+        "percentage_error_pct"    : round(pct_err,     4),
+        "mae_mg_dL"               : round(mae,         4),
+        "rmse_mg_dL"              : round(rmse,        4),
+        "r2"                      : None,   # undefined for N=1
+        "clarke_error_grid_zone"  : clarke,
+    }
+
+    # ── Append validation to session_metadata.json ───────────────────────────
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            session = json.load(f)
+        session["validation"] = validation
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(session, f, indent=4)
+        print(f"  💾 Validation saved to session JSON : {json_path}")
+    except Exception as exc:
+        print(f"  ⚠️  Could not update session JSON: {exc}")
+
+    # ── Append validation columns to prediction_log.csv ──────────────────────
+    try:
+        log_df = pd.read_csv(log_path)
+        mask   = log_df["run_id"] == _RUN_ID
+        if mask.any():
+            log_df.loc[mask, "actual_glucose_mg_dL"] = round(actual,     4)
+            log_df.loc[mask, "signed_error_mg_dL"]   = round(signed_err, 4)
+            log_df.loc[mask, "absolute_error_mg_dL"] = round(abs_err,    4)
+            log_df.loc[mask, "percentage_error_pct"] = round(pct_err,    4)
+            log_df.loc[mask, "mae_mg_dL"]            = round(mae,        4)
+            log_df.loc[mask, "rmse_mg_dL"]           = round(rmse,       4)
+            log_df.loc[mask, "clarke_zone"]          = clarke
+            log_df.to_csv(log_path, index=False)
+            print(f"  💾 Validation columns appended to prediction log : {log_path}")
+        else:
+            print(f"  ⚠️  Run ID '{_RUN_ID}' not found in prediction log. Skipping CSV update.")
+    except Exception as exc:
+        print(f"  ⚠️  Could not update prediction log CSV: {exc}")
+
+
+# ==============================================================================
 #  MAIN ENTRY POINT
 # ==============================================================================
 
@@ -1635,6 +1776,9 @@ def main():
             raw_csv, win_paths, saved_windows, proc_results,
             all_win_feats, avg_feats, feat24, scaled24, sel_feats, prediction
         )
+
+        # ── Stage 9: Actual Glucose Validation (optional) ────────────────────
+        stage9_validate_prediction(prediction, json_path, log_path)
 
         # ── Final Summary ─────────────────────────────────────────────────────
         print("\n" + "═" * 70)
