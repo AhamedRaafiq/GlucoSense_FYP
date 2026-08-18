@@ -1,73 +1,36 @@
-# Tests
+# 🧪 Tests & Validation
 
-## Overview
-This folder contains test suites for validating firmware, data processing, and machine learning components of the diabetes prediction system.
+This directory contains the comprehensive testing suite for the GlucoSense pipeline. It validates all system components, ensuring the reliability of the firmware, signal processing algorithms, machine learning models, and system integration.
 
-## Purpose
-- Unit tests for individual functions
-- Integration tests for complete workflows
-- Validation tests for data quality
-- Model performance tests
+## 🚀 Key Features
 
-## Planned Test Categories
+- **Firmware Testing:** Validates I2C communication, sensor initialization routines, and UART data transmission (using ESP-IDF testing frameworks).
+- **Data Processing Validation:** Unit tests for signal normalization, filtering algorithms, and feature extraction correctness.
+- **ML Model Verification:** Tests for training reproducibility, evaluation metric accuracy, cross-validation logic, and edge-case handling.
+- **Integration Tests:** End-to-end data flow validation and system benchmark testing.
 
-### 1. Firmware Tests
-- I2C communication validation
-- Sensor initialization checks
-- Data acquisition accuracy
-- UART transmission integrity
+## 📁 Directory Structure
 
-### 2. Data Processing Tests
-- Normalization correctness
-- Filter performance validation
-- Feature extraction accuracy
-- Data format consistency
+- `test_firmware/`: Hardware and microcontroller unit tests.
+- `test_data_processing/`: Validation for signal cleaning and feature generation.
+- `test_ml_models/`: ML pipeline reproducibility and scoring checks.
+- `test_integration/`: End-to-end pipeline execution tests.
+- `test_data/`: Mock datasets and fixtures for test isolation.
 
-### 3. Machine Learning Tests
-- Model training reproducibility
-- Prediction accuracy validation
-- Cross-validation tests
-- Edge case handling
+## 🎯 Coverage Goals
 
-### 4. Integration Tests
-- End-to-end pipeline validation
-- Data flow verification
-- System performance benchmarks
+- **General Code Coverage:** > 80%
+- **Critical Paths:** 100% (Clinical weighting logic, vital signal processing).
 
-## File Structure (To Be Created)
-```
-08_Tests/
-├── test_firmware/           # ESP32 firmware tests
-├── test_data_processing/    # Signal processing tests
-├── test_ml_models/          # ML model tests
-├── test_integration/        # End-to-end tests
-├── test_data/              # Sample data for testing
-└── README.md               # This file
-```
+## 🚀 Quick Start
 
-## Testing Framework
-- **Python**: `pytest`, `unittest`
-- **Firmware**: ESP-IDF testing framework
-- **CI/CD**: GitHub Actions (future)
-
-## Running Tests
+**Run All Tests**
 ```bash
-# Python tests
-pytest 08_Tests/
-
-# Specific test file
-pytest 08_Tests/test_data_processing/test_normalization.py
+pytest 09_Tests/
 ```
 
-## Test Coverage Goals
-- Aim for >80% code coverage
-- Critical paths: 100% coverage
-- Document known limitations
-
-## Getting Started
-This folder is currently empty. Tests will be added as components are developed.
-
-## Related Folders
-- `01_Firmware_ESP32/` - Firmware to be tested
-- `03_Python_Signal_Processing_Pipeline/` - Processing code to be tested
-- `06_Machine_Learning_Models/` - Models to be validated
+**Run Specific Test Suite**
+```bash
+pytest 09_Tests/test_data_processing/test_normalization.py
+```
+*(Continuous Integration via GitHub Actions is planned for automated test execution).*
