@@ -4,7 +4,7 @@
 
 ### Non-Invasive Blood Glucose Estimation via PPG Optical Signal Analysis
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: Source-Available](https://img.shields.io/badge/License-Source--Available-orange.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://python.org)
 [![ESP-IDF](https://img.shields.io/badge/ESP--IDF-v5.x-E7352C?logo=espressif&logoColor=white)](https://docs.espressif.com/projects/esp-idf/)
 [![React 18](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev)
@@ -112,8 +112,8 @@ The data flows through **4 phases and 11 sequential steps** — from photons hit
 ### 1 · Clone & Install
 
 ```bash
-git clone https://github.com/AhamedRaafiq/fyp_new.git
-cd fyp_new
+git clone https://github.com/AhamedRaafiq/GlucoSense_FYP.git
+cd GlucoSense_FYP
 pip install -r requirements.txt
 ```
 
@@ -184,7 +184,10 @@ Contributions are welcome! Please read the [Contributing Guidelines](CONTRIBUTIN
 
 ## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is released under a **Source-Available License** — see the [LICENSE](LICENSE) file for details.
+
+> 👁️ You are free to **view, review, and provide feedback** on this repository.  
+> 🔒 **Copying, modification, distribution, or use** of this code requires **written permission** from the author.
 
 > ⚠️ **Disclaimer:** GlucoSense is an academic research prototype. It has **not** been validated for clinical use and must **not** be used for medical diagnosis or treatment decisions.
 
