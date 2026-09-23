@@ -14,7 +14,7 @@
 
 <br/>
 
-<img src="GlucoSense_Hardware.png" alt="GlucoSense Hardware — Exploded View" width="720"/>
+<img src="docs/hardware.png" alt="GlucoSense Hardware — Exploded View" width="720"/>
 
 <br/>
 
@@ -22,7 +22,7 @@
 
 ---
 
-**[Explore the Pipeline ⟶](PIPELINE_FLOWCHART.md)** · **[Contributing ⟶](CONTRIBUTING.md)** · **[Project Report ⟶](GlucoSense_Project_Report.html)**
+**[Explore the Pipeline ⟶](PIPELINE_FLOWCHART.md)** · **[Contributing ⟶](CONTRIBUTING.md)** · **[Project Report ⟶](docs/report.html)**
 
 </div>
 
@@ -127,7 +127,7 @@ docker-compose up -d
 ### 3 · Launch the Backend
 
 ```bash
-cd Backend
+cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
@@ -135,7 +135,7 @@ uvicorn app.main:app --reload --port 8000
 ### 4 · Launch the Frontend
 
 ```bash
-cd Frontend
+cd frontend
 npm install
 npm run dev
 ```
@@ -144,10 +144,10 @@ npm run dev
 
 ```bash
 # Mode 1: From an existing CSV
-python GlucoSense_Inference_Engine.py
+python inference/engine.py
 
 # Mode 2: Live from ESP32
-python GlucoSense_Inference_Engine.py   # Select live acquisition when prompted
+python inference/engine.py   # Select live acquisition when prompted
 ```
 
 <br/>
@@ -156,20 +156,28 @@ python GlucoSense_Inference_Engine.py   # Select live acquisition when prompted
 
 ```
 GlucoSense/
-├── 01_Firmware_ESP32/            # ESP32-S3 + MAX30102 embedded C firmware
-├── 02_Python_Data_Logger/        # Real-time PyQt5 dual-channel waveform logger
-├── 03_Python_Data_Processing/    # Interactive window slicer tool
-├── 04_Python_Signal_Processing/  # 12-stage automated DSP engine (~3,000 lines)
-├── 05_Signal_Feature_Learning/   # 19-feature per-channel extraction + averaging
-├── 06_Data_Set_Creation/         # PPG ↔ glucometer metadata fusion
-├── 07_Data_Set_Processing/       # 24-feature engineering & dataset cleaning
-├── 08_Machine_Learning_Models/   # XGBoost training, tuning & Clarke Grid eval
-├── 08_Results_and_Visualizations/# 17 experiment runs + tuning history
-├── 09_Tests/                     # pytest unit tests
-├── 10_Docs_&_R_Papers/           # Research papers & documentation
-├── Backend/                      # FastAPI + SQLAlchemy + WebSocket server
-├── Frontend/                     # React 18 + Vite clinical dashboard
-├── GlucoSense_Inference_Engine.py  # Unified end-to-end runtime (~1,800 lines)
+├── firmware/                     # ESP32-S3 + MAX30102 embedded C firmware
+├── pipeline/                     # 10-script data processing pipeline
+│   ├── data_logger.py            #   Real-time PyQt5 dual-channel logger
+│   ├── window_slicer.ipynb       #   Interactive window slicer tool
+│   ├── signal_processing.py      #   12-stage automated DSP engine
+│   ├── feature_extraction.py     #   19-feature per-channel extraction
+│   ├── feature_averaging.py      #   Cross-window feature averaging
+│   ├── dataset_creation.py       #   PPG ↔ glucometer metadata fusion
+│   ├── feature_engineering.py    #   24-feature engineering
+│   ├── dataset_cleaning.py       #   NaN + IQR outlier removal
+│   └── train_test_split.py       #   RobustScaler + 80/20 split
+├── ml/                           # XGBoost training, tuning & evaluation
+├── inference/                    # Standalone end-to-end inference engine
+│   ├── engine.py                 #   Unified runtime (~1,800 lines)
+│   └── outputs/                  #   Prediction runs & logs
+├── backend/                      # FastAPI + SQLAlchemy + WebSocket server
+├── frontend/                     # React 18 + Vite clinical dashboard
+├── data/                         # All data artifacts (raw → final)
+├── results/                      # XGBoost experiment results & tuning
+├── docs/                         # Research papers, datasheets, READMEs
+├── tests/                        # pytest unit tests
+├── scripts/                      # Utility scripts
 ├── docker-compose.yml            # PostgreSQL 15 + pgAdmin containers
 └── requirements.txt              # Python dependencies
 ```

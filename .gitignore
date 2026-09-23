@@ -14,6 +14,7 @@ __pycache__/
 venv/
 ENV/
 env/
+ppg_env/
 *.egg-info/
 dist/
 *.egg
@@ -46,18 +47,15 @@ desktop.ini
 *.bak
 *.cache
 
+# ── Project-Specific Ignores ──
 
-xgboost-2.1.3-py3-none-win_amd64.whl
+# Data storage (large datasets — not committed)
+data/
+inference/outputs/
+results/xgboost/
 
-ppg_env
+# Practice/test data
+data/practice/
 
-05_Data_Storage
-
-04_Filtered
-05_Features_
-06_Averaged_Features
-
-08_Results_and_Visualizations
-
-04_Filtered
-Inference_Engine_Outputs
+# Large binary wheels
+*.whl
