@@ -1,76 +1,65 @@
-# Utility Scripts
+# 🛠️ Project Automation Scripts
 
-## Overview
-This folder contains utility scripts for project setup, deployment, data management, and automation tasks.
+Automated tools for environment setup, data management, device flashing, and batch processing.
 
-## Purpose
-- Automate repetitive tasks
-- Simplify project setup
-- Manage data workflows
-- Deployment utilities
+This module provides cross-platform utility scripts to streamline repetitive tasks such as configuring the development environment, managing data lifecycles, and deploying firmware to hardware components.
 
-## Planned Scripts
+**Pipeline Position:** Cross-cutting automation and utility layer.
 
-### Setup Scripts
-- `setup_environment.sh` - Install dependencies and configure environment
-- `install_requirements.py` - Python package installation helper
+## ✨ Key Features
+- **Environment Setup:** Automated dependency installation and system configuration for Linux, Mac, and Windows.
+- **Data Lifecycle Management:** Automated backups, data reorganization, and stale file cleanup.
+- **Hardware Deployment:** Streamlined ESP32 firmware flashing and model deployment.
+- **General Utilities:** System health checks, status reporting, and batch processing.
 
-### Data Management
-- `backup_data.py` - Automated data backup
-- `clean_old_data.py` - Remove outdated files
-- `organize_data.py` - Reorganize data folders
+## 📂 Structure
+- `setup/`: Environment initialization scripts.
+- `data_management/`: Backup, organization, and cleanup scripts.
+- `deployment/`: Firmware and model deployment tools.
+- `utilities/`: System checks, reporting, and batch execution.
 
-### Deployment
-- `flash_firmware.sh` - Automated ESP32 flashing
-- `deploy_model.py` - Deploy trained models
+## 🚀 Quick Start
 
-### Utilities
-- `check_system.py` - Verify system requirements
-- `generate_report.py` - Auto-generate project reports
-- `batch_process.py` - Batch process multiple data files
-
-## File Structure (To Be Created)
-```
-scripts/
-├── setup/                   # Environment setup scripts
-├── data_management/         # Data handling utilities
-├── deployment/              # Deployment automation
-├── utilities/               # General utilities
-└── README.md               # This file
-```
-
-## Usage Examples
-
-### Setup Environment
+### 1. Environment Setup
 ```bash
 # Linux/Mac
 ./scripts/setup/setup_environment.sh
 
-# Windows
+# Windows/Cross-platform (Python)
 python scripts/setup/setup_environment.py
 ```
 
-### Backup Data
+### 2. Data Management (Backup)
 ```bash
 python scripts/data_management/backup_data.py --source 04_Data_Storage/Raw/ --dest backup/
 ```
 
-### Flash Firmware
+### 3. Firmware Deployment
 ```bash
 ./scripts/deployment/flash_firmware.sh --port COM3
 ```
 
-## Best Practices
-- Make scripts cross-platform when possible
-- Include help messages (`--help` flag)
-- Add error handling and validation
-- Document script parameters
-- Use configuration files for settings
+> **Note:** All Python scripts support the `--help` flag for detailed usage instructions and argument validation.
 
-## Getting Started
-This folder is currently empty. Scripts will be added as automation needs arise.
+## ⚙️ Core Scripts Reference
 
-## Related Folders
-- `01_Firmware_ESP32/` - Firmware deployment targets
-- `04_Data_Storage/` - Data management targets
-- All folders - Various automation targets
+| Category | Script | Description |
+|---|---|---|
+| **Setup** | `setup_environment.[sh\|py]` | Initializes workspace and installs dependencies |
+| **Setup** | `install_requirements.py` | Installs Python package requirements |
+| **Data** | `backup_data.py` | Copies data from source to backup destination |
+| **Data** | `clean_old_data.py` | Removes stale or intermediate data files |
+| **Data** | `organize_data.py` | Reorganizes raw and processed data directories |
+| **Deploy** | `flash_firmware.sh` | Flashes firmware to ESP32 devices |
+| **Deploy** | `deploy_model.py` | Deploys trained ML models to target environments |
+| **Utils** | `check_system.py` | Verifies system requirements and hardware status |
+| **Utils** | `generate_report.py` | Creates automated project status reports |
+| **Utils** | `batch_process.py` | Executes batch processing tasks over datasets |
+
+## 🛠️ Troubleshooting
+
+| Issue | Cause | Solution |
+|---|---|---|
+| **Permission Denied (.sh scripts)** | Missing executable flags on Linux/Mac | Run `chmod +x scripts/**/*.sh` before executing |
+| **COM Port Not Found** | Incorrect port or driver issue during flashing | Verify the port in Device Manager/lsusb and update the `--port` argument |
+| **Import Errors in Python Scripts** | Environment not activated or missing dependencies | Ensure your virtual environment is active and run `install_requirements.py` |
